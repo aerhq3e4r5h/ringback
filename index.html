@@ -568,5 +568,33 @@ footer{padding-block:56px 40px;color:var(--faint);font-size:.88rem}
   $('yr').textContent = new Date().getFullYear();
 })();
 </script>
+
+<!-- Ringback AI assistant: chat + voice (Vapi). Key is a public, origin-restricted client key. -->
+<vapi-widget
+  public-key="4d96fa0f-6478-4fb1-8e04-dccad2410c86"
+  assistant-id="5aef0057-c3ed-4d67-a802-23db18e26f8a"
+  mode="hybrid"
+  theme="dark"
+  position="bottom-right"
+  border-radius="large"
+  base-bg-color="#0B1716"
+  accent-color="#FF7A3D"
+  cta-button-color="#FF7A3D"
+  cta-button-text-color="#160A04"
+  title="Ask Ringback"
+  cta-title="Ask Ringback"
+  cta-subtitle="Chat, talk, or try the demo"
+  start-button-text="Talk to the assistant"
+  end-button-text="End call"
+  chat-first-message="Hi, I'm the Ringback assistant. Ask me anything about how it works, or type 'try the demo' to see it handle a burst-geyser call."
+  hybrid-empty-message="Type a question, or tap the mic to talk. Say 'try the demo' to hear it take a burst-geyser call."
+  chat-placeholder="Ask about pricing, setup, POPIA..."
+  voice-show-transcript="true"
+  consent-required="true"
+  consent-title="Before we start"
+  consent-content="This chat or call is handled by an AI assistant and is recorded so we can reply and follow up with you. Please don't share sensitive personal information. By continuing you agree to this."
+  consent-storage-key="ringback_consent"
+></vapi-widget>
+<script src="https://unpkg.com/@vapi-ai/client-sdk-react@0.1.1/dist/embed/widget.umd.js" async></script>
 </body>
 </html>
