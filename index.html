@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ringback for Plumbers</title>
+<meta name="description" content="Ringback answers the calls you miss, spots burst-geyser emergencies and books jobs for plumbers in Gauteng.">
+<meta name="theme-color" content="#07100F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23FF7A3D'/%3E%3Cpath d='M8 13v6M12 10v12M16 7v18M20 10v12M24 13v6' stroke='%2307100F' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one deliberate dark world. A live call is the hero; a bento grid of real UI fragments explains the product; ember-orange is the single hot colour, used like a "recording" light. */
+:root{
+  --bg:#07100F; --bg-2:#0B1716; --panel:#0F1D1C; --panel-2:#132423; --line:rgba(214,240,232,.09); --line-2:rgba(214,240,232,.16);
+  --ink:#ECF3F0; --muted:#93A6A1; --faint:#5F7570;
+  --ember:#FF7A3D; --ember-2:#FFB25B; --ember-glow:rgba(255,122,61,.35);
+  --mint:#5BE3B4; --red:#FF5A4E;
+  --display:"Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --body:"Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:20px; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:24px}
+@media (max-width:600px){.wrap{padding-inline:16px}}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.035em;line-height:1}
+h1{font-size:clamp(2.9rem,7.4vw,6.2rem);font-weight:800}
+h2{font-size:clamp(2.2rem,4.8vw,3.8rem);font-weight:800}
+h3{font-size:1.25rem;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+p{margin:0}
+a{color:inherit}
+.hot{background:linear-gradient(100deg,var(--ember) 10%,var(--ember-2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 0 4px rgba(255,122,61,.18)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:54ch}
+section{position:relative}
+.sec{padding-block:120px}
+@media (max-width:700px){.sec{padding-block:80px}}
+.head{display:grid;gap:18px;max-width:760px;margin-bottom:56px}
+.head.c{margin-inline:auto;text-align:center;justify-items:center}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:600 .95rem/1 var(--body);padding:16px 22px;border-radius:999px;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s}
+.btn-hot{background:var(--ember);color:#160A04;box-shadow:0 10px 30px -10px var(--ember-glow),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-hot:hover{transform:translateY(-1px);box-shadow:0 16px 40px -12px var(--ember-glow),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-line{border-color:var(--line-2);color:var(--ink);background:rgba(255,255,255,.02)}
+.btn-line:hover{border-color:var(--ink)}
+.btn svg{width:18px;height:18px}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px}
+
+.nav{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);left:0;right:0;z-index:50;pointer-events:none;padding-inline:16px}
+.nav-in{pointer-events:auto;max-width:1080px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 8px 8px 18px;border-radius:999px;background:rgba(11,23,22,.72);border:1px solid var(--line-2);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.2rem;letter-spacing:-.03em;text-decoration:none}
+.logo-mark{width:28px;height:28px;border-radius:8px;background:var(--ember);display:grid;place-items:center}
+.logo-mark svg{width:18px;height:18px}
+.links{display:flex;align-items:center;gap:26px;font-size:.92rem;color:var(--muted)}
+.links a{text-decoration:none;transition:color .15s}
+.links a:hover{color:var(--ink)}
+.links .btn{padding:11px 16px;font-size:.88rem;color:#160A04}
+@media (max-width:820px){.links a:not(.btn){display:none}}
+
+.hero{padding-top:150px;padding-bottom:100px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 30%,transparent 75%);pointer-events:none}
+.hero::after{content:"";position:absolute;width:900px;height:900px;left:50%;top:-420px;transform:translateX(-10%);background:radial-gradient(closest-side,rgba(255,122,61,.22),rgba(255,122,61,.06) 50%,transparent);pointer-events:none}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.hero-grid > *{min-width:0}
+.hero h1{margin-top:22px}
+.hero .lede{margin-top:26px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:40px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);font-size:.86rem;color:var(--muted)}
+.chip svg{width:15px;height:15px;color:var(--mint)}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr}.hero{padding-top:130px}}
+
+.call{position:relative;border-radius:28px;padding:1px;background:linear-gradient(160deg,rgba(255,122,61,.55),rgba(214,240,232,.08) 40%,rgba(214,240,232,.05));box-shadow:0 40px 120px -40px rgba(255,122,61,.35),0 30px 60px -30px rgba(0,0,0,.8)}
+.call-in{border-radius:27px;background:linear-gradient(180deg,#112120,#0B1716);padding:22px;display:grid;gap:18px}
+.call-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.caller{display:flex;align-items:center;gap:12px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line-2);display:grid;place-items:center;font-family:var(--display);font-weight:700}
+.caller b{display:block;font-weight:600}
+.caller span{font-family:var(--mono);font-size:.75rem;color:var(--faint)}
+.rec{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ember);padding:6px 10px;border-radius:999px;background:rgba(255,122,61,.1);border:1px solid rgba(255,122,61,.3)}
+.rec i{width:7px;height:7px;border-radius:50%;background:var(--ember);animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.wave{height:64px;display:flex;align-items:center;gap:3px;padding:0 4px}
+.wave span{flex:1;min-width:2px;border-radius:3px;background:linear-gradient(180deg,var(--ember-2),var(--ember));animation:wv 1.2s ease-in-out infinite}
+@keyframes wv{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+.lines{display:grid;gap:8px}
+.line{display:grid;grid-template-columns:76px 1fr;gap:12px;font-size:.9rem;padding:10px 12px;border-radius:12px;border:1px solid transparent;transition:background .4s,border-color .4s}
+.line small{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding-top:3px}
+.line.ai small{color:var(--ember-2)}
+.line.on{background:rgba(255,255,255,.035);border-color:var(--line)}
+.triage{display:flex;gap:8px;flex-wrap:wrap}
+.tag{font-family:var(--mono);font-size:.72rem;padding:6px 10px;border-radius:8px;border:1px solid var(--line-2);color:var(--muted)}
+.tag.red{color:var(--red);border-color:rgba(255,90,78,.4);background:rgba(255,90,78,.08)}
+.toast{position:absolute;right:-18px;bottom:-34px;width:min(300px,82%);padding:14px 16px;border-radius:16px;background:rgba(19,36,35,.92);border:1px solid var(--line-2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 20px 50px -20px rgba(0,0,0,.8);font-size:.84rem;animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+.toast-top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.toast-top b{color:var(--red);font-weight:500}
+.call-in{padding-bottom:84px}
+@media (max-width:980px){.toast{right:8px}}
+@media (max-width:520px){.call-in{padding-bottom:22px}}
+@media (max-width:520px){.toast{position:relative;right:auto;bottom:auto;width:auto;margin-top:12px}.line{grid-template-columns:1fr;gap:2px}}
+
+.ticker{border-block:1px solid var(--line);background:var(--bg-2);overflow:hidden;padding-block:18px}
+.track{display:flex;gap:14px;width:max-content;animation:scroll 40s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(calc(-50% - 7px))}}
+.tk{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;border:1px solid var(--line);font-size:.92rem;white-space:nowrap;color:var(--muted)}
+.tk b{font-family:var(--mono);font-size:.66rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:6px}
+.tk .e{color:var(--red);background:rgba(255,90,78,.1)}
+.tk .r{color:var(--mint);background:rgba(91,227,180,.1)}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.split > *{min-width:0}
+.big-num{font-family:var(--display);font-weight:800;font-size:clamp(3.4rem,8vw,6.6rem);letter-spacing:-.05em;line-height:.95}
+.src{font-size:.8rem;color:var(--faint);margin-top:14px}
+.src a{color:var(--muted)}
+.timeline{position:relative;display:grid;gap:14px;padding-left:28px}
+.timeline::before{content:"";position:absolute;left:7px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--ember),rgba(255,122,61,.05))}
+.tl{position:relative;padding:18px 20px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.tl::before{content:"";position:absolute;left:-26px;top:24px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--ember)}
+.tl time{font-family:var(--mono);font-size:.78rem;color:var(--ember-2)}
+.tl b{display:block;margin-top:2px;font-weight:600}
+.tl span{font-size:.92rem;color:var(--muted)}
+@media (max-width:900px){.split{grid-template-columns:1fr;gap:48px}}
+
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.card{position:relative;border-radius:var(--r);background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);padding:28px;display:flex;flex-direction:column;gap:12px;overflow:hidden;min-width:0;transition:border-color .25s,transform .25s}
+.card:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.card p{color:var(--muted);font-size:.95rem}
+.c-4{grid-column:span 4}.c-2{grid-column:span 2}.c-3{grid-column:span 3}
+.card .ui{margin-top:auto;padding-top:16px;position:relative}
+.card.glow::after{content:"";position:absolute;width:420px;height:420px;right:-160px;bottom:-220px;background:radial-gradient(closest-side,rgba(255,122,61,.22),transparent);pointer-events:none}
+.triage-ui{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lane{border-radius:14px;border:1px solid var(--line);padding:14px;display:grid;gap:8px;background:rgba(0,0,0,.18);min-width:0}
+.lane h4{margin:0;font-family:var(--mono);font-size:.7rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.lane.e h4{color:var(--red)}.lane.r h4{color:var(--mint)}
+.pill{font-size:.86rem;padding:8px 10px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line)}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{font-family:var(--mono);font-size:.74rem;text-align:center;padding:10px 2px;border-radius:10px;border:1px solid var(--line);color:var(--muted)}
+.slot.pick{border-color:var(--ember);color:var(--ink);background:rgba(255,122,61,.12)}
+.slot.off{opacity:.35;text-decoration:line-through}
+.sms{font-family:var(--mono);font-size:.8rem;line-height:1.55;padding:14px;border-radius:14px 14px 14px 4px;background:var(--panel-2);border:1px solid var(--line)}
+.sms b{color:var(--red);font-weight:500}
+.clock{display:flex;align-items:baseline;gap:6px;font-family:var(--display);font-weight:800;font-size:3.6rem;letter-spacing:-.04em;line-height:1}
+.clock small{font-family:var(--mono);font-size:1.6rem;font-weight:400;color:var(--faint)}
+.langs{display:flex;gap:8px;flex-wrap:wrap}
+.bars{display:flex;align-items:flex-end;gap:8px;height:90px}
+.bars span{flex:1;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,var(--ember-2),rgba(255,122,61,.25))}
+.bars-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.7rem;color:var(--faint);margin-top:6px}
+@media (max-width:980px){.c-4,.c-2,.c-3{grid-column:span 3}}
+@media (max-width:680px){.bento{grid-template-columns:1fr}.c-4,.c-2,.c-3{grid-column:auto}.triage-ui{grid-template-columns:1fr}}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{padding:30px;border-radius:var(--r);border:1px solid var(--line);background:var(--bg-2);display:grid;gap:12px;align-content:start;min-width:0}
+.step .n{font-family:var(--mono);font-size:.8rem;color:var(--ember);display:flex;align-items:center;gap:10px}
+.step .n::after{content:"";flex:1;height:1px;background:var(--line-2)}
+.step p{color:var(--muted);font-size:.95rem}
+@media (max-width:820px){.steps{grid-template-columns:1fr}}
+
+.calc{display:grid;grid-template-columns:1.1fr .9fr;border-radius:28px;border:1px solid var(--line-2);overflow:hidden;background:var(--bg-2)}
+.calc > *{min-width:0}
+.calc form{padding:40px;display:grid;gap:30px}
+.field{display:grid;gap:12px}
+.field label{display:flex;justify-content:space-between;gap:12px;font-weight:500}
+.field output{font-family:var(--mono);color:var(--ember-2)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--ember) var(--p,50%),rgba(214,240,232,.12) var(--p,50%));margin:8px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ink);border:4px solid var(--ember);cursor:pointer;box-shadow:0 0 0 6px rgba(255,122,61,.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);border:4px solid var(--ember);cursor:pointer}
+.out{position:relative;padding:40px;display:flex;flex-direction:column;justify-content:center;gap:20px;background:radial-gradient(120% 90% at 100% 0%,rgba(255,122,61,.22),transparent 60%),var(--panel);border-left:1px solid var(--line)}
+.out .lbl{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.out .big-num{font-size:clamp(3rem,6.4vw,4.8rem);font-variant-numeric:tabular-nums}
+.out dl{margin:0}
+.out dl div{display:flex;justify-content:space-between;gap:12px;padding-block:12px;border-top:1px solid var(--line)}
+.out dt{color:var(--muted)}
+.out dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:.85rem;color:var(--faint);margin-top:16px}
+@media (max-width:860px){.calc{grid-template-columns:1fr}.calc form,.out{padding:26px}.out{border-left:0;border-top:1px solid var(--line)}}
+
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
+.plan{position:relative;border-radius:24px;border:1px solid var(--line);background:var(--bg-2);padding:32px;display:flex;flex-direction:column;gap:20px;min-width:0}
+.plan.star{background:linear-gradient(180deg,#1A1410,var(--bg-2) 60%);border-color:rgba(255,122,61,.5);box-shadow:0 30px 80px -40px var(--ember-glow)}
+.ribbon{position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--ember);color:#160A04}
+.plan .d{color:var(--muted);font-size:.93rem;margin-top:6px}
+.price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.price b{font-family:var(--display);font-weight:800;font-size:3.2rem;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.price span{color:var(--muted);font-size:.9rem}
+.setup{font-family:var(--mono);font-size:.78rem;color:var(--faint);padding-bottom:20px;border-bottom:1px solid var(--line)}
+.plan ul{list-style:none;padding:0;margin:0;display:grid;gap:12px;font-size:.94rem;flex:1;align-content:start}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan li svg{width:18px;height:18px;color:var(--mint);flex:none;margin-top:3px}
+.fine{text-align:center;color:var(--faint);font-size:.86rem;margin-top:24px}
+@media (max-width:920px){.plans{grid-template-columns:1fr;max-width:520px;margin-inline:auto}}
+
+.faq{max-width:820px;margin-inline:auto;display:grid;gap:10px}
+.faq details{border-radius:16px;border:1px solid var(--line);background:var(--bg-2);padding:0 22px;transition:border-color .2s}
+.faq details[open]{border-color:var(--line-2)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:20px;font-weight:600;font-size:1.02rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";width:10px;height:10px;flex:none;border-right:2px solid var(--ember);border-bottom:2px solid var(--ember);transform:rotate(45deg) translateY(-3px);transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(-135deg) translateY(-3px)}
+.faq details p{padding-bottom:20px;color:var(--muted)}
+
+.final{position:relative;border-radius:32px;overflow:hidden;padding:72px 48px;text-align:center;border:1px solid rgba(255,122,61,.35);background:radial-gradient(80% 120% at 50% 0%,rgba(255,122,61,.28),transparent 60%),var(--bg-2)}
+.final::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(214,240,232,.12) 1px,transparent 1px);background-size:22px 22px;mask-image:radial-gradient(ellipse at center,#000,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000,transparent 70%);pointer-events:none}
+.final > *{position:relative}
+.final .lede{margin:20px auto 0}
+.dial{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:36px;padding:10px 10px 10px 24px;border-radius:999px;background:rgba(7,16,15,.7);border:1px solid var(--line-2)}
+.dial .num{font-family:var(--mono);font-size:clamp(1.2rem,3vw,1.6rem);letter-spacing:.04em;user-select:all}
+.final small{display:block;margin-top:18px;color:var(--muted);font-size:.88rem}
+@media (max-width:600px){.final{padding:48px 20px}.dial{border-radius:20px;padding:16px}}
+
+footer{padding-block:56px 40px;color:var(--faint);font-size:.88rem}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:32px}
+.foot p{max-width:46ch;margin-top:10px}
+.foot-r{display:grid;gap:6px;font-family:var(--mono);font-size:.82rem;text-align:right}
+@media (max-width:600px){.foot-r{text-align:left}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top" aria-label="Ringback home">
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#160A04" stroke-width="2.6" stroke-linecap="round"><path d="M5 10v4M9 7v10M13 4v16M17 7v10M21 10v4"/></svg></span>
+      Ringback
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#pricing">Pricing</a>
+      <a class="btn btn-hot" href="#demo">Hear the demo</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">AI phone assistant · Plumbers in Gauteng</span>
+      <h1>Never lose a job to a <span class="hot">missed call.</span></h1>
+      <p class="lede">Ringback answers every call you can't, in your business name. It spots a burst geyser, talks the customer through making it safe, and alerts you within a minute. Routine jobs go straight into your calendar.</p>
+      <div class="ctas">
+        <a class="btn btn-hot" href="#demo"><svg><use href="#i-phone"/></svg>Call the demo line</a>
+        <a class="btn btn-line" href="#calculator">See what you're losing <svg><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="proof">
+        <span class="chip"><svg><use href="#i-check"/></svg>Keep your own number</span>
+        <span class="chip"><svg><use href="#i-check"/></svg>Live in one visit</span>
+        <span class="chip"><svg><use href="#i-check"/></svg>POPIA-aware</span>
+      </div>
+    </div>
+
+    <div class="call" aria-label="Example of a call Ringback handled">
+      <div class="call-in">
+        <div class="call-top">
+          <div class="caller"><span class="avatar">LM</span><div><b>Incoming · Fourways</b><span>082 *** **12 · 21:47</span></div></div>
+          <span class="rec"><i></i>Live</span>
+        </div>
+        <div class="wave" id="wave" aria-hidden="true"></div>
+        <div class="lines" id="lines">
+          <div class="line ai on"><small>Ringback</small><span>Hi, you've reached Ridgeway Plumbing. This call is recorded. How can I help?</span></div>
+          <div class="line"><small>Caller</small><span>Water's pouring through my ceiling. I think the geyser burst.</span></div>
+          <div class="line ai"><small>Ringback</small><span>Let's get it safe. Switch the geyser off at the DB board, then close the main tap by the meter.</span></div>
+          <div class="line ai"><small>Ringback</small><span>Thanks, Lerato. Pieter will call you back within 15 minutes.</span></div>
+        </div>
+        <div class="triage"><span class="tag red">Emergency</span><span class="tag">Burst geyser</span><span class="tag">Power off ✓</span><span class="tag">Water off ✓</span></div>
+      </div>
+      <div class="toast" role="note">
+        <div class="toast-top"><b>● Emergency alert</b><span>SMS · now</span></div>
+        <strong>Lerato M · Fourways</strong><br>Burst geyser, water through ceiling. Power and water off. Call back within 15 min.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-label="Types of calls Ringback handles">
+  <div class="track" id="track">
+    <span class="tk"><b class="e">Emergency</b>Burst geyser</span>
+    <span class="tk"><b class="r">Booked</b>Dripping kitchen tap</span>
+    <span class="tk"><b class="e">Emergency</b>Sewage backing up</span>
+    <span class="tk"><b class="r">Booked</b>Geyser service</span>
+    <span class="tk"><b class="e">Emergency</b>No water to the house</span>
+    <span class="tk"><b class="r">Callback</b>Bathroom renovation quote</span>
+    <span class="tk"><b class="e">Emergency</b>Pipe burst in the wall</span>
+    <span class="tk"><b class="r">Booked</b>Blocked shower drain</span>
+    <span class="tk"><b class="r">Callback</b>Plumbing COC for a sale</span>
+    <span class="tk"><b class="r">Booked</b>Running toilet</span>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="wrap split">
+    <div>
+      <span class="kicker">The problem</span>
+      <h2 style="margin-top:18px">A burst geyser doesn't leave a voicemail.</h2>
+      <p class="lede" style="margin-top:22px">The homeowner hangs up and calls the next plumber on Google. By the time you're down from the ceiling and phone back, the job's gone.</p>
+      <div style="margin-top:40px">
+        <div class="big-num"><span class="hot">R10k–R16k</span></div>
+        <p style="color:var(--muted);margin-top:10px">Typical cost of an emergency geyser replacement. Lost to one missed call.</p>
+        <p class="src">Source: <a href="https://energybee.co.za/guides/burst-geyser-what-to-do-south-africa" target="_blank" rel="noopener">EnergyBee, 2026</a></p>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="tl"><time>10:20</time><b>Under a sink</b><span>Hands full. The phone rings out in your pocket.</span></div>
+      <div class="tl"><time>13:05</time><b>On another call</b><span>The next customer gets a busy tone and tries someone else.</span></div>
+      <div class="tl"><time>21:47</time><b>Off for the night</b><span>You're with the family. The geyser doesn't care.</span></div>
+      <div class="tl"><time>Sat 07:30</time><b>Weekend rush</b><span>Everyone's home, and the emergencies pile up.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="features" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker">What it does</span>
+      <h2>A front desk that never takes a lunch break.</h2>
+    </div>
+    <div class="bento">
+      <div class="card c-4 glow">
+        <h3>Knows a burst geyser from a dripping tap</h3>
+        <p>Every call is sorted in seconds. When it's not sure, it treats the call as urgent and alerts you.</p>
+        <div class="ui triage-ui">
+          <div class="lane e"><h4>Emergency · alert now</h4><div class="pill">Burst geyser, Randburg</div><div class="pill">Sewage in bathroom, Northcliff</div></div>
+          <div class="lane r"><h4>Routine · book it</h4><div class="pill">Leaking tap, Fourways</div><div class="pill">COC quote, Sandton</div></div>
+        </div>
+      </div>
+      <div class="card c-2">
+        <h3>Answers 24/7</h3>
+        <p>Nights, weekends and public holidays. Two calls at once is fine.</p>
+        <div class="ui"><div class="clock">24<small>/</small>7</div></div>
+      </div>
+      <div class="card c-2">
+        <h3>Books the job</h3>
+        <p>Offers real open slots from your Google Calendar.</p>
+        <div class="ui slots">
+          <span class="slot off">Mon 08:00</span><span class="slot pick">Tue 09:00</span><span class="slot">Tue 14:00</span>
+          <span class="slot">Wed 10:00</span><span class="slot off">Wed 15:00</span><span class="slot">Thu 08:00</span>
+        </div>
+      </div>
+      <div class="card c-2">
+        <h3>Alerts you instantly</h3>
+        <p>Every call lands on your phone with a recording.</p>
+        <div class="ui sms"><b>EMERGENCY</b> · Lerato M · Fourways<br>Burst geyser. Power + water off. Call back in 15 min.</div>
+      </div>
+      <div class="card c-2">
+        <h3>Speaks your customers' language</h3>
+        <p>A calm, local tone. Switches to Afrikaans when the caller does (Pro plan).</p>
+        <div class="ui langs"><span class="tag">English</span><span class="tag">Afrikaans</span><span class="tag" style="opacity:.5">More in testing</span></div>
+      </div>
+      <div class="card c-3">
+        <h3>Your name, your rules</h3>
+        <p>Answers as your business. Quotes only your call-out fee. Never promises a price or arrival time you haven't set.</p>
+        <div class="ui langs"><span class="tag">Call-out fee only</span><span class="tag">Your service area</span><span class="tag">Your hours</span></div>
+      </div>
+      <div class="card c-3 glow">
+        <h3>Proof every month</h3>
+        <p>A report of calls answered, emergencies caught and jobs booked, so you can see what it earned you.</p>
+        <div class="ui"><div class="bars" aria-hidden="true"><span style="height:38%"></span><span style="height:55%"></span><span style="height:47%"></span><span style="height:72%"></span><span style="height:64%"></span><span style="height:90%"></span></div><div class="bars-cap"><span>Calls answered per week</span><span>Illustration</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how" style="padding-top:0">
+  <div class="wrap">
+    <div class="head c">
+      <span class="kicker">How it works</span>
+      <h2>Live in a day. Nothing changes for the calls you answer.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">01</span><h3>We set up forwarding</h3><p>Calls you don't answer within 20 seconds, or that arrive while you're busy, forward to Ringback. We do it on your phone, with you.</p></div>
+      <div class="step"><span class="n">02</span><h3>Ringback handles the call</h3><p>Emergencies get safety steps and an instant alert to you. Routine work is booked into your calendar or logged for a callback.</p></div>
+      <div class="step"><span class="n">03</span><h3>You get the details</h3><p>Name, number, suburb, problem and a recording arrive by SMS. Monthly, you get a report of what it caught.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="calculator" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker">Missed-call calculator</span>
+      <h2>What are missed calls costing you?</h2>
+      <p class="lede">Drag the sliders to match your business. Not sure how many you miss? Check your phone's call log for last week.</p>
+    </div>
+    <div class="calc">
+      <form id="calc" onsubmit="return false">
+        <div class="field"><label for="missed">Missed calls per week <output id="o-missed" for="missed"></output></label><input type="range" id="missed" min="1" max="40" step="1" value="8"></div>
+        <div class="field"><label for="real">Share that are real jobs <output id="o-real" for="real"></output></label><input type="range" id="real" min="10" max="100" step="5" value="50"></div>
+        <div class="field"><label for="win">Share you'd win if answered <output id="o-win" for="win"></output></label><input type="range" id="win" min="10" max="100" step="5" value="50"></div>
+        <div class="field"><label for="value">Average job value <output id="o-value" for="value"></output></label><input type="range" id="value" min="500" max="15000" step="250" value="2500"></div>
+      </form>
+      <div class="out" aria-live="polite">
+        <span class="lbl">Work lost to missed calls / month</span>
+        <span class="big-num" id="lost">R0</span>
+        <dl>
+          <div><dt>Jobs lost per month</dt><dd id="jobs">0</dd></div>
+          <div><dt>Ringback Starter</dt><dd>R2,500</dd></div>
+          <div><dt>Jobs needed to cover it</dt><dd id="breakeven">1</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="note">Starting values are a conservative example, not a promise. Your 30-day report shows your real numbers.</p>
+  </div>
+</section>
+
+<section class="sec" id="pricing" style="padding-top:0">
+  <div class="wrap">
+    <div class="head c">
+      <span class="kicker">Pricing</span>
+      <h2>One recovered geyser job pays for months.</h2>
+      <p class="lede">Simple monthly plans in rand. Prices exclude VAT.</p>
+    </div>
+    <div class="plans">
+      <div class="plan star">
+        <span class="ribbon">3 places</span>
+        <div><h3>Founding pilot</h3><p class="d">For our first three plumbing businesses.</p></div>
+        <div class="price"><b>R1,500</b><span>/mo for 60 days</span></div>
+        <p class="setup">No setup fee · review + 2 referrals if you're happy</p>
+        <ul>
+          <li><svg><use href="#i-check"/></svg>Everything in Starter</li>
+          <li><svg><use href="#i-check"/></svg>Weekly call reviews with you</li>
+          <li><svg><use href="#i-check"/></svg>Stop at day 60, no questions</li>
+        </ul>
+        <a class="btn btn-hot" href="#demo">Apply for the pilot</a>
+      </div>
+      <div class="plan">
+        <div><h3>Starter</h3><p class="d">Missed and after-hours calls, handled.</p></div>
+        <div class="price"><b>R2,500</b><span>/month</span></div>
+        <p class="setup">R3,500 once-off setup · 250 minutes</p>
+        <ul>
+          <li><svg><use href="#i-check"/></svg>Missed and after-hours calls</li>
+          <li><svg><use href="#i-check"/></svg>Emergency SMS alerts</li>
+          <li><svg><use href="#i-check"/></svg>Google Calendar booking</li>
+          <li><svg><use href="#i-check"/></svg>Summary and recording of every call</li>
+        </ul>
+        <a class="btn btn-line" href="#demo">Get started</a>
+      </div>
+      <div class="plan">
+        <div><h3>Pro</h3><p class="d">A full front desk for a growing team.</p></div>
+        <div class="price"><b>R4,500</b><span>/month</span></div>
+        <p class="setup">R5,500 once-off setup · 600 minutes</p>
+        <ul>
+          <li><svg><use href="#i-check"/></svg>Everything in Starter</li>
+          <li><svg><use href="#i-check"/></svg>English and Afrikaans</li>
+          <li><svg><use href="#i-check"/></svg>Google review requests</li>
+          <li><svg><use href="#i-check"/></svg>Follow-up on callers who didn't book</li>
+          <li><svg><use href="#i-check"/></svg>Monthly results report</li>
+        </ul>
+        <a class="btn btn-line" href="#demo">Get started</a>
+      </div>
+    </div>
+    <p class="fine">Extra minutes R5 each · 3-month minimum, then month-to-month with 30 days' notice.</p>
+  </div>
+</section>
+
+<section class="sec" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="head c">
+      <span class="kicker">FAQ</span>
+      <h2>Questions plumbers ask us.</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Will my customers know it's not a person?</summary><p>It introduces itself as your assistant, and if anyone asks, it says it's an AI. Callers mostly want help fast, and it beats voicemail or a busy tone.</p></details>
+      <details><summary>What if it gets an emergency wrong?</summary><p>When it isn't sure, it treats the call as an emergency and alerts you. You also get every call as a recording, and we review them with you weekly in the first month.</p></details>
+      <details><summary>Does it quote prices?</summary><p>Only your call-out fee, if you want it to. For anything else it tells the customer you'll quote once you've seen the job.</p></details>
+      <details><summary>Do I need a new number or phone?</summary><p>No. We set up call forwarding on your existing cellphone in about 10 minutes, and you can switch it off any time.</p></details>
+      <details><summary>What about POPIA and my customers' details?</summary><p>Callers are told the call is recorded. Recordings are kept for 90 days, then deleted, and only you and we can access them. It's all in our written agreement.</p></details>
+      <details><summary>Does it speak other languages?</summary><p>English and Afrikaans today, on the Pro plan. Other South African languages are in testing; ask us before relying on them.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="demo" style="padding-top:0">
+  <div class="wrap">
+    <div class="final">
+      <span class="kicker">Hear it for yourself</span>
+      <h2 style="margin-top:18px">Call the demo line.<br>Pretend your geyser <span class="hot">just burst.</span></h2>
+      <p class="lede">It's answering for a demo business, Ridgeway Plumbing. Try to catch it out. Like what you hear? We'll run it on your number for a free trial week.</p>
+      <div class="dial">
+        <span class="num" id="demoNum">0XX XXX XXXX</span>
+        <button class="btn btn-hot" id="copyDemo" type="button">Copy number</button>
+      </div>
+      <small>To set up your own, WhatsApp or call <span style="font-family:var(--mono)">0XX XXX XXXX</span> · you@yourdomain.co.za</small>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a class="logo" href="#top"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#160A04" stroke-width="2.6" stroke-linecap="round"><path d="M5 10v4M9 7v10M13 4v16M17 7v10M21 10v4"/></svg></span>Ringback</a>
+      <p>AI phone assistant for plumbers and trades in Gauteng. Ridgeway Plumbing is a fictional business used for the demo.</p>
+    </div>
+    <div class="foot-r">
+      <span>you@yourdomain.co.za</span>
+      <span>Johannesburg · Pretoria · East Rand</span>
+      <span>© <span id="yr">2026</span> Ringback</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  var wave = $('wave');
+  for (var i = 0; i < 48; i++) {
+    var s = document.createElement('span');
+    s.style.height = (25 + Math.round(70 * Math.abs(Math.sin(i * 0.55) * Math.cos(i * 0.21)))) + '%';
+    s.style.animationDelay = (-(i * 37) % 1200) + 'ms';
+    s.style.animationDuration = (900 + (i * 53) % 700) + 'ms';
+    wave.appendChild(s);
+  }
+
+  var lines = $('lines').children, cur = 0;
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function(){
+      lines[cur].classList.remove('on');
+      cur = (cur + 1) % lines.length;
+      lines[cur].classList.add('on');
+    }, 2600);
+  }
+
+  var track = $('track');
+  track.innerHTML += track.innerHTML;
+
+  function rand(n){ return 'R' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function fill(el){ el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+  function calc(){
+    var m = +$('missed').value, r = $('real').value / 100, w = $('win').value / 100, v = +$('value').value;
+    var jobs = m * r * w * 4.3;
+    $('o-missed').textContent = m;
+    $('o-real').textContent = Math.round(r * 100) + '%';
+    $('o-win').textContent = Math.round(w * 100) + '%';
+    $('o-value').textContent = rand(v);
+    $('lost').textContent = rand(jobs * v);
+    $('jobs').textContent = jobs.toFixed(1);
+    $('breakeven').textContent = Math.max(1, Math.ceil(2500 / v));
+    ['missed','real','win','value'].forEach(function(id){ fill($(id)); });
+  }
+  ['missed','real','win','value'].forEach(function(id){ $(id).addEventListener('input', calc); });
+  calc();
+
+  $('copyDemo').addEventListener('click', function(){
+    var btn = this, text = $('demoNum').textContent;
+    var done = function(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy number'; }, 1500); };
+    var fallback = function(){ var r = document.createRange(); r.selectNodeContents($('demoNum')); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+
+  $('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
