@@ -176,9 +176,25 @@
     wa.className = 'wa-float'; wa.href = RB.wa('Hi Ringback, I have a question.'); wa.target = '_blank'; wa.rel = 'noopener';
     wa.setAttribute('aria-label', 'Chat to us on WhatsApp'); wa.innerHTML = RB.icon('i-wa');
     document.body.appendChild(wa);
-    var waSmall = window.matchMedia('(max-width: 700px)');
-    var waCheck = function(){ wa.classList.toggle('away', waSmall.matches && window.scrollY < 480); };
-    window.addEventListener('scroll', waCheck, { passive: true }); waSmall.addEventListener && waSmall.addEventListener('change', waCheck); waCheck();
+  }
+
+  /* ---------- phone action bar ----------
+     On small screens a bottom bar (trial, ask, WhatsApp) replaces the floating buttons. It slides in once
+     the page hero has scrolled away, so it never covers the headline. */
+  var mbar = null;
+  if (!document.body.hasAttribute('data-no-float')) {
+    mbar = document.createElement('div');
+    mbar.className = 'mbar'; mbar.setAttribute('role', 'region'); mbar.setAttribute('aria-label', 'Quick actions');
+    mbar.innerHTML = (isIn ? '<a class="btn btn-hot" href="dashboard.html">Go to dashboard</a>' : '<a class="btn btn-hot" href="login.html?mode=signup">Start free trial ' + RB.icon('i-arrow') + '</a>') +
+      (!document.body.hasAttribute('data-no-ai') && C.vapiPublicKey ? '<button class="mbar-ic" type="button" data-open-ai aria-label="Ask the Ringback assistant">' + RB.icon('i-mic') + '</button>' : '') +
+      (C.whatsapp ? '<a class="mbar-ic wa" href="' + RB.wa('Hi Ringback, I have a question.') + '" target="_blank" rel="noopener" aria-label="Chat to us on WhatsApp">' + RB.icon('i-wa') + '</a>' : '');
+    document.body.appendChild(mbar);
+    var small = window.matchMedia('(max-width: 700px)');
+    var syncBar = function(){ document.body.classList.toggle('has-mbar', small.matches); };
+    if (small.addEventListener) small.addEventListener('change', syncBar); syncBar();
+    var heroEl = document.querySelector('.hero, .phero, .nf');
+    if (heroEl && 'IntersectionObserver' in window) new IntersectionObserver(function(en){ mbar.classList.toggle('show', !en[0].isIntersecting); }, { rootMargin: '-90px 0px 0px 0px' }).observe(heroEl);
+    else { var barScroll = function(){ mbar.classList.toggle('show', window.scrollY > 300); }; window.addEventListener('scroll', barScroll, { passive: true }); barScroll(); }
   }
 
   /* ---------- fill contact placeholders ---------- */
@@ -195,6 +211,38 @@
     var el = e.target.closest && e.target.closest('.spot'); if (!el) return;
     var r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px');
   }, { passive: true });
+
+  /* ---------- section headings build in word by word ----------
+     Desktop only, first time each heading is seen. Phones and reduced-motion just show the heading. */
+  var revealOK = !reduced && window.matchMedia('(hover: hover) and (min-width: 701px)').matches && 'IntersectionObserver' in window;
+  RB.splitWords = function(h){
+    var n = 0;
+    (function walk(el, hot){
+      [].slice.call(el.childNodes).forEach(function(node){
+        if (node.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          node.textContent.split(/(\s+)/).forEach(function(part){
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            var w = document.createElement('span'); w.className = 'w' + (hot ? ' hot' : ''); w.style.setProperty('--i', n++); w.textContent = part; frag.appendChild(w);
+          });
+          node.parentNode.replaceChild(frag, node);
+        } else if (node.nodeType === 1 && node.tagName !== 'BR') {
+          /* a gradient word group: give each word its own gradient so it survives being split */
+          var isHot = node.classList.contains('hot');
+          if (isHot) node.classList.remove('hot');
+          walk(node, hot || isHot);
+        }
+      });
+    })(h, false);
+  };
+  if (revealOK) {
+    var heads = [].filter.call(document.querySelectorAll('main h2'), function(h){ return !h.closest('.app, .prose, .paper, .faq') && !h.classList.contains('faq-cat'); });
+    var hio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting) { hio.unobserve(en.target); en.target.classList.add('is-in'); } });
+    }, { threshold: .3 });
+    heads.forEach(function(h){ RB.splitWords(h); h.classList.add('wr'); hio.observe(h); });
+  }
 
   /* ---------- count-up (final numbers are shown at rest) ---------- */
   if ('IntersectionObserver' in window && !reduced) {
@@ -274,10 +322,11 @@
       'consent-storage-key':'ringback_consent' };
     Object.keys(attrs).forEach(function(k){ vw.setAttribute(k, attrs[k]); });
     document.body.appendChild(vw);
-    /* on phones the chat launcher covers the hero buttons, so it waits until the hero has scrolled away (never while a chat is open) */
-    var vwSmall = window.matchMedia('(max-width: 700px)');
-    var vwCheck = function(){ vw.classList.toggle('away', vwSmall.matches && window.scrollY < 480 && !vw.querySelector('button')); };
-    window.addEventListener('scroll', vwCheck, { passive: true }); vwSmall.addEventListener && vwSmall.addEventListener('change', vwCheck); vwCheck();
+    /* the collapsed launcher has no buttons; once a chat opens it does. CSS hides the collapsed launcher on phones,
+       where the action bar's Ask button opens it instead. */
+    var syncVw = function(){ vw.classList.toggle('closed', !vw.querySelector('button')); };
+    syncVw();
+    if ('MutationObserver' in window) new MutationObserver(syncVw).observe(vw, { childList: true, subtree: true });
     var sc = document.createElement('script'); sc.src = 'https://unpkg.com/@vapi-ai/client-sdk-react@0.1.1/dist/embed/widget.umd.js'; sc.async = true; document.body.appendChild(sc);
   }
 })();

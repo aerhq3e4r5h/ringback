@@ -42,20 +42,28 @@
     <div class="console auto" id="console">
       <span class="anchor" id="plumbing"></span><span class="anchor" id="electrical"></span><span class="anchor" id="gates"></span><span class="anchor" id="solar"></span><span class="anchor" id="pest"></span><span class="anchor" id="aircon"></span><span class="anchor" id="locksmith"></span>
       <div class="trade-tabs" role="tablist" aria-label="Choose a trade to see an example call" id="tabs"></div>
-      <div class="call" role="tabpanel" id="callPanel" aria-live="polite">
-        <div class="call-in">
-          <div class="call-top">
-            <div class="caller"><span class="avatar" id="cAvatar">LM</span><div><b id="cTitle">Incoming · Fourways</b><span id="cMeta">Forwarded to Ridgeway Plumbing · 21:47</span></div></div>
-            <span class="rec"><i></i>Live</span>
+      <div class="phone-stage">
+        <div class="phone" role="tabpanel" id="callPanel" aria-labelledby="cTitle">
+          <div class="phone-screen">
+            <div class="ph-status" aria-hidden="true"><span id="pTime">21:47</span><span class="island"></span><span class="ph-icons"><span class="sig"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:11px"></i></span><span class="bat"></span></span></div>
+            <div class="call-in">
+              <div class="call-top">
+                <div class="caller"><span class="avatar" id="cAvatar">LM</span><div><b id="cTitle">Incoming · Fourways</b><span id="cMeta">Forwarded to Ridgeway Plumbing</span></div></div>
+                <span class="rec"><i></i>Answering</span>
+              </div>
+              <div class="wave" id="wave" aria-hidden="true"></div>
+              <div class="lines" id="lines"></div>
+              <div class="triage" id="triage"></div>
+            </div>
+            <div class="lock" aria-hidden="true"><span class="lock-date">Call ended · handled by Ringback</span><span class="lock-time" id="lTime">21:48</span></div>
+            <div class="toast-card" id="toastCard" role="note" data-kind="emergency">
+              <div class="toast-top"><span class="t-app"><svg><use href="#i-chat"/></svg></span><b id="tKind">● Emergency alert</b><span>SMS · now</span></div>
+              <strong id="tWho">Lerato M · Fourways</strong><br><span id="tBody">Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</span>
+            </div>
+            <span class="ph-home" aria-hidden="true"></span>
           </div>
-          <div class="wave" id="wave" aria-hidden="true"></div>
-          <div class="lines" id="lines"></div>
-          <div class="triage" id="triage"></div>
         </div>
-        <div class="toast-card" id="toastCard" role="note" data-kind="emergency">
-          <div class="toast-top"><b id="tKind">● Emergency alert</b><span>SMS · now</span></div>
-          <strong id="tWho">Lerato M · Fourways</strong><br><span id="tBody">Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</span>
-        </div>
+        <p class="phone-cap">Example call · fictional business</p>
       </div>
     </div>
   </div>

@@ -136,9 +136,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .chip svg{width:15px;height:15px;color:var(--mint)}
 @media (max-width:1040px){.hero-grid{grid-template-columns:1fr}.hero{padding-top:134px}}
 
-/* live call console */
+/* live call console: trade tabs above a phone that plays an example call, then locks with the SMS alert */
 .console{position:relative}
-.trade-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;margin-bottom:12px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.console > .anchor{position:absolute;top:0;left:0;width:1px;height:1px}
+.trade-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;margin-bottom:22px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
 .trade-tabs::-webkit-scrollbar{display:none}
 .trade-tab{flex:none;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:0;background:transparent;color:var(--muted);font-size:.86rem;font-weight:500;cursor:pointer;position:relative;overflow:hidden;transition:color .2s,background .2s}
 .trade-tab svg{width:16px;height:16px}
@@ -147,18 +148,32 @@ button,input,select,textarea{font:inherit;color:inherit}
 .trade-tab[aria-selected="true"] svg{color:var(--ember)}
 .trade-tab .bar{position:absolute;left:14px;right:14px;bottom:3px;height:2px;border-radius:2px;background:var(--ember);transform-origin:0 50%;transform:scaleX(0)}
 .console.auto .trade-tab[aria-selected="true"] .bar{animation:fillbar 9s linear forwards}
+.console.paused .trade-tab .bar,.console.paused .wave span{animation-play-state:paused}
 @keyframes fillbar{to{transform:scaleX(1)}}
-.call{position:relative;border-radius:28px;padding:1px;background:linear-gradient(160deg,rgba(255,122,61,.55),rgba(214,240,232,.08) 40%,rgba(214,240,232,.05));box-shadow:0 40px 120px -40px rgba(255,122,61,.35),0 30px 60px -30px rgba(0,0,0,.8)}
-.call-in{border-radius:27px;background:linear-gradient(180deg,#112120,#0B1716);padding:22px 22px 92px;display:grid;gap:16px;min-height:540px;align-content:start}
+.phone-stage{position:relative;display:grid;justify-items:center;gap:14px}
+.phone-stage::before{content:"";position:absolute;left:50%;top:46%;width:130%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,122,61,.22),rgba(255,122,61,.05) 55%,transparent);pointer-events:none}
+.phone{position:relative;width:min(100%,370px);border-radius:56px;padding:11px;background:linear-gradient(150deg,#33403D,#0D1615 32%,#0A1211 68%,#2A3532);box-shadow:inset 0 0 0 1px rgba(236,243,240,.14),inset 0 0 0 3px #050A0A,0 60px 110px -50px rgba(255,122,61,.55),0 40px 70px -40px #000}
+.phone::before,.phone::after{content:"";position:absolute;width:3px;border-radius:3px;background:#26302E}
+.phone::before{left:-3px;top:150px;height:56px;box-shadow:0 74px 0 #26302E}
+.phone::after{right:-3px;top:190px;height:84px}
+.phone-screen{position:relative;border-radius:46px;overflow:hidden;background:radial-gradient(120% 55% at 50% 0%,rgba(255,122,61,.16),transparent 62%),linear-gradient(180deg,#102120,#081211 70%)}
+.ph-status{position:relative;display:flex;justify-content:space-between;align-items:center;height:48px;padding:6px 30px 0;font:600 .82rem/1 var(--body);font-variant-numeric:tabular-nums}
+.island{position:absolute;left:50%;top:12px;width:100px;height:29px;border-radius:20px;background:#000;transform:translateX(-50%)}
+.ph-icons{display:flex;align-items:center;gap:6px}
+.ph-icons .sig{display:flex;align-items:flex-end;gap:2px;height:11px}
+.ph-icons .sig i{width:3px;border-radius:1px;background:var(--ink)}
+.ph-icons .bat{width:23px;height:11px;border-radius:3px;border:1.5px solid rgba(236,243,240,.55);padding:1px;position:relative}
+.ph-icons .bat::before{content:"";display:block;height:100%;width:72%;border-radius:1px;background:var(--ink)}
+.call-in{padding:10px 16px 40px;display:grid;gap:12px;align-content:start;transition:opacity .5s,transform .6s}
 .call-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .caller{display:flex;align-items:center;gap:12px;min-width:0}
 .avatar{width:44px;height:44px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line-2);display:grid;place-items:center;font-family:var(--display);font-weight:700;flex:none}
-.caller b{display:block;font-weight:600}
-.caller span{font-family:var(--mono);font-size:.75rem;color:var(--faint)}
-.rec{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ember);padding:6px 10px;border-radius:999px;background:rgba(255,122,61,.1);border:1px solid rgba(255,122,61,.3);flex:none}
+.caller b{display:block;font-weight:600;line-height:1.3}
+.caller div > span{display:block;font-family:var(--mono);font-size:.72rem;color:var(--faint);line-height:1.4}
+.rec{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ember);padding:6px 10px;border-radius:999px;background:rgba(255,122,61,.1);border:1px solid rgba(255,122,61,.3);flex:none}
 .rec i{width:7px;height:7px;border-radius:50%;background:var(--ember);animation:blink 1.4s ease-in-out infinite}
 @keyframes blink{50%{opacity:.25}}
-.wave{height:56px;display:flex;align-items:center;gap:3px;padding:0 4px}
+.wave{height:40px;display:flex;align-items:center;gap:3px;padding:0 2px}
 .wave span{flex:1;min-width:2px;border-radius:3px;background:linear-gradient(180deg,var(--ember-2),var(--ember));animation:wv 1.2s ease-in-out infinite}
 @keyframes wv{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
 .lines{display:grid;gap:8px}
@@ -167,17 +182,38 @@ button,input,select,textarea{font:inherit;color:inherit}
 .line.ai small{color:var(--ember-2)}
 .line.on{background:rgba(255,255,255,.035);border-color:var(--line)}
 .line.wait{opacity:0;transform:translateY(6px)}
+.phone .line{grid-template-columns:1fr;gap:1px;max-width:90%;padding:8px 12px;border-radius:18px;font-size:.86rem;line-height:1.45;background:var(--panel-3);border-color:transparent;justify-self:end;border-bottom-right-radius:6px}
+.phone .line small{font-size:.62rem;padding-top:0}
+.phone .line.ai{justify-self:start;background:rgba(255,122,61,.09);border-color:rgba(255,122,61,.18);border-radius:18px;border-bottom-left-radius:6px}
+.phone .line.on{border-color:rgba(255,178,91,.55)}
 .triage{display:flex;gap:8px;flex-wrap:wrap;transition:opacity .4s}
-.triage.wait,.toast-card.wait{opacity:0}
-.toast-card{position:absolute;right:-18px;bottom:-30px;width:min(320px,84%);padding:14px 16px;border-radius:16px;background:rgba(19,36,35,.94);border:1px solid var(--line-2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 20px 50px -20px rgba(0,0,0,.8);font-size:.85rem;transition:opacity .5s}
-@media (prefers-reduced-motion:no-preference){.toast-card{animation:float 6s ease-in-out infinite}@keyframes float{50%{transform:translateY(-6px)}}}
-.toast-top{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.triage.wait{opacity:0}
+.lock{position:absolute;inset:48px 0 0;display:grid;justify-items:center;align-content:start;gap:4px;padding-top:34px;opacity:0;transition:opacity .6s;pointer-events:none}
+.lock-date{font-size:.86rem;font-weight:500;color:var(--muted)}
+.lock-time{font-family:var(--display);font-weight:700;font-size:4.8rem;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.lock-note{margin-top:6px;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mint)}
+.phone.locked .call-in{opacity:.05;transform:scale(.94)}
+.phone.locked .lock{opacity:1}
+.toast-card{position:absolute;left:10px;right:10px;top:52px;z-index:2;padding:12px 14px;border-radius:22px;background:rgba(32,50,48,.97);border:1px solid var(--line-2);box-shadow:0 20px 40px -18px rgba(0,0,0,.9);font-size:.84rem;line-height:1.45;transition:transform .6s cubic-bezier(.2,.9,.3,1.12),opacity .35s}
+.toast-card.wait{opacity:0;transform:translateY(-150%)}
+.phone.locked .toast-card{transform:translateY(150px)}
+.toast-top{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.toast-top .t-app{width:20px;height:20px;border-radius:6px;background:var(--mint);display:grid;place-items:center;flex:none}
+.toast-top .t-app svg{width:12px;height:12px;color:var(--bg)}
 .toast-top b{font-weight:500}
+.toast-top span:last-child{margin-left:auto}
 .toast-card[data-kind="emergency"] .toast-top b{color:var(--red)}
 .toast-card[data-kind="booked"] .toast-top b{color:var(--mint)}
 .toast-card[data-kind="callback"] .toast-top b{color:var(--amber)}
-@media (max-width:1040px){.toast-card{right:8px}}
-@media (max-width:560px){.call-in{padding-bottom:22px;min-height:0}.toast-card{position:relative;right:auto;bottom:auto;width:auto;margin-top:12px;animation:none}.line{grid-template-columns:1fr;gap:2px}}
+.ph-home{position:absolute;left:50%;bottom:9px;width:120px;height:4px;border-radius:4px;background:rgba(236,243,240,.4);transform:translateX(-50%)}
+.hero-grid{align-items:start}
+.hero-grid > .console{margin-top:24px}
+.call-in{min-height:630px}
+.trade-tabs{min-height:50px}
+#tradeDetails:empty,#tradeGrid:empty{min-height:100vh}
+.phone-cap{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);position:relative}
+@media (max-width:1040px){.console{max-width:560px;margin-inline:auto;width:100%}}
+@media (max-width:560px){.phone{border-radius:48px;padding:9px}.phone-screen{border-radius:40px}.call-in{padding-inline:12px}.lock-time{font-size:4rem}.line{grid-template-columns:1fr;gap:2px}}
 
 /* marquee */
 .marquee{border-block:1px solid var(--line);background:var(--bg-2);overflow:hidden;padding-block:14px;display:grid;gap:10px}
@@ -679,9 +715,57 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .paper{box-shadow:none;border-radius:0;padding:0;background:#fff}
   .paper-pay{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
-.console > .anchor{position:absolute;top:0;left:0;width:1px;height:1px}
 .form input[type=file]{padding:9px 10px;cursor:pointer;color:var(--muted)}
 .form input[type=file]::file-selector-button{font:600 .85rem var(--body);color:var(--ink);background:var(--panel-3);border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;margin-right:12px;cursor:pointer}
+
+/* ---------- modern layer ---------- */
+/* Cross-page transitions: the nav stays put while the page underneath cross-fades. */
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  .nav{view-transition-name:site-nav}
+  ::view-transition-old(root){animation:vt-out .22s ease both}
+  ::view-transition-new(root){animation:vt-in .32s ease both}
+  @keyframes vt-out{to{opacity:0}}
+  @keyframes vt-in{from{opacity:0;transform:translateY(8px)}}
+}
+
+/* Film grain: one static tile over everything, never animated. */
+body::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");background-size:140px 140px}
+@media print{body::before{display:none}}
+
+/* Glowing conic border on the featured plan and the closing call-to-action cards.
+   It turns slowly on desktop only; phones and reduced-motion get the same border standing still. */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.plan.star::after,.final::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:conic-gradient(from var(--ang),rgba(255,122,61,.08) 0deg,rgba(255,122,61,.08) 200deg,var(--ember) 250deg,var(--ember-2) 280deg,rgba(255,122,61,.08) 330deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.final{border-color:rgba(255,122,61,.18)}
+.plan.star{border-color:rgba(255,122,61,.2)}
+.final > *{z-index:1}
+@media (hover:hover) and (min-width:701px) and (prefers-reduced-motion:no-preference){
+  .plan.star::after,.final::after{animation:ang 9s linear infinite}
+  @keyframes ang{to{--ang:360deg}}
+}
+
+/* Section headings build in word by word the first time they're seen (desktop only; added by site.js). */
+.wr .w{display:inline-block;opacity:0;transform:translateY(.38em);filter:blur(4px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1),filter .6s;transition-delay:calc(var(--i) * 42ms)}
+.wr.is-in .w{opacity:1;transform:none;filter:none}
+.w.hot{padding-bottom:.06em}
+
+/* Phone action bar: replaces the floating WhatsApp button on small screens. */
+.mbar{display:none}
+@media (max-width:700px){
+  .mbar{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:45;display:flex;gap:8px;align-items:center;padding:8px;border-radius:24px;background:#0E1B1A;border:1px solid var(--line-2);box-shadow:0 18px 40px -12px rgba(0,0,0,.85);transform:translateY(calc(100% + 30px));visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s .32s}
+  .mbar.show{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+  .mbar .btn{flex:1;padding-block:14px}
+  .mbar-ic{display:grid;place-items:center;width:50px;height:50px;flex:none;border-radius:50%;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink);cursor:pointer}
+  .mbar-ic svg{width:21px;height:21px}
+  .mbar-ic.wa{color:var(--mint)}
+  body.has-mbar{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  body.has-mbar .wa-float{display:none}
+  /* the chat launcher would sit on top of the bar, so on phones the bar's Ask button opens it instead */
+  body.has-mbar vapi-widget.closed{display:none}
+}
 
 /* ---------- mobile and touch ----------
    Phones get a calmer, cheaper page: no scroll-linked reveals, no blurred layers over moving content,
@@ -747,11 +831,8 @@ a,button,summary,label,input,select,textarea{touch-action:manipulation}
   table.cmp th:first-child,table.cmp td:first-child{position:sticky;left:0;z-index:1;background:var(--bg-2);min-width:150px;max-width:170px}
   th,td{padding:14px 14px}
   .wordmark{margin-top:36px}
-  .site-footer{padding-block:56px calc(96px + env(safe-area-inset-bottom,0px))}
+  .site-footer{padding-block:56px 32px}
   .wa-float{left:16px;width:48px;height:48px;transition:transform .25s,opacity .25s}
-  /* the floating WhatsApp button waits until the hero has scrolled away so it never sits on top of the headline */
-  vapi-widget.away{visibility:hidden}
-  .wa-float.away,vapi-widget.away{opacity:0;transform:translateY(12px);pointer-events:none}
   .otp{gap:6px}
   .otp input{font-size:1.6rem}
 }
