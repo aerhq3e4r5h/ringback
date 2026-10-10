@@ -96,6 +96,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .drawer .drawer-cta a{justify-content:center}
 @media (max-width:1060px){.links{display:none}.menu-btn{display:grid}}
 @media (max-width:520px){.nav-cta .hide-sm{display:none}}
+@media (max-width:440px){.nav-cta .btn .lbl-sm{display:none}.nav-cta .btn:has(.lbl-sm){padding-inline:12px}}
 
 /* ---------- page heroes ---------- */
 .hero{position:relative;padding-top:156px;padding-bottom:110px;overflow:hidden}
@@ -120,7 +121,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .hero-grid > *{min-width:0}
 .hero h1{margin-top:24px}
 .rot{display:inline-grid;vertical-align:bottom}
-.rot > span{grid-area:1/1;transition:opacity .35s,transform .45s}
+/* the gradient lives on each word, not the wrapper: a wrapper's background-clip:text paints every child's glyphs,
+   hidden ones included, which is how all four words ended up stacked on top of each other on Android */
+.rot.hot{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ember)}
+.rot > span{grid-area:1/1;transition:opacity .35s,transform .45s;background:linear-gradient(100deg,var(--ember) 10%,var(--ember-2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rot > span:not(.on):not(.leaving){visibility:hidden;transition:opacity .35s,transform .45s,visibility 0s .45s}
 .rot > span:not(.on){opacity:0;transform:translateY(.4em)}
 .rot > span.leaving{transform:translateY(-.4em)}
 .rot > span.on{transition-delay:.18s}
@@ -745,7 +750,8 @@ a,button,summary,label,input,select,textarea{touch-action:manipulation}
   .site-footer{padding-block:56px calc(96px + env(safe-area-inset-bottom,0px))}
   .wa-float{left:16px;width:48px;height:48px;transition:transform .25s,opacity .25s}
   /* the floating WhatsApp button waits until the hero has scrolled away so it never sits on top of the headline */
-  .wa-float.away{opacity:0;transform:translateY(12px);pointer-events:none}
+  vapi-widget.away{visibility:hidden}
+  .wa-float.away,vapi-widget.away{opacity:0;transform:translateY(12px);pointer-events:none}
   .otp{gap:6px}
   .otp input{font-size:1.6rem}
 }

@@ -133,7 +133,7 @@
   var isIn = RB.loggedIn();
   function navLinks(){ return NAV.map(function(n){ var cur = n[0].split('#')[0] === page + '.html' && n[0].indexOf('#') < 0; return '<a href="' + n[0] + '"' + (cur ? ' aria-current="page"' : '') + '>' + n[1] + '</a>'; }).join(''); }
   var ctas = isIn
-    ? '<a class="btn btn-hot btn-sm" href="dashboard.html">' + RB.icon('i-home') + 'Dashboard</a>'
+    ? '<a class="btn btn-hot btn-sm" href="dashboard.html" aria-label="Dashboard">' + RB.icon('i-home') + '<span class="lbl-sm">Dashboard</span></a>'
     : '<a class="btn btn-line btn-sm hide-sm" href="login.html">Log in</a><a class="btn btn-hot btn-sm" href="login.html?mode=signup">Get started</a>';
   var drawerCtas = isIn
     ? '<div class="drawer-cta" style="grid-template-columns:1fr"><a class="btn btn-hot" href="dashboard.html">Go to dashboard</a></div>'
@@ -274,6 +274,10 @@
       'consent-storage-key':'ringback_consent' };
     Object.keys(attrs).forEach(function(k){ vw.setAttribute(k, attrs[k]); });
     document.body.appendChild(vw);
+    /* on phones the chat launcher covers the hero buttons, so it waits until the hero has scrolled away (never while a chat is open) */
+    var vwSmall = window.matchMedia('(max-width: 700px)');
+    var vwCheck = function(){ vw.classList.toggle('away', vwSmall.matches && window.scrollY < 480 && !vw.querySelector('button')); };
+    window.addEventListener('scroll', vwCheck, { passive: true }); vwSmall.addEventListener && vwSmall.addEventListener('change', vwCheck); vwCheck();
     var sc = document.createElement('script'); sc.src = 'https://unpkg.com/@vapi-ai/client-sdk-react@0.1.1/dist/embed/widget.umd.js'; sc.async = true; document.body.appendChild(sc);
   }
 })();
