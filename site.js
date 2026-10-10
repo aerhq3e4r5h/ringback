@@ -37,6 +37,13 @@
     'i-star':'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
     'i-wa':'<path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9.5c.3 2.2 2.3 4.2 4.5 4.5l1-1.2 2 .8c-.2 1.2-1 1.9-2.1 1.9A6 6 0 0 1 8.4 9.6c0-1.1.7-1.9 1.9-2.1l.8 2z"/>',
     'i-ban':'<circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/>',
+    'i-receipt':'<path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    'i-upload':'<path d="M12 15V3M7 8l5-5 5 5M5 21h14"/>',
+    'i-copy':'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+    'i-print':'<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/>',
+    'i-alert':'<path d="M12 3 2 21h20z"/><path d="M12 10v4M12 17.5v.01"/>',
+    'i-bank':'<path d="M3 10h18M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18M12 3l9 5H3z"/>',
+    'i-back':'<path d="M19 12H5M11 6l-6 6 6 6"/>',
     't-plumb':'<path d="M12 2.7S5.5 10 5.5 14.5a6.5 6.5 0 0 0 13 0C18.5 10 12 2.7 12 2.7z"/>',
     't-elec':'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
     't-gate':'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
@@ -56,6 +63,17 @@
   RB.esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
   RB.wa = function(text){ return 'https://wa.me/' + C.whatsapp + (text ? '?text=' + encodeURIComponent(text) : ''); };
   RB.rand = function(n){ return 'R' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+  RB.money = function(cents){ var v = (Math.round(cents || 0) / 100).toFixed(2).split('.'); return 'R' + v[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + v[1]; };
+  RB.copy = function(text, btn){
+    var done = function(ok){ RB.toast(ok ? 'Copied' : 'Couldn\'t copy. Select and copy it instead.', ok ? 'ok' : 'err'); if (ok && btn) { btn.classList.add('copied'); setTimeout(function(){ btn.classList.remove('copied'); }, 1400); } };
+    try { navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(false); }); } catch (e) { done(false); }
+  };
+  /* Plan prices in cents, excluding VAT. Keep in step with pricing.html. */
+  RB.PLANS = {
+    founding: { name:'Founding partner', monthly:150000, setup:0, per:'/mo for 60 days', setupText:'No setup fee', minutes:250, feats:['Everything in Starter','Weekly call reviews','Stop at day 60'] },
+    starter:  { name:'Starter', monthly:250000, setup:350000, per:'/month', setupText:'R3,500 setup · 250 min', minutes:250, feats:['Missed and after-hours calls','Emergency SMS alerts','Calendar booking','Call recordings'] },
+    pro:      { name:'Pro', monthly:450000, setup:550000, per:'/month', setupText:'R5,500 setup · 600 min', minutes:600, feats:['Everything in Starter','English and Afrikaans','Review requests','Monthly report'] }
+  };
   RB.loggedIn = function(){ try { return Object.keys(localStorage).some(function(k){ return /^sb-.*-auth-token$/.test(k); }); } catch (e) { return false; } };
   var toastBox;
   RB.toast = function(msg, kind){

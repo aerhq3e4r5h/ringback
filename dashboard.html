@@ -23,7 +23,8 @@
   <aside class="side" aria-label="Portal">
     <a href="#overview" data-nav="overview"><svg><use href="#i-home"/></svg>Overview</a>
     <a href="#setup" data-nav="setup"><svg><use href="#i-sliders"/></svg>Business setup</a>
-    <a href="#plan" data-nav="plan"><svg><use href="#i-card"/></svg>Plan and trial</a>
+    <a href="#plan" data-nav="plan"><svg><use href="#i-star"/></svg>Plan and trial</a>
+    <a href="#billing" data-nav="billing"><svg><use href="#i-receipt"/></svg>Billing<span class="nav-badge" id="billBadge" hidden></span></a>
     <a href="#calls" data-nav="calls"><svg><use href="#i-list"/></svg>Calls</a>
     <a href="#account" data-nav="account"><svg><use href="#i-user"/></svg>Account</a>
     <a href="admin.html" id="adminLink" hidden><svg><use href="#i-lock"/></svg>Admin</a>
@@ -34,11 +35,11 @@
 
   <div class="pane">
     <nav class="tabs-m" aria-label="Portal sections">
-      <a href="#overview" data-nav="overview">Overview</a><a href="#setup" data-nav="setup">Setup</a><a href="#plan" data-nav="plan">Plan</a><a href="#calls" data-nav="calls">Calls</a><a href="#account" data-nav="account">Account</a><a href="admin.html" id="adminLinkM" hidden>Admin</a>
+      <a href="#overview" data-nav="overview">Overview</a><a href="#setup" data-nav="setup">Setup</a><a href="#plan" data-nav="plan">Plan</a><a href="#billing" data-nav="billing">Billing</a><a href="#calls" data-nav="calls">Calls</a><a href="#account" data-nav="account">Account</a><a href="admin.html" id="adminLinkM" hidden>Admin</a>
     </nav>
 
     <div id="loading" style="display:grid;gap:16px"><div class="skeleton" style="height:48px;width:50%"></div><div class="skeleton" style="height:180px"></div><div class="skeleton" style="height:240px"></div></div>
-    <p class="alert err" id="loadErr" hidden></p>
+    <div class="alert err" id="loadErr" hidden></div>
 
     <!-- OVERVIEW -->
     <section data-view="overview" hidden>
@@ -56,6 +57,7 @@
         </div>
         <div style="display:grid;gap:16px;align-content:start">
           <div class="card"><span class="kicker">Your plan</span><h3 id="planName" style="font-size:1.5rem">Not chosen yet</h3><p id="planNote">Pick the plan that fits. You start with a free trial week either way.</p><a class="link" href="#plan">Manage plan <svg><use href="#i-arrow"/></svg></a></div>
+          <div class="card"><span class="kicker">Billing</span><h3 style="font-size:2rem" id="dueTotal">R0.00</h3><p id="dueNote">Nothing to pay right now.</p><a class="link" href="#billing">View invoices <svg><use href="#i-arrow"/></svg></a></div>
           <div class="card"><span class="kicker">Calls this month</span><h3 style="font-size:2.4rem" id="callCount">0</h3><p>Calls appear here once Ringback is live on your number.</p><a class="link" href="#calls">View calls <svg><use href="#i-arrow"/></svg></a></div>
           <div class="card"><span class="kicker">Need a hand?</span><p>WhatsApp us any time and we'll help you get set up.</p><a class="btn btn-line btn-sm" id="helpWa" target="_blank" rel="noopener" href="#"><svg><use href="#i-wa"/></svg>WhatsApp us</a></div>
         </div>
@@ -65,18 +67,20 @@
     <!-- SETUP -->
     <section data-view="setup" hidden>
       <div class="pane-head">
-        <div style="display:grid;gap:10px"><span class="kicker">Business setup</span><h1>Teach your assistant your business</h1><p class="muted" style="max-width:60ch">This is what your assistant uses to answer calls. Fields marked <i class="req">*</i> are needed before we can switch you on.</p></div>
+        <div style="display:grid;gap:10px"><span class="kicker">Business setup</span><h1>Teach your assistant your business</h1><p class="muted" style="max-width:60ch">This is what your assistant uses to answer calls. Fields marked <i class="req">*</i> are needed before we can switch you on. You can save and come back any time.</p></div>
         <div style="display:grid;gap:6px;min-width:180px"><span class="mono faint" id="setupPct">0% complete</span><div class="meter"><i id="setupMeter"></i></div></div>
       </div>
+      <div class="alert warn" id="missingBox" role="status" hidden style="margin-bottom:20px"></div>
+      <div class="alert ok" id="setupDone" role="status" hidden style="margin-bottom:20px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Setup complete.</b> Next, choose a plan and request your free trial week.</span><a class="btn btn-hot btn-sm" href="#plan">Choose a plan <svg><use href="#i-arrow"/></svg></a></div>
       <form class="form" id="setupForm" novalidate style="gap:20px">
         <fieldset class="fieldset"><legend>Your business</legend>
           <div class="two">
-            <label class="fld"><span>Business name <i class="req">*</i></span><input name="business_name" maxlength="120" required></label>
+            <label class="fld"><span>Business name <i class="req">*</i></span><input name="business_name" maxlength="120" required autocomplete="organization"></label>
             <label class="fld"><span>Trade <i class="req">*</i></span><select name="trade"><option>Plumbing</option><option>Electrical</option><option>Gates & alarms</option><option>Solar & backup</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
           </div>
           <div class="two">
             <label class="fld"><span>Owner's first name</span><input name="owner_name" maxlength="60" placeholder="The name the assistant uses, e.g. Pieter"></label>
-            <label class="fld"><span>Cellphone for alerts <i class="req">*</i></span><input name="phone" type="tel" maxlength="30" required placeholder="082 123 4567"></label>
+            <label class="fld"><span>Cellphone for alerts <i class="req">*</i></span><input name="phone" type="tel" maxlength="30" required autocomplete="tel" placeholder="e.g. 082 123 4567"></label>
           </div>
           <label class="fld"><span>Services you offer</span><textarea name="services" maxlength="1000" placeholder="e.g. Geyser replacements, leak detection, blocked drains, COCs"></textarea></label>
           <label class="fld"><span>Services you don't offer</span><textarea name="not_offered" maxlength="1000" placeholder="e.g. No gas work, no solar geysers"></textarea></label>
@@ -85,7 +89,9 @@
         <fieldset class="fieldset"><legend>Area and hours</legend>
           <label class="fld"><span>Suburbs you cover <i class="req">*</i></span><textarea name="service_areas" maxlength="1000" required placeholder="e.g. Randburg, Fourways, Sandton, Northcliff"></textarea></label>
           <label class="fld"><span>Areas you won't go to</span><input name="excluded_areas" maxlength="300"></label>
-          <label class="fld"><span>Working hours <i class="req">*</i></span><input name="hours" maxlength="200" required placeholder="e.g. Mon–Fri 07:00–17:00, Sat 08:00–12:00"></label>
+          <div class="fld"><label for="f-hours"><span>Working hours <i class="req">*</i></span></label><input id="f-hours" name="hours" maxlength="200" required placeholder="Type your hours, or tap an option below">
+            <div class="quick" aria-label="Quick fill working hours"><button type="button" class="prompt" data-fill="hours" data-val="Mon–Fri 07:00–17:00">Mon–Fri 07:00–17:00</button><button type="button" class="prompt" data-fill="hours" data-val="Mon–Fri 07:00–17:00, Sat 08:00–13:00">Mon–Fri + Sat morning</button><button type="button" class="prompt" data-fill="hours" data-val="Mon–Sat 07:00–18:00">Mon–Sat 07:00–18:00</button><button type="button" class="prompt" data-fill="hours" data-val="Mon–Fri 07:00–17:00, emergencies 24/7">Emergencies 24/7</button></div>
+          </div>
           <div class="fld"><span>Do you take after-hours emergencies?</span><div class="chips"><label><input type="radio" name="after_hours" value="yes"><span>Yes</span></label><label><input type="radio" name="after_hours" value="no"><span>No, take a message</span></label></div></div>
         </fieldset>
 
@@ -124,7 +130,23 @@
         <span class="kicker">Free trial week</span>
         <h3 style="font-size:1.5rem" id="trialTitle">Ready when you are</h3>
         <p id="trialText">Once your business details are filled in, request your trial and we'll WhatsApp you to set up call forwarding.</p>
-        <div class="ctas" style="margin-top:4px"><button class="btn btn-hot btn-sm" type="button" id="trialBtn">Request my free trial week</button><a class="btn btn-line btn-sm" id="trialWa" target="_blank" rel="noopener" href="#"><svg><use href="#i-wa"/></svg>WhatsApp us</a></div>
+        <div class="ctas" style="margin-top:4px"><button class="btn btn-hot btn-sm" type="button" id="trialBtn">Request my free trial week</button><a class="btn btn-line btn-sm" id="trialFix" href="#setup" hidden>Finish business setup</a><a class="btn btn-line btn-sm" id="trialWa" target="_blank" rel="noopener" href="#"><svg><use href="#i-wa"/></svg>WhatsApp us</a></div>
+      </div>
+    </section>
+
+    <!-- BILLING -->
+    <section data-view="billing" hidden>
+      <div class="pane-head"><div style="display:grid;gap:10px"><span class="kicker">Billing</span><h1>Invoices and payments</h1><p class="muted" style="max-width:62ch">Pay by EFT with the invoice number as your reference, then tap <b>I've paid</b> so we can match it. You can add proof of payment if you like.</p></div></div>
+      <div class="kpis" id="billKpis" style="margin-bottom:20px"></div>
+      <div class="bill-grid">
+        <div style="display:grid;gap:12px;align-content:start;min-width:0">
+          <h2 style="font-size:1.4rem">Your invoices</h2>
+          <div id="invoiceBox"></div>
+        </div>
+        <aside style="display:grid;gap:16px;align-content:start;min-width:0">
+          <div class="card" id="bankCard"></div>
+          <div class="card" id="costCard"></div>
+        </aside>
       </div>
     </section>
 

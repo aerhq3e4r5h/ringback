@@ -26,11 +26,24 @@
       <div class="ctas" style="margin-top:0"><a class="btn btn-line btn-sm" href="dashboard.html">My portal</a><button class="btn btn-line btn-sm" type="button" id="refreshBtn">Refresh</button></div>
     </div>
     <p class="alert err" id="noAccess" hidden>This page is only for the Ringback owner.</p>
-    <div id="adminBody" hidden style="display:grid;gap:28px">
-      <div class="kpis" id="adminKpis"></div>
-      <section style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Clients</h2><div id="clientsBox"></div></section>
-      <section style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Website enquiries</h2><div id="leadsBox"></div></section>
-      <section style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Account requests</h2><div id="reqBox"></div></section>
+    <div id="adminLoading" style="display:grid;gap:16px"><div class="skeleton" style="height:90px"></div><div class="skeleton" style="height:260px"></div></div>
+    <div id="adminBody" hidden style="display:grid;gap:36px">
+      <nav class="subnav" aria-label="Admin sections"><a href="#clients">Clients</a><a href="#billing">Billing</a><a href="#enquiries">Enquiries</a><a href="#requests">Requests</a></nav>
+      <div class="kpis kpis-6" id="adminKpis"></div>
+      <section id="clients" style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Clients</h2><div id="clientsBox"></div></section>
+      <section id="billing" style="display:grid;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <h2 style="font-size:1.6rem">Billing</h2>
+          <div class="ctas" style="margin-top:0"><button class="btn btn-hot btn-sm" type="button" id="newInvBtn"><svg><use href="#i-receipt"/></svg>New invoice</button><button class="btn btn-line btn-sm" type="button" id="monthlyBtn">Create this month's invoices</button><button class="btn btn-line btn-sm" type="button" id="settingsBtn"><svg><use href="#i-bank"/></svg>Payment details</button></div>
+        </div>
+        <div class="alert warn" id="bankWarn" hidden style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>Add your banking details so clients can see where to pay.</span><button class="btn btn-line btn-sm" type="button" id="bankWarnBtn">Add payment details</button></div>
+        <div class="seg seg-sm" role="tablist" aria-label="Filter invoices" id="invFilter" style="--n:5;max-width:620px">
+          <button type="button" role="tab" data-f="open" aria-selected="true">Open</button><button type="button" role="tab" data-f="pending" aria-selected="false">To confirm</button><button type="button" role="tab" data-f="paid" aria-selected="false">Paid</button><button type="button" role="tab" data-f="void" aria-selected="false">Cancelled</button><button type="button" role="tab" data-f="all" aria-selected="false">All</button>
+        </div>
+        <div id="invBox"></div>
+      </section>
+      <section id="enquiries" style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Website enquiries</h2><div id="leadsBox"></div></section>
+      <section id="requests" style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Account requests</h2><div id="reqBox"></div></section>
     </div>
   </div>
 </main>

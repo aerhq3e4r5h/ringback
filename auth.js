@@ -5,11 +5,18 @@
   if (C.supabaseUrl && C.supabaseKey && window.supabase && window.supabase.createClient) {
     RB.sb = window.supabase.createClient(C.supabaseUrl, C.supabaseKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' } });
   }
+  /* An email link that has expired or was already used comes back with an error in the address. */
+  function linkError(){ var h = new URLSearchParams(location.hash.replace(/^#/, '')); return h.get('error_code') || h.get('error') || ''; }
   RB.requireUser = async function(){
     if (!RB.sb) { location.replace('login.html'); return null; }
+    var err = linkError();
     var r = await RB.sb.auth.getSession();
     var s = r.data && r.data.session;
-    if (!s) { location.replace('login.html?next=' + encodeURIComponent((location.pathname.split('/').pop() || 'dashboard.html') + location.hash)); return null; }
+    if (!s) {
+      var here = (location.pathname.split('/').pop() || 'dashboard.html') + location.search + (err ? '' : location.hash);
+      location.replace('login.html?next=' + encodeURIComponent(here) + (err ? '&notice=' + encodeURIComponent(err) : ''));
+      return null;
+    }
     return s.user;
   };
   RB.signOut = async function(){ if (RB.sb) await RB.sb.auth.signOut(); location.href = 'index.html'; };
@@ -21,7 +28,8 @@
   var params = new URLSearchParams(location.search);
   var mode = params.get('mode') === 'signup' ? 'signup' : 'login';
   var next = params.get('next') || 'dashboard.html';
-  if (!/^[\w-]+\.html(#[\w-]*)?$/.test(next)) next = 'dashboard.html';
+  if (!/^[\w-]+\.html(\?[\w=&-]*)?(#[\w-]*)?$/.test(next)) next = 'dashboard.html';
+  var notice = params.get('notice') || linkError();
   var LEN = C.otpLength || 6, email = '', timer = null;
 
   if (!RB.sb) { $('cfgWarn').hidden = false; $('sendBtn').disabled = true; }
@@ -47,6 +55,10 @@
   $('tabLogin').onclick = function(){ setMode('login'); };
   $('tabSignup').onclick = function(){ setMode('signup'); };
   setMode(mode);
+  if (notice) {
+    say(/expired|otp|invalid|access_denied/i.test(notice) ? 'That sign-in link has expired or was already used. Enter your email and we\'ll send you a new code.' : 'That sign-in link didn\'t work. Enter your email and we\'ll send you a new code.', 'warn');
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  }
 
   function friendly(err){
     var m = (err && (err.message || err.msg)) || '';
