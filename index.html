@@ -22,6 +22,7 @@
 <link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <script>try{if(!sessionStorage.getItem('rb_intro_seen')&&matchMedia('(hover:hover) and (pointer:fine) and (min-width:701px) and (min-height:501px) and (prefers-reduced-motion:no-preference)').matches)document.documentElement.classList.add('intro')}catch(e){}</script>
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="home.css">
 </head>
 <body data-page="index">
 <a class="skip" href="#main">Skip to content</a>
@@ -31,55 +32,61 @@
 
 <section class="hero">
   <div class="wrap hero-grid">
-    <div>
-      <span class="kicker">AI receptionist for <span data-trade-text="plural">home-service trades</span> · Gauteng</span>
+    <div class="hero-copy">
+      <p class="kicker hero-kick"><span class="k-plain">AI receptionist for <span data-trade-text="plural">home-service trades</span> · Gauteng</span><span class="k-pick">AI receptionist for <select class="kpick" data-trade-select aria-label="Your trade"><option value="">home-service trades</option><option value="plumbing">plumbers</option><option value="electrical">electricians</option><option value="gates">gate and alarm installers</option><option value="solar">solar and backup installers</option><option value="pest">pest controllers</option><option value="aircon">aircon technicians</option><option value="locksmith">locksmiths</option></select> · Gauteng</span></p>
       <h1><span class="ln">Every call answered.</span> <span class="ln">Every job <span class="rot hot" id="rot"><span class="on">booked.</span><span>caught.</span><span>kept.</span><span>yours.</span></span></span></h1>
-      <p class="lede">Ringback picks up every call your business misses, in your name, day or night. It knows an emergency from a quote request, tells callers how to stay safe, books the job, and alerts you in under a minute.</p>
+      <p class="lede">Ringback answers every call you miss, in your business name, day or night. It spots emergencies, books the job and texts you the details in under a minute.</p>
       <div class="ctas">
         <a class="btn btn-hot" href="login.html?mode=signup">Start your free trial week <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
         <button class="btn btn-line" type="button" data-open-ai><svg aria-hidden="true"><use href="#i-mic"/></svg>Talk to it now</button>
       </div>
-      <div class="proof">
-        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>Keep your own number</span>
-        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>Live in one visit</span>
-        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>POPIA-aware</span>
-        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>English and Afrikaans</span>
+      <div class="hero-more">
+        <a class="link" href="build.html">Preview your own assistant in a minute <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <div data-draft-pill hidden></div>
       </div>
-      <label class="tpick" id="heroTrade"></label>
+      <ul class="spec" aria-label="The short version">
+        <li>Keep your number</li><li>Live in one visit</li><li>POPIA-aware</li><li><span aria-hidden="true">EN + AFR</span><span class="sr-only">English and Afrikaans</span></li>
+      </ul>
     </div>
 
     <div class="console auto" id="console">
       <span class="anchor" id="plumbing"></span><span class="anchor" id="electrical"></span><span class="anchor" id="gates"></span><span class="anchor" id="solar"></span><span class="anchor" id="pest"></span><span class="anchor" id="aircon"></span><span class="anchor" id="locksmith"></span>
-      <div class="trade-tabs" role="tablist" aria-label="Choose a trade to see an example call" id="tabs"></div>
+      <div class="trade-tabs" role="tablist" aria-label="Choose a trade to see an example call" id="tabs"><span class="tab-ind" aria-hidden="true"></span></div>
       <div class="phone-stage">
         <div class="phone" role="tabpanel" id="callPanel" aria-labelledby="cTitle">
+          <svg class="rings" viewBox="-440 -440 880 880" aria-hidden="true" focusable="false"><circle r="420" stroke-dasharray="2 12" style="--k:4"/><circle r="360" stroke-dasharray="56 10" style="--k:3"/><g class="spin"><circle r="300" stroke-dasharray="120 18 8 18" style="--k:2"/></g><circle r="240" stroke-dasharray="3 9" style="--k:1"/><circle class="r-in" r="180" stroke-dasharray="90 14"/></svg>
           <div class="phone-screen">
-            <div class="ph-status" aria-hidden="true"><span id="pTime">21:47</span><span class="island"></span><span class="ph-icons"><span class="sig"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:11px"></i></span><span class="bat"></span></span></div>
+            <div class="ph-status" aria-hidden="true"><span id="pTime">21:47</span><span class="island"><span class="isl-t">Ringback · answering</span><span class="isl-w"><i></i><i></i><i></i></span></span><span class="ph-icons"><span class="sig"><i></i><i></i><i></i><i></i></span><span class="bat"></span></span></div>
             <div class="call-in">
               <div class="call-top">
                 <div class="caller"><span class="avatar" id="cAvatar">LM</span><div><b id="cTitle">Incoming · Fourways</b><span id="cMeta">Forwarded to Ridgeway Plumbing</span></div></div>
-                <span class="rec"><i></i>Answering</span>
+                <span class="rec"><i></i>Rec</span>
               </div>
               <div class="wave" id="wave" aria-hidden="true"></div>
-              <div class="lines" id="lines"></div>
-              <div class="triage" id="triage"></div>
+              <div class="chat"><div class="chat-in" id="chatIn"><div class="lines" id="lines"></div><div class="triage" id="triage"></div></div></div>
             </div>
             <div class="lock" aria-hidden="true"><span class="lock-date">Call ended · handled by Ringback</span><span class="lock-time" id="lTime">21:48</span></div>
+            <div class="toast-stack" id="toastStack">
+            <div class="toast-card toast-back" aria-hidden="true">
+              <div class="toast-top"><span class="t-app"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><b>Call summary · recording</b><span>now</span></div>
+              <span id="tSum">Lerato M · Fourways · Burst geyser · Power off · Water off</span>
+            </div>
             <div class="toast-card" id="toastCard" role="note" data-kind="emergency">
               <div class="toast-top"><span class="t-app"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><b id="tKind">● Emergency alert</b><span>SMS · now</span></div>
               <strong id="tWho">Lerato M · Fourways</strong><br><span id="tBody">Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</span>
             </div>
+            </div>
             <span class="ph-home" aria-hidden="true"></span>
           </div>
         </div>
-        <p class="phone-cap">Example call · fictional business</p>
+        <div class="pctl" id="pctl"><p class="phone-cap">Example call · fictional business</p></div>
         <div class="hear" id="hear" hidden></div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="marquee" aria-label="Kinds of calls Ringback handles">
+<section class="marquee" aria-label="Kinds of calls Ringback handles">
   <div class="track" id="trackA">
     <span class="tk"><b class="e">Emergency</b>Burst geyser</span>
     <span class="tk"><b class="r">Booked</b>Gate motor service</span>
@@ -100,111 +107,120 @@
     <span class="tk"><b class="c">Callback</b>Bathroom renovation</span>
     <span class="tk"><b class="r">Booked</b>Aircon not cooling</span>
   </div>
-</div>
+</section>
 
-<section class="sec">
+<section class="sec band score" aria-labelledby="k01">
   <div class="wrap">
-    <div class="stats rv">
-      <div class="stat"><b class="hot">24/7</b><span>Answers nights, weekends and public holidays</span></div>
-      <div class="stat"><b>&lt;60s</b><span>From hang-up to the SMS on your phone</span></div>
-      <div class="stat"><b>20s</b><span>Unanswered calls forward after about 20 seconds</span></div>
-      <div class="stat"><b>10 min</b><span>To set up forwarding on your phone, with you</span></div>
-    </div>
+    <p class="kicker" id="k01"><b>01</b>At a glance</p>
+    <dl class="score-grid rv">
+      <div><dt class="num">24/7</dt><dd>Answers nights, weekends and public holidays</dd></div>
+      <div><dt class="num">&lt;60<small>s</small></dt><dd>From hang-up to the SMS on your phone</dd></div>
+      <div><dt class="num">20<small>s</small></dt><dd>Unanswered calls forward after about 20 seconds</dd></div>
+      <div><dt class="num">10<small> min</small></dt><dd>To set up forwarding on your phone, with you</dd></div>
+    </dl>
   </div>
 </section>
 
-<section class="sec">
-  <div class="wrap split">
+<section class="sec" id="problem">
+  <div class="wrap split prob">
     <div class="rv">
-      <span class="kicker">The problem</span>
-      <h2 style="margin-top:18px">Your best customers don't leave voicemails.</h2>
-      <p class="lede" style="margin-top:22px">When something breaks, people call the first business that answers. If that's not you, the job goes to the next name on Google, and so does every job they'd have given you after.</p>
-      <div style="margin-top:40px">
-        <div class="big-num"><span class="hot">R10k–R16k</span></div>
-        <p class="muted" style="margin-top:10px">What one emergency geyser replacement typically costs. That's a single missed call for a plumber.</p>
+      <p class="kicker"><b>02</b>The problem</p>
+      <h2>Your best customers don't leave voicemails.</h2>
+      <p class="lede mt-m">When something breaks, people call the first business that answers. If that's not you, the job goes to the next name on Google, and so does every job they'd have given you after.</p>
+      <div class="cost">
+        <p class="big-num">R10k–R16k</p>
+        <p class="muted mt-s">What one emergency geyser replacement typically costs. That's a single missed call for a plumber.</p>
         <p class="src">Source: <a href="https://energybee.co.za/guides/burst-geyser-what-to-do-south-africa" target="_blank" rel="noopener">EnergyBee, 2026</a></p>
       </div>
     </div>
-    <div class="night rv" id="night">
-      <div class="night-top">
-        <span class="kicker">An example day</span>
-        <div class="seg seg-sm seg--status" role="group" aria-label="Show the day" style="--n:2"><button type="button" aria-pressed="true" data-night="off">Without Ringback</button><button type="button" aria-pressed="false" data-night="on">With Ringback</button></div>
+    <div class="rv">
+      <div class="ledger screen" id="night">
+        <div class="screen-bar"><span>Example day · illustrative values</span></div>
+        <div class="ledger-sw"><div class="seg seg-sm seg--status" role="group" aria-label="Show the day" style="--n:2"><button type="button" aria-pressed="true" data-night="off">Without Ringback</button><button type="button" aria-pressed="false" data-night="on">With Ringback</button></div></div>
+        <ol class="ledger-rows">
+          <li class="lr"><time>07:30</time><b>On the road</b><span class="lr-v swap"><span class="off-v red-t">−R1,800</span><span class="on-v amber-t">Callback</span></span><span class="lr-d swap"><span class="off-v">A quote request rings while you drive. You can't answer safely.</span><span class="on-v">Answered. You get the details and a callback request by SMS.</span></span></li>
+          <li class="lr"><time>10:20</time><b>Hands full</b><span class="lr-v swap"><span class="off-v red-t">−R950</span><span class="on-v mint-t">Booked</span></span><span class="lr-d swap"><span class="off-v">A routine job rings out while you're up a ladder.</span><span class="on-v">Answered and booked into your next open slot, Thu 08:00.</span></span></li>
+          <li class="lr"><time>13:05</time><b>Already on a call</b><span class="lr-v swap"><span class="off-v red-t">−R2,400</span><span class="on-v mint-t">Booked</span></span><span class="lr-d swap"><span class="off-v">A repeat customer hears a busy tone and calls someone else.</span><span class="on-v">Busy calls forward too. Answered and booked, Fri 10:00.</span></span></li>
+          <li class="lr"><time>21:47</time><b>Off for the night</b><span class="lr-v swap"><span class="off-v red-t">−R12,000</span><span class="on-v red-t">Alerted</span></span><span class="lr-d swap"><span class="off-v">An emergency rings while you're with the family.</span><span class="on-v">Safety steps given, and you're alerted in under a minute.</span></span></li>
+          <li class="lr"><time>Sat 08:00</time><b>Weekend rush</b><span class="lr-v swap"><span class="off-v red-t">−R3,100</span><span class="on-v mint-t">2 booked</span></span><span class="lr-d swap"><span class="off-v">Two calls ring out at once while you're on site.</span><span class="on-v">Both answered at the same time, both booked.</span></span></li>
+        </ol>
+        <div class="ledger-total"><span class="swap" aria-live="polite"><span class="off-v"><b>6 calls missed.</b> The work goes to someone else.</span><span class="on-v"><b>6 calls answered.</b> 4 booked, 1 emergency caught, 6 SMS alerts.</span></span><b class="num tot-n" id="nightNum">−R20,250</b></div>
       </div>
-      <div class="timeline">
-        <div class="tl"><time>07:30</time><b>On the road</b><div class="swap"><span class="off-v">Driving to the first job. You can't answer safely. <em class="tag red">Missed · quote, about R1,800</em></span><span class="on-v">It picks up, takes the details and texts you a callback request. <em class="tag mint">Callback request sent</em></span></div></div>
-        <div class="tl"><time>10:20</time><b>Hands full</b><div class="swap"><span class="off-v">Up a ladder, in a roof, under a sink. The phone rings out. <em class="tag red">Missed · routine job, about R950</em></span><span class="on-v">It books the job into the next open slot in your calendar. <em class="tag mint">Booked Thu 08:00</em></span></div></div>
-        <div class="tl"><time>13:05</time><b>Already on a call</b><div class="swap"><span class="off-v">The next customer gets a busy tone and tries someone else. <em class="tag red">Missed · repeat customer, about R2,400</em></span><span class="on-v">Busy calls forward too. The second caller is answered and booked. <em class="tag mint">Booked Fri 10:00</em></span></div></div>
-        <div class="tl"><time>21:47</time><b>Off for the night</b><div class="swap"><span class="off-v">You're with the family. The emergency doesn't care. <em class="tag red">Missed · emergency, about R12,000</em></span><span class="on-v">It gives safety steps and alerts you in under a minute. You call back. <em class="tag mint">Emergency alert sent</em></span></div></div>
-        <div class="tl"><time>Sat 08:00</time><b>Weekend rush</b><div class="swap"><span class="off-v">Everyone's home, things break, and the calls pile up. <em class="tag red">2 missed · about R3,100</em></span><span class="on-v">Two calls at once? Both answered, both booked. <em class="tag mint">2 booked</em></span></div></div>
-      </div>
-      <div class="night-sum swap" aria-live="polite"><span class="off-v"><b>6 calls missed.</b> About <b class="red-t">R20,250</b> of work gone to someone else.</span><span class="on-v"><b>6 calls answered.</b> <b class="mint-t">4 jobs booked</b>, 1 emergency caught, 6 SMS alerts sent.</span></div>
       <p class="src">Example day. Job values are illustrative, not a promise.</p>
     </div>
   </div>
 </section>
 
-<section class="sec" id="features">
+<section class="sec band" id="features">
   <div class="wrap">
     <div class="head rv">
-      <span class="kicker">The product</span>
+      <p class="kicker"><b>03</b>The product</p>
       <h2>A front desk that never sleeps, never calls in sick, and never misses a call.</h2>
       <a class="link" href="product.html">See how it all works <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
-    <div class="bento">
-      <div class="card c-4 spot rv">
-        <span class="ic"><svg aria-hidden="true"><use href="#i-chat"/></svg></span>
-        <h3>Sorts every call in seconds</h3>
-        <p>Set up for how your trade talks. It knows a burst pipe from a dripping tap, and a tripped board from a quote request. When it isn't sure, it treats the call as urgent.</p>
-        <div class="ui triage-ui">
-          <div class="lane e"><h4>Emergency · alert now</h4><div class="pill">Burst geyser, Randburg</div><div class="pill">Burning smell, Centurion</div></div>
-          <div class="lane r"><h4>Routine · book it</h4><div class="pill">Gate service, Midrand</div><div class="pill">Rats in roof, Randburg</div></div>
-          <div class="lane c"><h4>Quote · call back</h4><div class="pill">2 aircon units, Sandton</div><div class="pill">Solar + battery, Benoni</div></div>
+    <div class="bento" id="bento" role="region" aria-label="What Ringback does, 7 cards">
+      <article class="card b-tri spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-filter"/></svg>Sorts every call in seconds</h3>
+        <p>Set up for how your trade talks. It knows a burst pipe from a dripping tap. When it isn't sure, it treats the call as urgent.</p>
+        <div class="ui screen">
+          <div class="screen-bar"><span>Example · how calls get sorted</span></div>
+          <div class="triage-ui" id="triUi">
+            <div class="lane e"><h4>Emergency · alert now</h4><span class="pill" style="--d:0">Burst geyser<i>, Randburg</i></span><span class="pill" style="--d:3">Burning smell<i>, Centurion</i></span><p class="lane-f">SMS alert to you in under a minute</p></div>
+            <div class="lane r"><h4>Routine · book it</h4><span class="pill" style="--d:1">Gate service<i>, Midrand</i></span><span class="pill" style="--d:4">Rats in roof<i>, Randburg</i></span><p class="lane-f">Booked into a free slot</p></div>
+            <div class="lane c"><h4>Quote · call back</h4><span class="pill" style="--d:2">2 aircons<i>, Sandton</i></span><span class="pill" style="--d:5">Solar + battery<i>, Benoni</i></span><p class="lane-f">On your callback list</p></div>
+          </div>
         </div>
-      </div>
-      <div class="card c-2 spot rv">
-        <span class="ic"><svg aria-hidden="true"><use href="#i-phone"/></svg></span>
-        <h3>Answers 24/7</h3>
+      </article>
+      <article class="card b-247 spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-clock"/></svg>Answers 24/7</h3>
         <p>Nights, weekends, public holidays. Several calls at once is fine.</p>
-        <div class="ui"><div class="clock">24<small>/</small>7</div></div>
-      </div>
-      <div class="card c-2 spot rv">
-        <h3>Books straight into your calendar</h3>
+        <p class="ui num big247" aria-hidden="true">24/7</p>
+      </article>
+      <article class="card b-cal spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-cal"/></svg>Books straight into your calendar</h3>
         <p>Offers real open slots from your Google Calendar and confirms by SMS.</p>
-        <div class="ui slots">
-          <span class="slot off">Mon 08:00</span><span class="slot pick">Tue 09:00</span><span class="slot">Tue 14:00</span>
-          <span class="slot">Wed 10:00</span><span class="slot off">Wed 15:00</span><span class="slot">Thu 08:00</span>
+        <div class="ui screen">
+          <div class="screen-bar"><span>Example · your week</span></div>
+          <div class="week" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><i class="x"></i><i class="pick"></i><i></i><i class="x"></i><i></i><i></i><i class="x"></i><i class="x"></i><i></i><i class="x"></i><i class="x"></i><i></i><i></i><i class="x"></i><i></i></div>
+          <p class="week-k"><i></i>Tue 09:00 · booked into a free slot</p>
         </div>
-      </div>
-      <div class="card c-2 spot rv">
-        <h3>Alerts you in under a minute</h3>
+      </article>
+      <article class="card b-sms spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-sms"/></svg>Alerts you in under a minute</h3>
         <p>Every call lands on your phone with a summary and recording.</p>
-        <div class="ui sms" data-trade-sms><b>EMERGENCY</b> · Johan V · Centurion<br>Burning smell at DB board. Main switched off. Call back in 15 min.</div>
-      </div>
-      <div class="card c-2 spot rv">
-        <h3>Filters out the noise</h3>
+        <div class="ui screen">
+          <div class="screen-bar"><span>Example · SMS alert</span></div>
+          <div class="sms-card"><div class="toast-top"><span class="t-app"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><b>Ringback</b><span>SMS · now</span></div><p data-trade-sms><b>EMERGENCY</b> · Johan V · Centurion<br>Burning smell at DB board. Main switched off. Call back in 15 min.</p></div>
+        </div>
+      </article>
+      <article class="card b-fil spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-ban"/></svg>Filters out the noise</h3>
         <p>Sales calls, SEO pitches and wrong numbers get a polite message and never reach you.</p>
-        <div class="ui blocked"><div><s>"We can get you to #1 on Google"</s><span class="tag">Filtered</span></div><div><s>"Is this the pizza place?"</s><span class="tag">Filtered</span></div></div>
-      </div>
-      <div class="card c-3 spot rv">
-        <span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span>
-        <h3>Your name, your rules</h3>
+        <div class="ui screen">
+          <div class="screen-bar"><span>Example · filtered calls</span></div>
+          <div class="blocked"><div><s>"We can get you to #1 on Google"</s><span class="tag">Filtered</span></div><div><s>"Is this the pizza place?"</s><span class="tag">Filtered</span></div></div>
+        </div>
+      </article>
+      <article class="card b-rul spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-shield"/></svg>Your name, your rules</h3>
         <p>Answers as your business. Quotes only your call-out fee. Never promises a price or an arrival time you haven't set. Says it's an AI if anyone asks.</p>
         <div class="ui row-tags"><span class="tag">Call-out fee only</span><span class="tag">Your service area</span><span class="tag">Your hours</span><span class="tag">Your emergency rules</span></div>
-      </div>
-      <div class="card c-3 spot rv">
-        <span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span>
-        <h3>Your own client portal</h3>
+      </article>
+      <article class="card b-por spot rv">
+        <h3 class="ih"><svg aria-hidden="true"><use href="#i-user"/></svg>Your own client portal</h3>
         <p>Log in to fill in your business details, pick a plan, request your trial, pay invoices and see every call the assistant takes.</p>
-        <div class="ui row-tags"><a class="tag ember" href="login.html?mode=signup" style="text-decoration:none">Create an account →</a><span class="tag">Email login codes</span><span class="tag">Invoices</span><span class="tag">Call history</span></div>
-      </div>
+        <div class="ui row-tags"><span class="tag">Email login codes</span><span class="tag">Invoices</span><span class="tag">Call history</span></div>
+        <a class="link" href="login.html?mode=signup">Create an account <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
     </div>
+    <p class="rail-count" aria-live="off"><span><span id="bentoN">1</span> / 7</span><span>Swipe for more</span></p>
   </div>
 </section>
 
 <section class="sec" id="trades">
   <div class="wrap">
     <div class="head rv">
-      <span class="kicker">Built for your trade</span>
+      <p class="kicker"><b>04</b>Built for your trade</p>
       <h2>If your work comes in by phone, Ringback answers it.</h2>
       <p class="lede">Each assistant is set up for your trade: the emergencies to escalate, the safety steps to give, and the jobs to book.</p>
     </div>
@@ -212,18 +228,29 @@
   </div>
 </section>
 
-<section class="sec" id="try">
+<section class="sec band" id="try">
   <div class="wrap">
-    <div class="live rv">
-      <div class="live-l">
-        <span class="kicker is-live">Live demo · not a recording</span>
+    <div class="live">
+      <div class="live-l rv">
+        <p class="kicker is-live"><b>05</b><i></i>Live demo · not a recording</p>
         <h2>Don't take our word for it. Talk to it.</h2>
         <ol class="live-steps">
           <li><i>01</i><span><b>Tap the mic</b> or type in the chat. It works in your browser.</span></li>
           <li><i>02</i><span><b>Say "try the demo"</b> and pick a trade.</span></li>
           <li><i>03</i><span><b>Play the customer.</b> Panic, interrupt, ask about prices. Try to catch it out.</span></li>
         </ol>
-        <p class="muted">Need an idea? Tap one to copy it, then paste or say it:</p>
+      </div>
+      <div class="studio screen rv">
+        <div class="screen-bar"><span>Live · the real assistant</span></div>
+        <div class="studio-in">
+          <svg class="mic-rings" viewBox="-160 -160 320 320" aria-hidden="true" focusable="false"><circle r="150" stroke-dasharray="2 10"/><circle r="122" stroke-dasharray="40 8"/><circle r="96"/></svg>
+          <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
+          <button class="mic" type="button" data-open-ai aria-label="Start talking to the Ringback assistant"><svg aria-hidden="true"><use href="#i-mic"/></svg></button>
+          <span class="mic-cap">Tap to talk or chat</span>
+        </div>
+      </div>
+      <div class="say rv">
+        <p class="say-l">You could say… <span>tap one to copy it</span></p>
         <div class="prompts" id="prompts">
           <button class="prompt" type="button">My geyser just burst</button>
           <button class="prompt" type="button">The power's out and I smell burning</button>
@@ -233,11 +260,6 @@
           <button class="prompt" type="button">Praat jy Afrikaans?</button>
         </div>
       </div>
-      <div class="live-r">
-        <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
-        <button class="mic" type="button" data-open-ai aria-label="Start talking to the Ringback assistant"><svg aria-hidden="true"><use href="#i-mic"/></svg></button>
-        <span class="mic-cap">Tap to talk or chat</span>
-      </div>
     </div>
   </div>
 </section>
@@ -245,40 +267,44 @@
 <section class="sec" id="how">
   <div class="wrap">
     <div class="head c rv">
-      <span class="kicker">How it works</span>
+      <p class="kicker"><b>06</b>How it works</p>
       <h2>Live the same day. Nothing changes for the calls you answer.</h2>
     </div>
-    <div class="steps">
-      <div class="step spot rv"><span class="n">01</span><h3>Create your account</h3><p>Sign up in a minute with just your email. Tell us your services, area, hours, call-out fee and what counts as an emergency.</p><span class="when">Day 0 · 5 minutes</span></div>
-      <div class="step spot rv"><span class="n">02</span><h3>We set it up with you</h3><p>We build your assistant and set up call forwarding on your phone. Calls you miss go to Ringback; calls you answer don't change.</p><span class="when">Day 1 · 10 minutes</span></div>
-      <div class="step spot rv"><span class="n">03</span><h3>You get the jobs</h3><p>Every call arrives as an SMS with a recording, and shows up in your portal. We tune it with you weekly for the first month.</p><span class="when">From day 1</span></div>
-    </div>
-    <p style="text-align:center;margin-top:28px"><a class="link" href="product.html">The full walkthrough <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
+    <ol class="how">
+      <li class="rv"><span class="how-n">01</span><div class="card"><h3>Create your account</h3><p>Sign up in a minute with just your email. Tell us your services, area, hours, call-out fee and what counts as an emergency.</p><span class="when">Day 0 · 5 minutes</span></div></li>
+      <li class="rv"><span class="how-n">02</span><div class="card"><h3>We set it up with you</h3><p>We build your assistant and set up call forwarding on your phone. Calls you miss go to Ringback; calls you answer don't change.</p><span class="when">Day 1 · 10 minutes</span></div></li>
+      <li class="rv"><span class="how-n">03</span><div class="card"><h3>You get the jobs</h3><p>Every call arrives as an SMS with a recording, and shows up in your portal. We tune it with you weekly for the first month.</p><span class="when">From day 1</span></div></li>
+    </ol>
+    <p class="center mt-l"><a class="link" href="product.html">The full walkthrough <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
+  </div>
+</section>
+
+<section class="sec band" aria-labelledby="k07">
+  <div class="wrap">
+    <p class="kicker" id="k07"><b>07</b>Next stops</p>
+    <ul class="next">
+      <li><a href="pricing.html"><span class="next-k">Pricing</span><b>From <span class="num">R2,500</span> a month</b><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+      <li><a href="pricing.html#calculator"><span class="next-k">Calculator</span><b>What are missed calls costing you?</b><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+      <li><a href="faq.html"><span class="next-k">FAQ</span><b>Questions owners ask</b><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+      <li><a href="build.html"><span class="next-k">Build your assistant</span><b>Preview yours in a minute</b><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+    </ul>
   </div>
 </section>
 
 <section class="sec">
   <div class="wrap">
-    <div class="grid-3">
-      <a class="card spot rv" href="pricing.html"><span class="kicker">Pricing</span><h3 style="font-size:1.6rem">From R2,500 a month</h3><p>Three simple plans in rand, a free trial week, and a founding partner offer for our first three businesses.</p><span class="link" style="margin-top:auto">See plans <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
-      <a class="card spot rv" href="pricing.html#calculator"><span class="kicker">Calculator</span><h3 style="font-size:1.6rem">What are missed calls costing you?</h3><p>Plug in your own numbers and see the monthly and yearly cost of calls that ring out.</p><span class="link" style="margin-top:auto">Work it out <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
-      <a class="card spot rv" href="faq.html"><span class="kicker">FAQ</span><h3 style="font-size:1.6rem">Questions owners ask</h3><p>Will customers know it's AI? What about POPIA? What if it gets an emergency wrong? Straight answers.</p><span class="link" style="margin-top:auto">Read the answers <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
-    </div>
-  </div>
-</section>
-
-<section class="sec">
-  <div class="wrap">
-    <div class="final surface-hot rv">
+    <div class="final final--home surface-hot rv">
+      <span class="final-bars" aria-hidden="true"></span>
       <div>
-        <span class="kicker">Start this week</span>
-        <h2 style="margin-top:18px">Stop losing jobs to <span class="hot">voicemail.</span></h2>
+        <p class="kicker"><b>08</b>Start this week</p>
+        <h2 class="statement">Stop losing jobs to voicemail.</h2>
         <p class="lede">Create your account, tell us about your business, and we'll put Ringback on your own number for a free trial week.</p>
       </div>
-      <div style="display:grid;gap:12px;justify-items:start">
+      <div class="cta-col">
         <a class="btn btn-hot" href="login.html?mode=signup">Create your account <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        <a class="btn btn-line" data-wa="Hi Ringback, I'd like to know more about a free trial week." href="contact.html"><svg aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp us instead</a>
-        <span class="faint mono">Already a client? <a href="login.html" style="color:var(--ember-2)">Log in</a></span>
+        <a class="btn btn-line" data-wa="Hi Ringback, I'd like to know more about a free trial week." href="contact.html"><svg aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp us</a>
+        <a class="link" href="contact.html#message" data-setup-call data-source="home">Rather we set it up with you? <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <p class="faint mono">Already a client? <a href="login.html">Log in</a></p>
       </div>
     </div>
   </div>
