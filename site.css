@@ -767,6 +767,75 @@ body::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opa
   body.has-mbar vapi-widget.closed{display:none}
 }
 
+/* ---------- your trade ---------- */
+.tpick{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:22px;font-size:.9rem;color:var(--muted)}
+.tpick select,.drawer-trade select{width:auto;min-width:180px;color:var(--ink);background:var(--panel);border:1px solid var(--line-2);border-radius:999px;padding:10px 38px 10px 16px;cursor:pointer;-webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF7A3D' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:14px}
+.tpick select:focus-visible,.drawer-trade select:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+.drawer-trade{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px 12px;margin-bottom:4px;border-bottom:1px solid var(--line);font-size:.86rem;color:var(--muted)}
+.trade.mine{border-color:rgba(255,122,61,.5);background:radial-gradient(100% 80% at 0% 0%,rgba(255,122,61,.12),transparent 60%),var(--bg-2)}
+.trade{position:relative}
+.mine-tag{position:absolute;top:20px;right:20px}
+
+/* ---------- sample-call player ---------- */
+.hear{display:flex;align-items:center;gap:14px;width:min(100%,370px);padding:10px 16px 10px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--line-2);position:relative}
+.hear-btn{width:42px;height:42px;flex:none;border-radius:50%;border:0;display:grid;place-items:center;background:var(--ember);color:var(--ember-ink);cursor:pointer;box-shadow:0 8px 20px -8px var(--ember-glow)}
+.hear-btn svg{width:18px;height:18px}
+.hear-mid{flex:1;min-width:0;display:grid;gap:2px}
+.hear-t{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hear-t .faint{font-weight:400}
+.hear .hear-seek{margin:6px 0 4px;height:4px}
+.hear .hear-seek::-webkit-slider-thumb{width:14px;height:14px;border-width:3px;box-shadow:none}
+.hear-time{font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+button.line{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%;background:transparent}
+.phone button.line{width:auto}
+button.line:hover{border-color:var(--line-2)}
+.mini-call .hear{width:100%;margin-top:6px}
+
+/* ---------- with / without Ringback ---------- */
+.night{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.night-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.night .seg{width:min(100%,330px);grid-template-columns:1fr 1fr;border-radius:999px}
+.night .seg button{white-space:nowrap;padding-inline:10px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.swap{display:grid}
+.swap > *{grid-area:1/1;transition:opacity .35s,transform .45s,visibility 0s}
+.swap .on-v,.night.with .swap .off-v{opacity:0;transform:translateY(6px);visibility:hidden;transition:opacity .25s,transform .35s,visibility 0s .35s}
+.night.with .swap .on-v{opacity:1;transform:none;visibility:visible;transition:opacity .35s .1s,transform .45s .1s,visibility 0s}
+.night .tl .swap{font-size:.92rem;color:var(--muted)}
+.night .tl em{font-style:normal;display:inline-flex;margin-top:8px;margin-left:0}
+.night .tl .swap > span{display:block}
+.night .tl .swap em{display:table;margin-top:8px;white-space:normal;max-width:100%}
+.night .timeline{grid-template-columns:minmax(0,1fr)}
+.night .timeline::before{transition:background .4s}
+.night .tl::before{transition:border-color .4s,background .4s}
+.night.with .timeline::before{background:linear-gradient(var(--mint),rgba(91,227,180,.05))}
+.night.with .tl::before{border-color:var(--mint);background:var(--mint)}
+.night:not(.with) .tl::before{border-color:var(--red)}
+.night:not(.with) .timeline::before{background:linear-gradient(var(--red),rgba(255,90,78,.05))}
+.night-sum{padding:16px 18px;border-radius:16px;border:1px solid var(--line-2);background:var(--bg-2);font-size:.95rem;color:var(--muted)}
+.night-sum b{color:var(--ink)}
+.red-t{color:var(--red)!important}.mint-t{color:var(--mint)!important}
+.night .src{margin-top:0}
+
+/* ---------- call-forwarding guide ---------- */
+.fwd{display:grid;grid-template-columns:1.1fr .9fr;border-radius:28px;border:1px solid var(--line-2);overflow:hidden;background:var(--bg-2)}
+.fwd > *{min-width:0}
+.fwd-in{padding:32px;gap:22px}
+.fwd-hint{display:block;margin-top:2px}
+.fwd-out{padding:32px;display:grid;gap:18px;align-content:center;background:radial-gradient(120% 90% at 100% 0%,rgba(255,122,61,.16),transparent 60%),var(--panel);border-left:1px solid var(--line)}
+.fwd-code{display:grid;gap:8px}
+.fwd-code .lbl{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fwd-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 14px 14px 18px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid var(--line-2)}
+.fwd-row code{font-family:var(--mono);font-size:clamp(1.05rem,2.4vw,1.4rem);letter-spacing:.02em;color:var(--ember-2);word-break:break-all}
+.fwd-row code.faint{color:var(--faint)}
+.fwd-row .icon-btn{width:40px;height:40px;border-radius:10px}
+.fwd-row .icon-btn[disabled]{opacity:.35;cursor:default}
+.fwd-note{font-size:.85rem;color:var(--muted)}
+.fwd-note b{color:var(--amber);font-weight:600}
+.fwd-note a{color:var(--ember-2)}
+@media (max-width:860px){.fwd{grid-template-columns:1fr}.fwd-in,.fwd-out{padding:22px}.fwd-out{border-left:0;border-top:1px solid var(--line)}}
+
 /* ---------- mobile and touch ----------
    Phones get a calmer, cheaper page: no scroll-linked reveals, no blurred layers over moving content,
    no hover states that stick after a tap, and viewport units that ignore the collapsing address bar. */
@@ -803,7 +872,7 @@ a,button,summary,label,input,select,textarea{touch-action:manipulation}
   .sheet{backdrop-filter:none}
   html{scroll-padding-top:88px}
   /* 16px stops iOS from zooming the page in when a field is tapped */
-  .in,.form input:not([type=checkbox]):not([type=radio]):not([type=range]),.form select,.form textarea,.data select{font-size:16px}
+  .in,.form input:not([type=checkbox]):not([type=radio]):not([type=range]),.form select,.form textarea,.data select,.tpick select,.drawer-trade select{font-size:16px}
   /* tighter rhythm so phones aren't scrolling through empty space */
   .sec{padding-block:64px}
   .hero{padding-top:118px;padding-bottom:64px}

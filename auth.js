@@ -35,6 +35,7 @@
   if (!RB.sb) { $('cfgWarn').hidden = false; $('sendBtn').disabled = true; }
   else RB.sb.auth.getSession().then(function(r){ if (r.data && r.data.session) location.replace(next); });
 
+  if (!params.get('trade') && RB.getTrade && RB.getTrade()) { var st = $('su-trade'), lab = RB.tradeByKey(RB.getTrade()).label; [].forEach.call(st.options, function(o){ if (o.text === lab) st.value = o.value; }); }
   if (params.get('trade')) { var ts = $('su-trade'); [].forEach.call(ts.options, function(o){ if (o.text === params.get('trade')) ts.value = o.value; }); }
   if (params.get('plan')) { try { sessionStorage.setItem('rb_plan', params.get('plan')); } catch (e) {} }
 

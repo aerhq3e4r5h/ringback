@@ -30,7 +30,7 @@
     show(n, true); tabs.children[n].focus();
   });
 
-  var phone = $('callPanel');
+  var phone = $('callPanel'), player = null;
   function fillCall(linesEl, tri, t, play){
     linesEl.innerHTML = '';
     t.lines.forEach(function(l){
@@ -65,6 +65,11 @@
     $('tKind').textContent = KIND[t.kind];
     $('tWho').textContent = t.caller + ' · ' + t.suburb;
     $('tBody').textContent = t.alert;
+    /* sample recording for this trade, if there is one: playing it takes over from the animation */
+    if (player) player.destroy();
+    player = RB.callAudio(t, { mount: $('hear'), lines: linesEl,
+      onPlay: function(){ stopAuto(); timers.forEach(clearTimeout); timers = []; phone.classList.remove('locked'); [].forEach.call(linesEl.children, function(x){ x.classList.remove('wait'); }); tri.classList.remove('wait'); toast.classList.add('wait'); },
+      onEnd: function(){ phone.classList.add('locked'); toast.classList.remove('wait'); } });
     if (play) {
       /* lines arrive one by one, then the call ends and the phone locks with the SMS alert */
       tri.classList.add('wait'); toast.classList.add('wait');
@@ -109,6 +114,21 @@
   var onScreen = true;
   if ('IntersectionObserver' in window) new IntersectionObserver(function(en){ onScreen = en[0].isIntersecting; consoleEl.classList.toggle('paused', !onScreen); }).observe(consoleEl);
   startAuto();
+
+  /* "Your night, with and without Ringback" */
+  var night = $('night');
+  if (night) night.querySelectorAll('[data-night]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var on = b.dataset.night === 'on';
+      night.classList.toggle('with', on);
+      night.querySelectorAll('[data-night]').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); });
+    });
+  });
+
+  /* "Your trade" picker in the hero; choosing one anywhere on the site switches the demo to it */
+  var hp = $('heroTrade');
+  if (hp) { hp.innerHTML = '<span>Show me examples for</span>' + RB.tradeSelect('heroTradeSel'); hp.querySelector('select').setAttribute('aria-label', 'Your trade'); RB.applyTrade(); }
+  document.addEventListener('rb:trade', function(e){ if (e.detail) RB.showTrade(e.detail); });
 
   var rot = $('rot').children, ri = 0;
   if (!reduced) setInterval(function(){ var o = rot[ri]; o.classList.remove('on'); o.classList.add('leaving'); setTimeout(function(){ o.classList.remove('leaving'); }, 500); ri = (ri + 1) % rot.length; rot[ri].classList.add('on'); }, 2400);

@@ -24,7 +24,7 @@
   <div class="orb a"></div><div class="orb b"></div>
   <div class="wrap hero-grid">
     <div>
-      <span class="kicker">AI receptionist for home-service trades · Gauteng</span>
+      <span class="kicker">AI receptionist for <span data-trade-text="plural">home-service trades</span> · Gauteng</span>
       <h1>Every call answered.<br>Every job <span class="rot hot" id="rot"><span class="on">booked.</span><span>caught.</span><span>kept.</span><span>yours.</span></span></h1>
       <p class="lede">Ringback picks up every call your business misses, in your name, day or night. It knows an emergency from a quote request, tells callers how to stay safe, books the job, and alerts you in under a minute.</p>
       <div class="ctas">
@@ -37,6 +37,7 @@
         <span class="chip"><svg><use href="#i-check"/></svg>POPIA-aware</span>
         <span class="chip"><svg><use href="#i-check"/></svg>English and Afrikaans</span>
       </div>
+      <label class="tpick" id="heroTrade"></label>
     </div>
 
     <div class="console auto" id="console">
@@ -64,6 +65,7 @@
           </div>
         </div>
         <p class="phone-cap">Example call · fictional business</p>
+        <div class="hear" id="hear" hidden></div>
       </div>
     </div>
   </div>
@@ -115,12 +117,20 @@
         <p class="src">Source: <a href="https://energybee.co.za/guides/burst-geyser-what-to-do-south-africa" target="_blank" rel="noopener">EnergyBee, 2026</a></p>
       </div>
     </div>
-    <div class="timeline rv">
-      <div class="tl"><time>07:30</time><b>On the road</b><span>Driving to the first job. You can't answer safely.</span></div>
-      <div class="tl"><time>10:20</time><b>Hands full</b><span>Up a ladder, in a roof, under a sink. The phone rings out.</span></div>
-      <div class="tl"><time>13:05</time><b>Already on a call</b><span>The next customer gets a busy tone and tries someone else.</span></div>
-      <div class="tl"><time>21:47</time><b>Off for the night</b><span>You're with the family. The emergency doesn't care.</span></div>
-      <div class="tl"><time>Sat 08:00</time><b>Weekend rush</b><span>Everyone's home, things break, and the calls pile up.</span></div>
+    <div class="night rv" id="night">
+      <div class="night-top">
+        <span class="kicker">An example day</span>
+        <div class="seg seg-sm" role="group" aria-label="Show the day" style="--n:2"><button type="button" aria-pressed="true" data-night="off">Without Ringback</button><button type="button" aria-pressed="false" data-night="on">With Ringback</button></div>
+      </div>
+      <div class="timeline">
+        <div class="tl"><time>07:30</time><b>On the road</b><div class="swap"><span class="off-v">Driving to the first job. You can't answer safely. <em class="tag red">Missed · quote, about R1,800</em></span><span class="on-v">It picks up, takes the details and texts you a callback request. <em class="tag mint">Callback request sent</em></span></div></div>
+        <div class="tl"><time>10:20</time><b>Hands full</b><div class="swap"><span class="off-v">Up a ladder, in a roof, under a sink. The phone rings out. <em class="tag red">Missed · routine job, about R950</em></span><span class="on-v">It books the job into the next open slot in your calendar. <em class="tag mint">Booked Thu 08:00</em></span></div></div>
+        <div class="tl"><time>13:05</time><b>Already on a call</b><div class="swap"><span class="off-v">The next customer gets a busy tone and tries someone else. <em class="tag red">Missed · repeat customer, about R2,400</em></span><span class="on-v">Busy calls forward too. The second caller is answered and booked. <em class="tag mint">Booked Fri 10:00</em></span></div></div>
+        <div class="tl"><time>21:47</time><b>Off for the night</b><div class="swap"><span class="off-v">You're with the family. The emergency doesn't care. <em class="tag red">Missed · emergency, about R12,000</em></span><span class="on-v">It gives safety steps and alerts you in under a minute. You call back. <em class="tag mint">Emergency alert sent</em></span></div></div>
+        <div class="tl"><time>Sat 08:00</time><b>Weekend rush</b><div class="swap"><span class="off-v">Everyone's home, things break, and the calls pile up. <em class="tag red">2 missed · about R3,100</em></span><span class="on-v">Two calls at once? Both answered, both booked. <em class="tag mint">2 booked</em></span></div></div>
+      </div>
+      <div class="night-sum swap" aria-live="polite"><span class="off-v"><b>6 calls missed.</b> About <b class="red-t">R20,250</b> of work gone to someone else.</span><span class="on-v"><b>6 calls answered.</b> <b class="mint-t">4 jobs booked</b>, 1 emergency caught, 6 SMS alerts sent.</span></div>
+      <p class="src">Example day. Job values are illustrative, not a promise.</p>
     </div>
   </div>
 </section>
@@ -160,7 +170,7 @@
       <div class="card c-2 spot rv">
         <h3>Alerts you in under a minute</h3>
         <p>Every call lands on your phone with a summary and recording.</p>
-        <div class="ui sms"><b>EMERGENCY</b> · Johan V · Centurion<br>Burning smell at DB board. Main switched off. Call back in 15 min.</div>
+        <div class="ui sms" data-trade-sms><b>EMERGENCY</b> · Johan V · Centurion<br>Burning smell at DB board. Main switched off. Call back in 15 min.</div>
       </div>
       <div class="card c-2 spot rv">
         <h3>Filters out the noise</h3>

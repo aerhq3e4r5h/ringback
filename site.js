@@ -32,6 +32,8 @@
     'i-bolt':'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
     'i-cal':'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 15l2 2 4-4"/>',
     'i-search':'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    'i-play':'<path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z" fill="currentColor" stroke="none"/>',
+    'i-pause':'<rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/>',
     'i-download':'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
     'i-trash':'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/>',
     'i-star':'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
@@ -82,51 +84,95 @@
     toastBox.appendChild(t); setTimeout(function(){ t.remove(); }, 4200);
   };
 
-  /* ---------- trades (example calls; all businesses are fictional) ---------- */
+  /* ---------- trades (example calls; all businesses are fictional) ----------
+     Sample call audio: put a recording of each example call at audio/<key>.mp3 (e.g. audio/plumbing.mp3).
+     The player only appears once that file loads. To line the transcript up exactly, add
+     cues:[0, 4.5, 9, 15.2] to a trade: the second each line starts. Without cues, lines are spread by length. */
   RB.TRADES = [
-    { key:'plumbing', label:'Plumbing', icon:'t-plumb', biz:'Ridgeway Plumbing', owner:'Pieter', caller:'Lerato M', init:'LM', suburb:'Fourways', time:'21:47', kind:'emergency',
+    { key:'plumbing', plural:'plumbers', log:[['21:47','Burst geyser · Fourways','red','Alerted'],['14:10','Blocked drain · Randburg','mint','Booked'],['09:32','COC for a house sale · Sandton','amber','Callback']],
+      label:'Plumbing', icon:'t-plumb', biz:'Ridgeway Plumbing', owner:'Pieter', caller:'Lerato M', init:'LM', suburb:'Fourways', time:'21:47', kind:'emergency',
       catches:'Burst geysers, major leaks, sewage backups, no water', books:'Leaks, blocked drains, geyser services, COCs',
       safety:'Geyser off at the DB board, main water off at the meter.',
       lines:[['ai',"Hi, you've reached Ridgeway Plumbing. This call is recorded. How can I help?"],['caller',"Water's pouring through my ceiling. I think the geyser burst."],['ai',"Let's get it safe. Switch the geyser off at the DB board, then close the main tap by the meter."],['ai',"Thanks, Lerato. I've sent this to Pieter as an emergency. He'll call you within 15 minutes."]],
       tags:[['red','Emergency'],['','Burst geyser'],['','Power off ✓'],['','Water off ✓']],
       alert:'Burst geyser, water through ceiling. Power and water off. Call back within 15 min.' },
-    { key:'electrical', label:'Electrical', icon:'t-elec', biz:'Ridgeway Electrical', owner:'Sipho', caller:'Johan V', init:'JV', suburb:'Centurion', time:'19:12', kind:'emergency',
+    { key:'electrical', plural:'electricians', log:[['19:12','Burning smell at the DB · Centurion','red','Alerted'],['11:05','New kitchen plugs · Midrand','mint','Booked'],['08:40','DB board upgrade quote · Edenvale','amber','Callback']],
+      label:'Electrical', icon:'t-elec', biz:'Ridgeway Electrical', owner:'Sipho', caller:'Johan V', init:'JV', suburb:'Centurion', time:'19:12', kind:'emergency',
       catches:'Burning smells, sparking plugs, full outages, tripping boards', books:'COCs, new plugs and lights, DB upgrades, quotes',
       safety:"Don't touch the board. If safe, switch off the main. Smoke or flames: call 10177.",
       lines:[['ai',"Hi, you've reached Ridgeway Electrical. This call is recorded. How can I help?"],['caller',"Half the house has no power and there's a burning smell by the DB board."],['ai',"Please don't touch the board. If it's safe, switch off the main switch and keep everyone away. If you see smoke or flames, call 10177."],['ai',"I've flagged this as urgent. Sipho will call you back within 15 minutes."]],
       tags:[['red','Emergency'],['','Burning smell'],['','Main off ✓']],
       alert:'Burning smell at DB board, partial outage. Main switched off. Call back within 15 min.' },
-    { key:'gates', label:'Gates & alarms', icon:'t-gate', biz:'Ridgeway Gates & Alarms', owner:'Thabo', caller:'Anika P', init:'AP', suburb:'Midrand', time:'23:05', kind:'emergency',
+    { key:'gates', plural:'gate and alarm installers', log:[['23:05','Gate stuck open · Midrand','red','Alerted'],['15:20','Gate motor service · Kempton Park','mint','Booked'],['10:15','New alarm quote · Benoni','amber','Callback']],
+      label:'Gates & alarms', icon:'t-gate', biz:'Ridgeway Gates & Alarms', owner:'Thabo', caller:'Anika P', init:'AP', suburb:'Midrand', time:'23:05', kind:'emergency',
       catches:"Gates stuck open, alarms that won't stop, failed beams", books:'Motor services, remotes, battery swaps, new installs',
       safety:'Stay inside, keep the release key handy. Feeling unsafe: armed response or 10111.',
       lines:[['ai',"Hi, you've reached Ridgeway Gates & Alarms. This call is recorded. How can I help?"],['caller',"My gate motor's stuck open and I can't close it. It's late and I'm worried."],['ai',"I understand. I've marked this urgent. Can you confirm your street address in Midrand?"],['ai',"Got it. Thabo will call you within 20 minutes. Keep the motor's release key handy."]],
       tags:[['red','Urgent'],['','Gate stuck open'],['','After hours']],
       alert:'Gate motor stuck open, after hours, security risk. Call back within 20 min.' },
-    { key:'solar', label:'Solar & backup', icon:'t-solar', biz:'Ridgeway Solar', owner:'Nadia', caller:'Kevin D', init:'KD', suburb:'Bryanston', time:'10:20', kind:'booked',
+    { key:'solar', plural:'solar and backup installers', log:[['18:30','Inverter tripping · Bryanston','red','Alerted'],['10:20','Inverter fault check · Bryanston','mint','Booked'],['09:05','Battery upgrade quote · Pretoria East','amber','Callback']],
+      label:'Solar & backup', icon:'t-solar', biz:'Ridgeway Solar', owner:'Nadia', caller:'Kevin D', init:'KD', suburb:'Bryanston', time:'10:20', kind:'booked',
       catches:'Inverters down, batteries not charging, tripping systems', books:'Fault-finding, panel cleaning, system quotes, upgrades',
       safety:"Don't open the inverter. If it smells hot or smokes, isolate it if safe and call 10177.",
       lines:[['ai',"Hi, you've reached Ridgeway Solar. This call is recorded. How can I help?"],['caller',"My inverter keeps beeping and the batteries aren't charging from the panels."],['ai',"I can book a technician to check it. Does Tuesday at 9 or Wednesday at 2 suit you?"],['ai',"Booked for Tuesday at 9, Kevin. You'll get an SMS confirmation now."]],
       tags:[['mint','Booked'],['','Inverter fault'],['','Tue 09:00']],
       alert:'Inverter beeping, batteries not charging. Booked Tue 09:00.' },
-    { key:'pest', label:'Pest control', icon:'t-pest', biz:'Ridgeway Pest Control', owner:'Lindiwe', caller:'Marie S', init:'MS', suburb:'Randburg', time:'14:35', kind:'booked',
+    { key:'pest', plural:'pest controllers', log:[['16:45','Bee swarm at the front door · Randburg','red','Alerted'],['14:35','Rats in the roof · Randburg','mint','Booked'],['08:50','Termite contract quote · Centurion','amber','Callback']],
+      label:'Pest control', icon:'t-pest', biz:'Ridgeway Pest Control', owner:'Lindiwe', caller:'Marie S', init:'MS', suburb:'Randburg', time:'14:35', kind:'booked',
       catches:'Bee swarms, wasp nests near entrances', books:'Rodents, termites, cockroaches, inspections, contracts',
       safety:'Keep people and pets away from swarms. Allergic reaction: call 10177.',
       lines:[['ai',"Hi, you've reached Ridgeway Pest Control. This call is recorded. How can I help?"],['caller',"We've got rats in the roof. We hear them every night."],['ai',"That's no fun. I can book an inspection. Thursday morning or Friday afternoon?"],['ai',"Thursday at 8 it is. Lindiwe will see you then, and you'll get an SMS confirmation."]],
       tags:[['mint','Booked'],['','Rodents'],['','Thu 08:00']],
       alert:'Rats in the roof. Inspection booked Thu 08:00.' },
-    { key:'aircon', label:'Aircon', icon:'t-air', biz:'Ridgeway Aircon', owner:'Ravi', caller:'Busi N', init:'BN', suburb:'Sandton', time:'12:05', kind:'callback',
+    { key:'aircon', plural:'aircon technicians', log:[['07:55','Server-room unit down · Rosebank','red','Alerted'],['13:30','Aircon service · Fourways','mint','Booked'],['12:05','Quote for 2 office units · Sandton','amber','Callback']],
+      label:'Aircon', icon:'t-air', biz:'Ridgeway Aircon', owner:'Ravi', caller:'Busi N', init:'BN', suburb:'Sandton', time:'12:05', kind:'callback',
       catches:'Server-room units down, units leaking over electrics', books:'Services, re-gassing, installs, quotes',
       safety:'Water near electrics: switch the unit off at the isolator if safe.',
       lines:[['ai',"Hi, you've reached Ridgeway Aircon. This call is recorded. How can I help?"],['caller',"I need a quote for two new aircon units in our office."],['ai',"Happy to help. Roughly how big are the rooms, and when would you like it done?"],['ai',"Thanks, Busi. Ravi will call you back today before 5 with a quote."]],
       tags:[['amber','Callback'],['','Quote request'],['','2 units']],
       alert:'Quote for 2 office aircon units. Call back before 17:00.' },
-    { key:'locksmith', label:'Locksmith', icon:'t-lock', biz:'Ridgeway Locksmiths', owner:'Charl', caller:'Zanele K', init:'ZK', suburb:'Rosebank', time:'07:40', kind:'emergency',
+    { key:'locksmith', plural:'locksmiths', log:[['07:40','Locked out · Rosebank','red','Alerted'],['15:10','Lock change after a move · Northcliff','mint','Booked'],['11:25','Safe installation quote · Sandton','amber','Callback']],
+      label:'Locksmith', icon:'t-lock', biz:'Ridgeway Locksmiths', owner:'Charl', caller:'Zanele K', init:'ZK', suburb:'Rosebank', time:'07:40', kind:'emergency',
       catches:'Lock-outs, break-in damage, keys snapped in locks', books:'Lock changes, safes, garage doors, duplicate keys',
       safety:'Checks the caller is safe. Break-in in progress: 10111.',
       lines:[['ai',"Hi, you've reached Ridgeway Locksmiths. This call is recorded. How can I help?"],['caller',"I've locked myself out and I need to get to work."],['ai',"Let's get you back in. Are you at the property now, and is it a house or a flat?"],['ai',"I've flagged it urgent. Charl will call within 10 minutes with an arrival time."]],
       tags:[['red','Urgent'],['','Locked out'],['','Rosebank']],
       alert:'Locked out of house, at the property. Call back within 10 min.' }
   ];
+
+  /* ---------- your trade (remembered on this device) ---------- */
+  var TRADE_KEY = 'rb_trade';
+  RB.tradeByKey = function(k){ for (var i = 0; i < RB.TRADES.length; i++) if (RB.TRADES[i].key === k) return RB.TRADES[i]; return null; };
+  RB.getTrade = function(){ var k = null; try { k = localStorage.getItem(TRADE_KEY); } catch (e) {} return RB.tradeByKey(k) ? k : null; };
+  RB.setTrade = function(k){
+    if (k && !RB.tradeByKey(k)) k = null;
+    try { if (k) localStorage.setItem(TRADE_KEY, k); else localStorage.removeItem(TRADE_KEY); } catch (e) {}
+    RB.applyTrade();
+    document.dispatchEvent(new CustomEvent('rb:trade', { detail: k }));
+  };
+  RB.tradeSelect = function(id, cls){
+    return '<select' + (id ? ' id="' + id + '"' : '') + ' class="' + (cls || '') + '" data-trade-select><option value="">All trades</option>' +
+      RB.TRADES.map(function(t){ return '<option value="' + t.key + '">' + RB.esc(t.label) + '</option>'; }).join('') + '</select>';
+  };
+  /* Fill every [data-trade-*] spot on the page from the chosen trade, or put the page's own wording back. */
+  RB.applyTrade = function(){
+    var t = RB.tradeByKey(RB.getTrade());
+    document.querySelectorAll('[data-trade-select]').forEach(function(sel){ sel.value = t ? t.key : ''; });
+    document.querySelectorAll('[data-trade-text]').forEach(function(el){
+      if (el.dataset.def == null) el.dataset.def = el.textContent;
+      el.textContent = t ? t[el.dataset.tradeText] : el.dataset.def;
+    });
+    document.querySelectorAll('[data-trade-sms]').forEach(function(el){
+      if (el.dataset.def == null) el.dataset.def = el.innerHTML;
+      var label = { emergency:'EMERGENCY', booked:'NEW BOOKING', callback:'CALLBACK' }, color = { emergency:'red', booked:'mint', callback:'amber' };
+      el.innerHTML = t ? '<b style="color:var(--' + color[t.kind] + ')">' + label[t.kind] + '</b> · ' + RB.esc(t.caller) + ' · ' + RB.esc(t.suburb) + '<br>' + RB.esc(t.alert) : el.dataset.def;
+    });
+    document.querySelectorAll('[data-trade-log]').forEach(function(el){
+      if (el.dataset.def == null) el.dataset.def = el.innerHTML;
+      el.innerHTML = t ? t.log.map(function(r){ return '<div><time>' + r[0] + '</time><span>' + RB.esc(r[1]) + '</span><span class="tag ' + r[2] + '">' + r[3] + '</span></div>'; }).join('') : el.dataset.def;
+    });
+  };
+  document.addEventListener('change', function(e){ if (e.target.matches && e.target.matches('[data-trade-select]')) RB.setTrade(e.target.value); });
 
   /* ---------- header ---------- */
   var NAV = [['product.html','Product'],['trades.html','Trades'],['pricing.html','Pricing'],['index.html#try','Live demo'],['faq.html','FAQ'],['about.html','About'],['contact.html','Contact']];
@@ -145,7 +191,7 @@
       '<div class="nav-in"><a class="logo" href="index.html" aria-label="Ringback home">' + LOGO + '</a>' +
       '<nav class="links" aria-label="Main">' + navLinks() + '</nav>' +
       '<div class="nav-cta">' + ctas + '<button class="menu-btn" type="button" id="menuBtn" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">' + RB.icon('i-menu') + '</button></div></div>' +
-      '<nav class="drawer" id="drawer" aria-label="Menu" hidden>' + navLinks() + drawerCtas + '</nav>';
+      '<nav class="drawer" id="drawer" aria-label="Menu" hidden><label class="drawer-trade"><span>Your trade</span>' + RB.tradeSelect('') + '</label>' + navLinks() + drawerCtas + '</nav>';
     var menuBtn = document.getElementById('menuBtn'), drawer = document.getElementById('drawer');
     menuBtn.addEventListener('click', function(){ var open = drawer.hidden; drawer.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.innerHTML = RB.icon(open ? 'i-close' : 'i-menu'); });
     drawer.addEventListener('click', function(e){ if (e.target.closest('a')) { drawer.hidden = true; menuBtn.setAttribute('aria-expanded','false'); menuBtn.innerHTML = RB.icon('i-menu'); } });
@@ -256,18 +302,22 @@
     document.querySelectorAll('[data-count]').forEach(function(el){ io.observe(el); });
   }
 
-  /* ---------- trade grid (links to trades page) ---------- */
+  /* ---------- trade grid (links to trades page); your trade comes first ---------- */
   var grid = document.getElementById('tradeGrid');
-  if (grid) {
-    RB.TRADES.forEach(function(t){
-      var a = document.createElement('a'); a.className = 'trade spot rv'; a.href = 'trades.html#' + t.key;
-      a.innerHTML = '<span class="ic">' + RB.icon(t.icon) + '</span><h3>' + RB.esc(t.label) + '</h3><dl><div><dt class="e">Escalates</dt><dd>' + RB.esc(t.catches) + '</dd></div><div><dt class="r">Books</dt><dd>' + RB.esc(t.books) + '</dd></div></dl><span class="go">See how it works ' + RB.icon('i-arrow') + '</span>';
+  RB.tradesInOrder = function(){ var k = RB.getTrade(); return RB.TRADES.filter(function(t){ return t.key === k; }).concat(RB.TRADES.filter(function(t){ return t.key !== k; })); };
+  function buildGrid(){
+    var mine = RB.getTrade();
+    grid.innerHTML = '';
+    RB.tradesInOrder().forEach(function(t){
+      var a = document.createElement('a'); a.className = 'trade spot rv' + (t.key === mine ? ' mine' : ''); a.href = 'trades.html#' + t.key;
+      a.innerHTML = '<span class="ic">' + RB.icon(t.icon) + '</span>' + (t.key === mine ? '<span class="tag ember mine-tag">Your trade</span>' : '') + '<h3>' + RB.esc(t.label) + '</h3><dl><div><dt class="e">Escalates</dt><dd>' + RB.esc(t.catches) + '</dd></div><div><dt class="r">Books</dt><dd>' + RB.esc(t.books) + '</dd></div></dl><span class="go">See how it works ' + RB.icon('i-arrow') + '</span>';
       grid.appendChild(a);
     });
     var more = document.createElement('a'); more.className = 'trade more spot rv'; more.href = 'contact.html';
     more.innerHTML = '<h3>Another trade?</h3><p class="muted" style="font-size:.92rem">Roofers, glaziers, pool services, appliance repairs, garage doors. If customers phone you, we can set it up.</p><span class="go">Talk to us ' + RB.icon('i-arrow') + '</span>';
     grid.appendChild(more);
   }
+  if (grid) { buildGrid(); document.addEventListener('rb:trade', buildGrid); }
 
   /* ---------- calculator ---------- */
   if (document.getElementById('calc')) {
@@ -293,6 +343,124 @@
       var none = document.getElementById('faqNone'); if (none) none.hidden = any;
     });
   }
+
+
+  /* ---------- "Hear a real call": sample-call audio with a synced transcript ----------
+     RB.callAudio(trade, { mount, lines, onPlay, onEnd }) puts a player in `mount` once audio/<key>.mp3 loads.
+     If the file is missing the player stays hidden and the transcript works as plain text. */
+  var audioOK = {}, nowPlaying = null;
+  function fmt(sec){ sec = Math.max(0, Math.floor(sec || 0)); return Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2); }
+  RB.callAudio = function(t, o){
+    var src = t.audio || ('audio/' + t.key + '.mp3'), mount = o.mount, a = null, dead = false, cues = null;
+    mount.hidden = true; mount.innerHTML = '';
+    if (audioOK[src] === false) return { destroy: function(){} };
+    a = new Audio(); a.preload = 'metadata';
+    function lineEls(){ return o.lines ? [].slice.call(o.lines.children) : []; }
+    function estimate(dur){
+      var w = t.lines.map(function(l){ return l[1].length + 25; }), sum = w.reduce(function(x, y){ return x + y; }, 0), at = 0;
+      return w.map(function(x){ var c = at; at += x / sum * dur; return c; });
+    }
+    function current(){ var i = 0; for (var k = 0; k < cues.length; k++) if (a.currentTime >= cues[k] - 0.05) i = k; return i; }
+    function mark(){
+      var i = current(), playing = !a.paused || a.currentTime > 0;
+      lineEls().forEach(function(el, k){ el.classList.toggle('on', playing && k === i); });
+      seek.value = a.currentTime; time.textContent = fmt(a.currentTime) + ' / ' + fmt(a.duration);
+      seek.style.setProperty('--p', (a.currentTime / (a.duration || 1) * 100) + '%');
+    }
+    var btn, seek, time;
+    function setBtn(){ var on = !a.paused; btn.innerHTML = RB.icon(on ? 'i-pause' : 'i-play'); btn.setAttribute('aria-label', (on ? 'Pause' : 'Play') + ' the example ' + t.label.toLowerCase() + ' call'); mount.classList.toggle('playing', on); }
+    function play(){ if (o.onPlay) o.onPlay(); var pr = a.play(); if (pr && pr.catch) pr.catch(function(){}); }
+    a.addEventListener('loadedmetadata', function(){
+      if (dead) return;
+      audioOK[src] = true;
+      cues = (t.cues && t.cues.length === t.lines.length) ? t.cues : estimate(a.duration);
+      mount.innerHTML = '<button type="button" class="hear-btn"></button><div class="hear-mid"><span class="hear-t">Hear this call <span class="faint">· example recording</span></span><input type="range" class="hear-seek" min="0" step="0.1" aria-label="Position in the recording"></div><span class="hear-time mono"></span>';
+      btn = mount.querySelector('.hear-btn'); seek = mount.querySelector('.hear-seek'); time = mount.querySelector('.hear-time');
+      seek.max = a.duration; setBtn(); mark();
+      btn.addEventListener('click', function(){ if (a.paused) play(); else a.pause(); });
+      seek.addEventListener('input', function(){ a.currentTime = +seek.value; mark(); });
+      /* each transcript line becomes a button that jumps the recording to that line */
+      lineEls().forEach(function(el, k){
+        var b = document.createElement('button'); b.type = 'button'; b.className = el.className + ' seekable'; b.innerHTML = el.innerHTML;
+        b.setAttribute('aria-label', 'Play from: ' + el.textContent);
+        b.addEventListener('click', function(){ a.currentTime = cues[k]; play(); mark(); });
+        el.parentNode.replaceChild(b, el);
+      });
+      mount.hidden = false;
+    });
+    a.addEventListener('error', function(){ audioOK[src] = false; mount.hidden = true; });
+    a.addEventListener('play', function(){ if (nowPlaying && nowPlaying !== a) nowPlaying.pause(); nowPlaying = a; });
+    ['play','pause'].forEach(function(ev){ a.addEventListener(ev, function(){ if (btn) { setBtn(); mark(); } }); });
+    a.addEventListener('timeupdate', function(){ if (btn) mark(); });
+    a.addEventListener('ended', function(){ lineEls().forEach(function(el){ el.classList.remove('on'); }); if (o.onEnd) o.onEnd(); });
+    a.src = src;
+    return { audio: a, destroy: function(){ dead = true; a.pause(); a.removeAttribute('src'); a.load(); mount.hidden = true; mount.innerHTML = ''; } };
+  };
+
+  /* ---------- call-forwarding guide ----------
+     Standard GSM forwarding codes (the 3GPP "MMI" codes most South African networks use).
+     PLEASE VERIFY each network against its current help pages, or by dialling the code, before relying on it,
+     then set verified to the date you checked (e.g. verified:'2026-10-12'). Until then the guide says plainly
+     that the code is the standard one and hasn't been confirmed for that network. Some contracts and
+     prepaid packages block forwarding, and the network bills forwarded calls at your normal rates. */
+  RB.FORWARD = {
+    networks: [
+      { key:'vodacom', name:'Vodacom', verified:null },
+      { key:'mtn', name:'MTN', verified:null },
+      { key:'cellc', name:'Cell C', verified:null },
+      { key:'telkom', name:'Telkom', verified:null }
+    ],
+    /* {n} is the number to forward to, {s} the ring time in seconds before forwarding (5–30). */
+    types: [
+      { key:'missed', label:'All missed calls', hint:'Busy, no answer and unreachable in one go. What Ringback normally uses.', on:'**004*{n}**{s}#', off:'##004#', ring:true },
+      { key:'noanswer', label:'No answer', hint:"Rings for a while first, then forwards.", on:'**61*{n}**{s}#', off:'##61#', ring:true },
+      { key:'busy', label:'When busy', hint:"When you're on another call or decline it.", on:'**67*{n}#', off:'##67#' },
+      { key:'unreachable', label:'Unreachable', hint:'Phone off, flat battery or no signal.', on:'**62*{n}#', off:'##62#' },
+      { key:'all', label:'All calls', hint:"Every call forwards and your phone won't ring. Handy on leave.", on:'**21*{n}#', off:'##21#' }
+    ],
+    /* overrides for a network whose codes differ, e.g. mtn:{ busy:{ on:'...', off:'...' } } */
+    overrides: {}
+  };
+  var fwdN = 0;
+  RB.forwardGuide = function(el){
+    var F = RB.FORWARD, id = 'fw' + (++fwdN);
+    var chips = function(name, list, sel){ return '<div class="chips" role="radiogroup">' + list.map(function(x){ return '<label><input type="radio" name="' + id + name + '" value="' + x.key + '"' + (x.key === sel ? ' checked' : '') + '><span>' + RB.esc(x.name || x.label) + '</span></label>'; }).join('') + '</div>'; };
+    el.classList.add('fwd');
+    el.innerHTML =
+      '<div class="fwd-in form">' +
+        '<div class="fld"><span id="' + id + 'nl">Your network</span>' + chips('net', F.networks, 'vodacom').replace('role="radiogroup"', 'role="radiogroup" aria-labelledby="' + id + 'nl"') + '</div>' +
+        '<div class="fld"><span id="' + id + 'tl">When should calls forward?</span>' + chips('type', F.types, 'missed').replace('role="radiogroup"', 'role="radiogroup" aria-labelledby="' + id + 'tl"') + '<small class="fwd-hint"></small></div>' +
+        '<div class="two"><label class="fld"><span>Number to forward to <small>the Ringback number we give you</small></span><input type="tel" inputmode="tel" autocomplete="off" class="fwd-num" placeholder="e.g. 010 123 4567" maxlength="20"></label>' +
+        '<label class="fld fwd-ring"><span>Ring for</span><select class="fwd-sec">' + [5,10,15,20,25,30].map(function(x){ return '<option value="' + x + '"' + (x === 20 ? ' selected' : '') + '>' + x + ' seconds</option>'; }).join('') + '</select></label></div>' +
+      '</div>' +
+      '<div class="fwd-out" aria-live="polite">' +
+        '<div class="fwd-code"><span class="lbl">Dial this to switch it on</span><div class="fwd-row"><code class="fwd-on"></code><button type="button" class="icon-btn fwd-copy" data-which="on" aria-label="Copy the code to switch forwarding on">' + RB.icon('i-copy') + '</button></div></div>' +
+        '<div class="fwd-code"><span class="lbl">Dial this to switch it off</span><div class="fwd-row"><code class="fwd-off"></code><button type="button" class="icon-btn fwd-copy" data-which="off" aria-label="Copy the code to switch forwarding off">' + RB.icon('i-copy') + '</button></div></div>' +
+        '<p class="fwd-note"></p>' +
+      '</div>';
+    var q = function(s){ return el.querySelector(s); };
+    function render(){
+      var net = F.networks.filter(function(x){ return x.key === q('[name=' + id + 'net]:checked').value; })[0];
+      var type = F.types.filter(function(x){ return x.key === q('[name=' + id + 'type]:checked').value; })[0];
+      var ov = (F.overrides[net.key] || {})[type.key] || {};
+      var raw = q('.fwd-num').value.replace(/[^\d+]/g, ''), ok = /^(\+27|0)\d{9}$/.test(raw);
+      var num = ok ? raw : '[number]', sec = q('.fwd-sec').value;
+      q('.fwd-hint').textContent = type.hint;
+      q('.fwd-ring').hidden = !type.ring;
+      q('.fwd-on').textContent = (ov.on || type.on).replace('{n}', num).replace('{s}', sec);
+      q('.fwd-off').textContent = ov.off || type.off;
+      q('.fwd-on').classList.toggle('faint', !ok);
+      q('[data-which=on]').disabled = !ok;
+      q('.fwd-note').innerHTML = (net.verified
+        ? 'Checked with ' + RB.esc(net.name) + ' on ' + RB.esc(net.verified) + '. '
+        : '<b>Standard code, not yet confirmed for ' + RB.esc(net.name) + '.</b> Most networks use it, but check with ' + RB.esc(net.name) + ' if it doesn\'t work, or <a href="' + RB.wa('Hi Ringback, can you help me set up call forwarding on ' + net.name + '?') + '" target="_blank" rel="noopener">let us set it up with you</a>. ') +
+        'You should see a confirmation on screen after dialling. Forwarded calls are billed by your network at your normal rates.' + (ok ? '' : ' Enter the number to forward to and the code will fill in.');
+    }
+    el.addEventListener('input', render); el.addEventListener('change', render);
+    el.querySelectorAll('.fwd-copy').forEach(function(b){ b.addEventListener('click', function(){ RB.copy(q(b.dataset.which === 'on' ? '.fwd-on' : '.fwd-off').textContent, b); }); });
+    render();
+  };
+  document.querySelectorAll('[data-forward-guide]').forEach(RB.forwardGuide);
 
   /* ---------- AI assistant (Vapi widget) ---------- */
   function openAI(){
@@ -329,4 +497,5 @@
     if ('MutationObserver' in window) new MutationObserver(syncVw).observe(vw, { childList: true, subtree: true });
     var sc = document.createElement('script'); sc.src = 'https://unpkg.com/@vapi-ai/client-sdk-react@0.1.1/dist/embed/widget.umd.js'; sc.async = true; document.body.appendChild(sc);
   }
+  RB.applyTrade();
 })();
