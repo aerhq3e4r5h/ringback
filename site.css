@@ -836,6 +836,32 @@ button.line:hover{border-color:var(--line-2)}
 .fwd-note a{color:var(--ember-2)}
 @media (max-width:860px){.fwd{grid-template-columns:1fr}.fwd-in,.fwd-out{padding:22px}.fwd-out{border-left:0;border-top:1px solid var(--line)}}
 
+/* ---------- calculator chart ---------- */
+.bars{display:grid;gap:12px;padding:6px 0 4px}
+.bar-row{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:.84rem;color:var(--muted)}
+.bar-row b{font-family:var(--mono);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.bar-row i{grid-column:1/-1;display:block;height:10px;border-radius:6px;background:rgba(214,240,232,.07);overflow:hidden}
+.bar-row u{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--ember),var(--ember-2));transform-origin:0 50%;transform:scaleX(0);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.bar-row.us u{background:linear-gradient(90deg,var(--mint),rgba(91,227,180,.6))}
+
+/* ---------- founding places ---------- */
+.spots{display:inline-flex;align-items:center;gap:8px;font-size:.88rem;color:var(--muted);margin-top:-8px}
+.spots i{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(91,227,180,.15)}
+.spots b{color:var(--ink)}
+.spots.full i{background:var(--faint);box-shadow:none}
+
+/* ---------- where we work ---------- */
+.area-map{position:relative;border-radius:28px;border:1px solid var(--line-2);background:radial-gradient(80% 70% at 55% 50%,rgba(255,122,61,.1),transparent 70%),var(--bg-2);padding:20px;display:grid;gap:10px}
+.area-map svg{width:100%;height:auto;display:block}
+.area-map figcaption{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);text-align:center}
+.map-ping{transform-box:fill-box;transform-origin:center;animation:ping 3.6s ease-out infinite}
+.map-ping.d2{animation-delay:1.2s}.map-ping.d3{animation-delay:2.4s}
+@keyframes ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(3.2);opacity:0}}
+.area-list{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:10px}
+.area-list li{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--bg-2)}
+.area-list li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ember);grid-row:span 2;align-self:center}
+.area-list span{color:var(--muted);font-size:.9rem;grid-column:2}
+
 /* ---------- mobile and touch ----------
    Phones get a calmer, cheaper page: no scroll-linked reveals, no blurred layers over moving content,
    no hover states that stick after a tap, and viewport units that ignore the collapsing address bar. */

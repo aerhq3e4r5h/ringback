@@ -36,6 +36,7 @@
         <span class="ribbon">3 places</span>
         <div><h3>Founding partner</h3><p class="d">For our first three businesses.</p></div>
         <div class="price"><b>R1,500</b><span>/mo for 60 days</span></div>
+        <p class="spots" id="spots" hidden></p>
         <p class="setup">No setup fee · review + 2 referrals if you're happy</p>
         <ul>
           <li><svg><use href="#i-check"/></svg>Everything in Starter</li>
@@ -126,12 +127,18 @@
       <div class="out" aria-live="polite">
         <span class="lbl">Work lost to missed calls / month</span>
         <span class="big-num" id="lost">R0</span>
+        <div class="bars" aria-hidden="true">
+          <div class="bar-row"><span>Lost per month</span><b id="bMonthV"></b><i><u id="bMonth"></u></i></div>
+          <div class="bar-row"><span>Lost per year</span><b id="bYearV"></b><i><u id="bYear"></u></i></div>
+          <div class="bar-row us"><span>Ringback Starter, first year with setup</span><b id="bCostV"></b><i><u id="bCost"></u></i></div>
+        </div>
         <dl>
           <div><dt>Per year</dt><dd id="yearly">R0</dd></div>
           <div><dt>Jobs lost per month</dt><dd id="jobs">0</dd></div>
           <div><dt>Ringback Starter</dt><dd>R2,500</dd></div>
           <div><dt>Jobs needed to cover it</dt><dd id="breakeven">1</dd></div>
         </dl>
+        <a class="btn btn-line btn-sm" id="shareWa" href="#" target="_blank" rel="noopener" style="justify-self:start;align-self:flex-start"><svg><use href="#i-wa"/></svg>Share on WhatsApp</a>
       </div>
     </div>
     <p class="note">Missed calls per week × share that are real jobs × share you'd win × average job value × 4.3 weeks. Starting values are a conservative example, not a promise.</p>
