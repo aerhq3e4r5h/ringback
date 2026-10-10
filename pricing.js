@@ -1,4 +1,6 @@
-/* Pricing page: the missed-call calculator and the founding places counter. */
+/* Pricing page: the missed-call calculator and the founding places counter.
+   The calculator keeps its inputs in sessionStorage rb_calc {missed, real, win, value} for the plan finder.
+   The counter sets RB.foundingLeft and fires 'rb:founding' only when real numbers arrive. */
 (function(){
   var C = window.RB_CONFIG || {}, RB = window.RB;
   var $ = function(id){ return document.getElementById(id); };
@@ -18,7 +20,8 @@
       var share = $('shareWa');
       if (share) share.href = RB.wa('I worked out what missed calls cost my business: about ' + RB.rand(month) + ' a month, ' + RB.rand(year) + ' a year, from ' + m + ' missed calls a week. Work out yours: ' + (C.siteUrl || '') + 'pricing.html#calculator', true);
     };
-    ids.forEach(function(id){ $(id).addEventListener('input', calc); }); calc();
+    var remember = function(){ try { sessionStorage.setItem('rb_calc', JSON.stringify({ missed: +$('missed').value, real: +$('real').value, win: +$('win').value, value: +$('value').value })); } catch (e) {} };
+    ids.forEach(function(id){ $(id).addEventListener('input', function(){ calc(); remember(); }); }); calc();
   }
 
   /* ---------- founding partner places (real numbers from the database, see supabase/founding_spots.sql) ----------
@@ -32,6 +35,8 @@
       .then(function(d){
         if (!d || typeof d.total !== 'number' || typeof d.taken !== 'number' || d.total < 1) return;
         var left = Math.max(0, d.total - d.taken);
+        RB.foundingLeft = left;
+        document.dispatchEvent(new CustomEvent('rb:founding', { detail: { left: left, total: d.total } }));
         spots.innerHTML = left ? '<i></i><b>' + left + ' of ' + d.total + '</b> places left' : '<i></i>All ' + d.total + ' places taken';
         spots.classList.toggle('full', !left); spots.hidden = false;
       }).catch(function(){});

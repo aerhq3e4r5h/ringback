@@ -1,6 +1,7 @@
-/* Home page: the switchable live-call console and the rotating headline word. */
+/* Home page: the switchable live-call console, the rotating headline word and the trade grid.
+   Reduced motion and lite mode (RB.lite) open on the finished call with a 'Play the example' button instead of autoplaying. */
 (function(){
-  var RB = window.RB, TRADES = RB.TRADES, reduced = RB.reduced;
+  var RB = window.RB, TRADES = RB.TRADES, reduced = RB.reduced, calm = reduced || RB.lite;
   var $ = function(id){ return document.getElementById(id); };
   var KIND = { emergency:'● Emergency alert', booked:'● New booking', callback:'● Callback request' };
 
@@ -14,7 +15,7 @@
   }
 
   var tabs = $('tabs'), consoleEl = $('console');
-  var current = 0, timers = [], autoTimer = null, autoOn = !reduced;
+  var current = 0, timers = [], autoTimer = null, autoOn = !calm;
   if (!autoOn) consoleEl.classList.remove('auto');
   TRADES.forEach(function(t, i){
     var b = document.createElement('button');
@@ -44,10 +45,10 @@
     t.tags.forEach(function(g){ var s = document.createElement('span'); s.className = 'tag ' + g[0]; s.textContent = g[1]; tri.appendChild(s); });
   }
   function plusMin(hm, m){ var p = hm.split(':'), t = (+p[0] * 60 + +p[1] + m) % 1440; return ('0' + Math.floor(t / 60)).slice(-2) + ':' + ('0' + t % 60).slice(-2); }
-  function show(i, animate){
+  function show(i, animate, force){
     timers.forEach(clearTimeout); timers = [];
     current = i;
-    var t = TRADES[i], play = animate && !reduced;
+    var t = TRADES[i], play = animate && (force || !reduced);
     [].forEach.call(tabs.children, function(b, j){ b.setAttribute('aria-selected', j === i ? 'true' : 'false'); b.tabIndex = j === i ? 0 : -1; });
     var activeTab = tabs.children[i];
     if (animate) tabs.scrollTo({ left: activeTab.offsetLeft - 8, behavior: reduced ? 'auto' : 'smooth' });
@@ -79,7 +80,7 @@
       });
       timers.push(setTimeout(function(){ tri.classList.remove('wait'); [].forEach.call(rows, function(x){ x.classList.remove('on'); }); }, end));
       timers.push(setTimeout(function(){ phone.classList.add('locked'); toast.classList.remove('wait'); }, end + 1100));
-    } else { tri.classList.remove('wait'); toast.classList.remove('wait'); }
+    } else { tri.classList.remove('wait'); toast.classList.remove('wait'); if (calm) phone.classList.add('locked'); }
   }
   RB.showTrade = function(key){ TRADES.forEach(function(t, i){ if (t.key === key) { stopAuto(); show(i, true); } }); };
   function startAuto(){
@@ -106,7 +107,13 @@
     callIn.style.minHeight = hi + 'px';
   }
   lockHeight();
-  show(start, !reduced);
+  show(start, !calm);
+  if (calm) {
+    var replay = document.createElement('button');
+    replay.type = 'button'; replay.className = 'btn btn-line btn-sm play-ex'; replay.innerHTML = RB.icon('i-play') + 'Play the example';
+    replay.addEventListener('click', function(){ show(current, true, true); });
+    var cap = consoleEl.querySelector('.phone-cap'); cap.parentNode.insertBefore(replay, cap.nextSibling);
+  }
   var lockW = innerWidth, lockT = null;
   window.addEventListener('resize', function(){ if (innerWidth === lockW) return; lockW = innerWidth; clearTimeout(lockT); lockT = setTimeout(lockHeight, 200); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockHeight);
@@ -133,5 +140,22 @@
   var rot = $('rot').children, ri = 0;
   if (!reduced) setInterval(function(){ var o = rot[ri]; o.classList.remove('on'); o.classList.add('leaving'); setTimeout(function(){ o.classList.remove('leaving'); }, 500); ri = (ri + 1) % rot.length; rot[ri].classList.add('on'); }, 2400);
 
-  ['trackA','trackB'].forEach(function(id){ var t = $(id); t.innerHTML += t.innerHTML; });
+  /* the marquee loops by doubling its track; standing still (lite, reduced motion) it scrolls by hand instead */
+  if (!calm) ['trackA','trackB'].forEach(function(id){ var t = $(id); if (t) t.innerHTML += t.innerHTML; });
+
+  /* ---------- trade grid (links to the trades page); your trade comes first ---------- */
+  var grid = $('tradeGrid');
+  function buildGrid(){
+    var mine = RB.getTrade();
+    grid.innerHTML = '';
+    RB.tradesInOrder().forEach(function(t){
+      var a = document.createElement('a'); a.className = 'trade spot rv' + (t.key === mine ? ' mine' : ''); a.href = 'trades.html#' + t.key;
+      a.innerHTML = '<span class="ic">' + RB.icon(t.icon) + '</span>' + (t.key === mine ? '<span class="tag ember mine-tag">Your trade</span>' : '') + '<h3>' + RB.esc(t.label) + '</h3><dl><div><dt class="e">Escalates</dt><dd>' + RB.esc(t.catches) + '</dd></div><div><dt class="r">Books</dt><dd>' + RB.esc(t.books) + '</dd></div></dl><span class="go">See how it works ' + RB.icon('i-arrow') + '</span>';
+      grid.appendChild(a);
+    });
+    var more = document.createElement('a'); more.className = 'trade more spot rv'; more.href = 'contact.html';
+    more.innerHTML = '<h3>Another trade?</h3><p class="muted">Roofers, glaziers, pool services, appliance repairs, garage doors. If customers phone you, we can set it up.</p><span class="go">Talk to us ' + RB.icon('i-arrow') + '</span>';
+    grid.appendChild(more);
+  }
+  if (grid) { buildGrid(); document.addEventListener('rb:trade', buildGrid); }
 })();

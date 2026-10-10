@@ -1,19 +1,71 @@
-/* Ringback shared site script: header, footer, icons, AI widget, small helpers.
-
-   Media tiers (the same queries as the comment at the top of site.css):
-   - RB.mq.compact: phones held either way. Calm motion, solid surfaces, the action bar.
-   - RB.mq.rich: a fine pointer on a big enough screen with motion allowed. Scroll-linked and ambient effects.
-   RB.seg(el) keeps a segmented control's sliding thumb (--i, --n) in step with aria-pressed / aria-selected. */
+/* Ringback shared site script: deferred on every page after config.js, before supabase-js, auth.js and the page script.
+   CONTRACT (other files rely only on these; this file and config.js are frozen for them)
+   Tiers  RB.mq.compact / RB.mq.rich: MediaQueryLists, the queries at the top of site.css. RB.rich, RB.reduced: read at load.
+          RB.lite: saveData or slow-2g/2g/3g. No autoplay, static marquee, no preloading, audio preload none.
+   Load   RB.loadScript(src) -> Promise, cached per src, rejects on error (a later call retries).
+          RB.loadAI() -> Promise<vapi-widget>: resolves when the launcher renders, rejects on error or after 12s.
+          RB.openAI(btn?): opens the assistant, loading it first; if it can't, a sheet offers WhatsApp and Call.
+          Clicks: [data-open-ai] -> RB.openAI(el). [data-setup-call] -> setupcall.js, RB.openSetupCall({source: el.dataset.source
+          || page, trade: RB.getTrade()}), else follow el.href. [data-search], Ctrl/Cmd+K and '/' (fine pointer only; not in
+          fields; not on faq.html) -> search.js, RB.openSearch(), else faq.html.
+   UI     RB.sheet({label, html, size:'sm'|'md'|'full', onClose}) -> {el, body, close}: .rb-sheet role=dialog, centred 440/640/900px,
+          a bottom sheet under COMPACT ('full' = 100dvh). Focus trap, Esc, backdrop, focus restore, inert page.
+          RB.spy(nav, {offset, axis:'x'|'y'}) -> {refresh}: scrollspy over nav's #links; aria-current="true" + .is-active,
+          --ind-x/--ind-w (x) or --ind-y/--ind-h (y) on nav.
+          RB.seg(el): .seg thumb (--n, --i, data-i) from aria-pressed/selected/checked. RB.toast(msg, 'ok'|'err'|'warn') -> el.
+          RB.icon(id), RB.splitWords(h), RB.copy(text, btn?), RB.esc(s), RB.wa(text, toAnyone?), RB.rand(n), RB.money(cents), RB.loggedIn().
+   Data   RB.TRADES, RB.tradeByKey(k), RB.tradesInOrder(), RB.getTrade(), RB.setTrade(k|null) (fires 'rb:trade'), RB.applyTrade(),
+          RB.tradeSelect(id, cls), RB.PLANS (cents excl. VAT), RB.EXTRA_MIN_CENTS (500, one extra minute).
+          RB.callAudio(trade, {mount, lines, onPlay, onEnd}) -> {audio, destroy}: only keys listed in config.audio.
+          RB.lead(row) -> Promise<boolean>, never throws: name, business, trade, area, phone, email, message, source (capped
+          120/120/60/120/30/200/2000), plus ' · Ref: CODE'. Sources: 'contact', 'signup_fallback', 'setup_call'.
+          RB.getRef() -> code|null: first-touch ?ref= of 8 chars [0-9a-f], 30 days in localStorage rb_ref {code, at}.
+          RB.getDraft() -> draft|null (under 30 days old), RB.clearDraft(). localStorage rb_draft, written by build.js:
+          {v:1, savedAt:ISO, fields:{business_name, owner_name, trade (an RB.TRADES label), service_areas (comma text),
+          callout_weekday, callout_after, after_hours:'yes'|'no', callback_promise:'10'|'15'|'20'|'30'|'60', booking:'calendar'|'callback'}}
+          Elsewhere: pricing.js sets RB.foundingLeft + fires 'rb:founding' on real data only, writes sessionStorage rb_calc
+          {missed, real, win, value}; forward.js: RB.FORWARD, RB.forwardGuide(el, {number, lock}); auth.js: RB.sb, RB.requireUser, RB.signOut.
+   Markup #site-header, #site-footer; body[data-page], [data-app] (slim header, short footer), [data-no-float], [data-no-ai].
+          [data-draft-pill]: 'Your draft: {business_name} · Continue' -> build.html, else hidden. [data-founder="card"|"compact"]:
+          config.founder when name, photo and note are all set, else empty and hidden. [data-wa], [data-tel], [data-phone],
+          [data-email], [data-trade-select|text|sms|log], [data-count].
+   Storage rb_trade, rb_ref, rb_draft (local), rb_intro_seen (session). */
 (function(){
   var C = window.RB_CONFIG || {};
   var RB = window.RB = window.RB || {};
   var reduced = RB.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var page = document.body.dataset.page || '';
+  var body = document.body, root = document.documentElement, page = body.dataset.page || '', isApp = body.hasAttribute('data-app');
+  var IO = window.IntersectionObserver;
+  var $$ = function(s, el){ return [].slice.call((el || document).querySelectorAll(s)); };
   RB.mq = {
     compact: window.matchMedia('(max-width:700px), (pointer:coarse) and (max-height:500px)'),
     rich: window.matchMedia('(hover:hover) and (pointer:fine) and (min-width:701px) and (min-height:501px) and (prefers-reduced-motion:no-preference)')
   };
   RB.rich = RB.mq.rich.matches;
+  var net = navigator.connection || {};
+  RB.lite = !!(navigator.connection && (net.saveData || /^(slow-2g|2g|3g)$/.test(net.effectiveType || '')));
+
+  /* ---------- referral: first touch wins, then the code leaves the address bar ---------- */
+  var REF_DAYS = 30 * 864e5;
+  RB.getRef = function(){ try { var r = JSON.parse(localStorage.getItem('rb_ref')); if (r && /^[0-9a-f]{8}$/.test(r.code) && Date.now() - r.at < REF_DAYS) return r.code; } catch (e) {} return null; };
+  (function(){
+    var q = new URLSearchParams(location.search), ref = q.get('ref');
+    if (ref === null) return;
+    if (/^[0-9a-f]{8}$/.test(ref) && !RB.getRef()) { try { localStorage.setItem('rb_ref', JSON.stringify({ code: ref, at: Date.now() })); } catch (e) {} }
+    q.delete('ref');
+    try { history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch (e) {}
+  })();
+
+  /* ---------- scripts on demand ---------- */
+  var scripts = {};
+  RB.loadScript = function(src){
+    return scripts[src] || (scripts[src] = new Promise(function(res, rej){
+      var s = document.createElement('script'); s.src = src; s.async = true;
+      s.onload = function(){ res(); };
+      s.onerror = function(){ delete scripts[src]; s.remove(); rej(new Error('Could not load ' + src)); };
+      document.head.appendChild(s);
+    }));
+  };
 
   /* ---------- icons ----------
      One 24px grid, 1.75 strokes, round caps and joins. <path class="d"> is an optional duotone fill
@@ -103,17 +155,19 @@
     starter:  { name:'Starter', monthly:250000, setup:350000, per:'/month', setupText:'R3,500 setup · 250 min', minutes:250, feats:['Missed and after-hours calls','Emergency SMS alerts','Calendar booking','Call recordings'] },
     pro:      { name:'Pro', monthly:450000, setup:550000, per:'/month', setupText:'R5,500 setup · 600 min', minutes:600, feats:['Everything in Starter','English and Afrikaans','Review requests','Monthly report'] }
   };
+  RB.EXTRA_MIN_CENTS = 500; /* each minute over the plan's allowance, excl. VAT */
   RB.loggedIn = function(){ try { return Object.keys(localStorage).some(function(k){ return /^sb-.*-auth-token$/.test(k); }); } catch (e) { return false; } };
   var toastBox;
   RB.toast = function(msg, kind){
-    if (!toastBox) { toastBox = document.createElement('div'); toastBox.className = 'toasts'; toastBox.setAttribute('role','status'); toastBox.setAttribute('aria-live','polite'); document.body.appendChild(toastBox); }
+    if (!toastBox) { toastBox = document.createElement('div'); toastBox.className = 'toasts'; toastBox.setAttribute('role','status'); toastBox.setAttribute('aria-live','polite'); body.appendChild(toastBox); }
     var t = document.createElement('div'); t.className = 'toast ' + (kind || ''); t.innerHTML = '<i></i><span></span>'; t.lastChild.textContent = msg;
     toastBox.appendChild(t); setTimeout(function(){ t.remove(); }, 4200);
+    return t;
   };
 
   /* ---------- trades (example calls; all businesses are fictional) ----------
-     Sample call audio: put a recording of each example call at audio/<key>.mp3 (e.g. audio/plumbing.mp3).
-     The player only appears once that file loads. To line the transcript up exactly, add
+     Sample call audio: put a recording of each example call at audio/<key>.mp3 (e.g. audio/plumbing.mp3) and add the
+     key to config.audio. The player only appears for listed keys, once the file loads. To line the transcript up exactly, add
      cues:[0, 4.5, 9, 15.2] to a trade: the second each line starts. Without cues, lines are spread by length. */
   RB.TRADES = [
     { key:'plumbing', plural:'plumbers', log:[['21:47','Burst geyser · Fourways','red','Alerted'],['14:10','Blocked drain · Randburg','mint','Booked'],['09:32','COC for a house sale · Sandton','amber','Callback']],
@@ -201,84 +255,235 @@
   };
   document.addEventListener('change', function(e){ if (e.target.matches && e.target.matches('[data-trade-select]')) RB.setTrade(e.target.value); });
 
-  /* ---------- header ---------- */
-  var NAV = [['product.html','Product'],['trades.html','Trades'],['pricing.html','Pricing'],['index.html#try','Live demo'],['faq.html','FAQ'],['about.html','About'],['contact.html','Contact']];
-  var isIn = RB.loggedIn();
-  function navLinks(){ return NAV.map(function(n){ var cur = n[0].split('#')[0] === page + '.html' && n[0].indexOf('#') < 0; return '<a href="' + n[0] + '"' + (cur ? ' aria-current="page"' : '') + '>' + n[1] + '</a>'; }).join(''); }
-  var ctas = isIn
-    ? '<a class="btn btn-hot btn-sm" href="dashboard.html" aria-label="Dashboard">' + RB.icon('i-home') + '<span class="lbl-sm">Dashboard</span></a>'
-    : '<a class="btn btn-line btn-sm hide-sm" href="login.html">Log in</a><a class="btn btn-hot btn-sm" href="login.html?mode=signup">Get started</a>';
-  var drawerCtas = isIn
-    ? '<div class="drawer-cta" style="grid-template-columns:1fr"><a class="btn btn-hot" href="dashboard.html">Go to dashboard</a></div>'
-    : '<div class="drawer-cta"><a class="btn btn-line" href="login.html">Log in</a><a class="btn btn-hot" href="login.html?mode=signup">Get started</a></div>';
-  var header = document.getElementById('site-header');
-  if (header) {
+  RB.tradesInOrder = function(){ var k = RB.getTrade(); return RB.TRADES.filter(function(t){ return t.key === k; }).concat(RB.TRADES.filter(function(t){ return t.key !== k; })); };
+
+  /* ---------- modal plumbing shared by the menu and RB.sheet ---------- */
+  var FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  var focusables = function(el){ return $$(FOCUSABLE, el).filter(function(f){ return f.getClientRects().length; }); };
+  var modalN = 0;
+  function modal(on){
+    modalN = Math.max(0, modalN + (on ? 1 : -1));
+    $$('#main, #site-header, #site-footer, .mbar, .wa-float, .skip, vapi-widget').forEach(function(el){ if (modalN) el.setAttribute('inert', ''); else el.removeAttribute('inert'); });
+    root.classList.toggle('sheet-open', modalN > 0);
+  }
+  function trap(panel, e){
+    if (e.key !== 'Tab') return;
+    var f = focusables(panel), a = document.activeElement;
+    if (!f.length) { e.preventDefault(); return; }
+    if (e.shiftKey ? (a === f[0] || !panel.contains(a)) : (a === f[f.length - 1] || !panel.contains(a))) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); }
+  }
+  var focusQuiet = function(el){ if (el && el.focus) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } };
+
+  /* RB.sheet: one dialog for the marketing site (the portal's legacy .sheet lives in app.css). */
+  RB.sheet = function(o){
+    o = o || {};
+    var opener = document.activeElement, size = /^(sm|md|full)$/.test(o.size) ? o.size : 'md', closed = false;
+    var layer = document.createElement('div'); layer.className = 'rb-layer';
+    layer.innerHTML = '<div class="rb-bd"></div><div class="rb-sheet rb-sheet--' + size + '" role="dialog" aria-modal="true" tabindex="-1">' +
+      '<div class="rb-sheet-bar"><span class="rb-sheet-label"></span><button class="icon-btn rb-sheet-x" type="button" aria-label="Close">' + RB.icon('i-close') + '</button></div><div class="rb-sheet-body"></div></div>';
+    var el = layer.lastChild, inner = el.lastChild;
+    el.setAttribute('aria-label', o.label || 'Dialog');
+    el.querySelector('.rb-sheet-label').textContent = o.label || '';
+    inner.innerHTML = o.html || '';
+    body.appendChild(layer); modal(true);
+    void layer.offsetWidth; layer.classList.add('is-open');
+    focusQuiet(focusables(inner)[0] || el);
+    function close(){
+      if (closed) return; closed = true;
+      layer.classList.remove('is-open'); modal(false);
+      setTimeout(function(){ layer.remove(); }, reduced ? 0 : 240);
+      if (opener && document.contains(opener)) focusQuiet(opener);
+      if (o.onClose) o.onClose();
+    }
+    layer.firstChild.addEventListener('click', close);
+    el.querySelector('.rb-sheet-x').addEventListener('click', close);
+    layer.addEventListener('keydown', function(e){ if (e.key === 'Escape') { e.stopPropagation(); close(); } else trap(el, e); });
+    return { el: el, body: inner, close: close };
+  };
+
+  /* ---------- header: desktop pill with a sliding highlight; 701-1060px three links + menu; COMPACT a 56px bar ---------- */
+  var NAV = [['product.html','Product',1],['trades.html','Trades'],['pricing.html','Pricing',1],['index.html#try','Live demo'],['faq.html','FAQ',1],['about.html','About'],['contact.html','Contact']];
+  var isIn = RB.loggedIn(), arrow = RB.icon('i-arrow'), aiOK = !body.hasAttribute('data-no-ai') && !!C.vapiPublicKey;
+  var isCur = function(href){ return href.indexOf('#') < 0 && href === page + '.html'; };
+  var header = document.getElementById('site-header'), menu = null, menuFrom = null;
+  if (header && isApp) {
+    header.className = 'nav nav--app';
+    header.innerHTML = '<div class="nav-in"><a class="logo" href="index.html" aria-label="Ringback home">' + LOGO + '</a>' +
+      (page === 'login' ? '<a class="nav-text" href="index.html">' + RB.icon('i-back') + 'Back to site</a>' : '<a class="nav-text" href="dashboard.html#account">' + RB.icon('i-user') + 'Account</a>') + '</div>';
+  } else if (header) {
+    var mac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
     header.className = 'nav';
     header.innerHTML =
       '<div class="nav-in"><a class="logo" href="index.html" aria-label="Ringback home">' + LOGO + '</a>' +
-      '<nav class="links" aria-label="Main">' + navLinks() + '</nav>' +
-      '<div class="nav-cta">' + ctas + '<button class="menu-btn" type="button" id="menuBtn" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">' + RB.icon('i-menu') + '</button></div></div>' +
-      '<nav class="drawer" id="drawer" aria-label="Menu" hidden><label class="drawer-trade"><span>Your trade</span>' + RB.tradeSelect('') + '</label>' + navLinks() + drawerCtas + '</nav>';
-    var menuBtn = document.getElementById('menuBtn'), drawer = document.getElementById('drawer');
-    menuBtn.addEventListener('click', function(){ var open = drawer.hidden; drawer.hidden = !open; menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.innerHTML = RB.icon(open ? 'i-close' : 'i-menu'); });
-    drawer.addEventListener('click', function(e){ if (e.target.closest('a')) { drawer.hidden = true; menuBtn.setAttribute('aria-expanded','false'); menuBtn.innerHTML = RB.icon('i-menu'); } });
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !drawer.hidden) { drawer.hidden = true; menuBtn.setAttribute('aria-expanded','false'); menuBtn.innerHTML = RB.icon('i-menu'); menuBtn.focus(); } });
-  }
+      '<nav class="links" aria-label="Main"><span class="nav-ind" aria-hidden="true"></span>' + NAV.map(function(n){
+        var live = n[0] === 'index.html#try';
+        return '<a href="' + n[0] + '"' + (n[2] || live ? ' class="' + (n[2] ? 'lk-t' : 'nav-live') + '"' : '') + (isCur(n[0]) ? ' aria-current="page"' : '') + '>' + (live ? '<i></i>' + RB.icon('i-mic') : '') + n[1] + '</a>';
+      }).join('') + '</nav>' +
+      '<div class="nav-cta"><button class="nav-search" type="button" data-search aria-label="Search the site">' + RB.icon('i-search') + '<kbd class="kbd" aria-hidden="true">' + (mac ? '⌘K' : 'Ctrl K') + '</kbd></button>' +
+        (isIn ? '<a class="btn btn-hot btn-sm nav-start" href="dashboard.html">Dashboard</a><a class="nav-text nav-login-c" href="dashboard.html">Dashboard</a>'
+              : '<a class="btn btn-line btn-sm nav-login" href="login.html">Log in</a><a class="btn btn-hot btn-sm nav-start" href="login.html?mode=signup">Get started</a><a class="nav-text nav-login-c" href="login.html">Log in</a>') +
+        '<button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">' + RB.icon('i-menu') + '</button></div></div>';
 
-  /* ---------- footer ---------- */
-  var footer = document.getElementById('site-footer');
+    /* the sliding highlight */
+    var links = header.querySelector('.links'), here = links.querySelector('[aria-current]');
+    var moveInd = function(a){
+      if (!a || !a.offsetWidth) { links.classList.remove('has-ind'); return; }
+      links.style.setProperty('--x', a.offsetLeft + 'px'); links.style.setProperty('--w', a.offsetWidth + 'px'); links.classList.add('has-ind');
+    };
+    var rest = function(){ moveInd(here); };
+    if (RB.rich) {
+      links.addEventListener('pointerover', function(e){ var a = e.target.closest('a'); if (a) moveInd(a); });
+      links.addEventListener('pointerleave', rest);
+      links.addEventListener('focusin', function(e){ moveInd(e.target.closest('a')); });
+      links.addEventListener('focusout', rest);
+    }
+    rest(); requestAnimationFrame(function(){ links.classList.add('ready'); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(rest);
+    window.addEventListener('resize', rest);
+
+    /* scrolled state from a sentinel, not a scroll listener */
+    if (IO) {
+      var sen = document.createElement('div'); sen.className = 'nav-sentinel'; sen.setAttribute('aria-hidden', 'true');
+      var skip = body.querySelector('.skip'); body.insertBefore(sen, skip ? skip.nextSibling : body.firstChild);
+      new IO(function(en){ header.classList.toggle('is-scrolled', !en[0].isIntersecting); }).observe(sen);
+    }
+
+    /* the menu: a bottom sheet under COMPACT, a right-hand sheet from 701 to 1060px */
+    menu = document.createElement('div'); menu.className = 'menu'; menu.id = 'menu'; menu.hidden = true;
+    menu.innerHTML = '<div class="menu-bd"></div><div class="menu-panel" role="dialog" aria-modal="true" aria-label="Menu" tabindex="-1">' +
+      '<button class="menu-handle" type="button" aria-label="Close menu"><span></span></button>' +
+      '<button class="menu-row" type="button" data-search>' + RB.icon('i-search') + 'Search the site</button>' +
+      '<nav aria-label="Pages"><ol class="menu-links">' + NAV.map(function(n, i){ return '<li style="--i:' + i + '"><a href="' + n[0] + '"' + (isCur(n[0]) ? ' aria-current="page"' : '') + '><span>0' + (i + 1) + '</span>' + n[1] + arrow + '</a></li>'; }).join('') + '</ol></nav>' +
+      '<div class="menu-trade"><p id="menuTrade">Your trade</p><div class="menu-chips" role="group" aria-labelledby="menuTrade">' +
+        RB.TRADES.map(function(t){ return '<button type="button" class="chip-t" data-trade="' + t.key + '" aria-pressed="false">' + RB.icon(t.icon) + RB.esc(t.label) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="menu-cta">' + (isIn ? '<a class="btn btn-hot" href="dashboard.html">Go to dashboard</a>' : '<a class="btn btn-line" href="login.html">Log in</a><a class="btn btn-hot" href="login.html?mode=signup">Get started</a>') + '</div></div>';
+    body.appendChild(menu);
+    var panel = menu.lastChild;
+    document.addEventListener('rb:trade', syncChips);
+    menu.addEventListener('click', function(e){
+      var t = e.target, chip = t.closest('.chip-t');
+      if (chip) { RB.setTrade(RB.getTrade() === chip.dataset.trade ? null : chip.dataset.trade); return; }
+      if (t.closest('.menu-bd, .menu-handle')) closeMenu();
+      else if (t.closest('.menu-links a')) closeMenu(true);
+    });
+    menu.addEventListener('keydown', function(e){ if (e.key === 'Escape') { e.stopPropagation(); closeMenu(); } else trap(panel, e); });
+    header.querySelector('.menu-btn').addEventListener('click', function(){ openMenu(this); });
+  }
+  function setExpanded(v){ $$('[aria-controls="menu"]').forEach(function(b){ b.setAttribute('aria-expanded', String(v)); }); }
+  function openMenu(from){
+    if (!menu || menu.classList.contains('is-open')) return;
+    menuFrom = from; syncChips(); menu.hidden = false; modal(true); setExpanded(true);
+    void menu.offsetWidth; menu.classList.add('is-open');
+    focusQuiet(menu.querySelector('.menu-links a'));
+  }
+  function closeMenu(leaving){
+    if (!menu || !menu.classList.contains('is-open')) return;
+    menu.classList.remove('is-open'); modal(false); setExpanded(false);
+    setTimeout(function(){ if (!menu.classList.contains('is-open')) menu.hidden = true; }, reduced ? 0 : 280);
+    if (!leaving) focusQuiet(menuFrom);
+  }
+  function syncChips(){ var k = RB.getTrade(); $$('.chip-t', menu).forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.trade === k)); }); }
+
+  /* ---------- footer: a closing chapter ---------- */
+  var footer = document.getElementById('site-footer'), main = document.getElementById('main');
+  if (!footer && isApp && main) { footer = document.createElement('footer'); footer.id = 'site-footer'; main.parentNode.insertBefore(footer, main.nextSibling); }
   if (footer) {
-    footer.className = 'site-footer';
-    var tradeLinks = RB.TRADES.map(function(t){ return '<li><a href="trades.html#' + t.key + '">' + t.label + '</a></li>'; }).join('');
-    footer.innerHTML =
-      '<div class="wrap"><div class="foot">' +
-        '<div><a class="logo" href="index.html">' + LOGO + '</a><p>The AI receptionist for home-service trades in Gauteng. Every call answered, every job booked.</p>' +
-          '<div style="display:grid;gap:8px;margin-top:18px" class="mono"><a href="' + RB.wa('Hi Ringback') + '" target="_blank" rel="noopener">WhatsApp ' + RB.esc(C.phoneDisplay) + '</a>' + (C.email ? '<a href="mailto:' + RB.esc(C.email) + '">' + RB.esc(C.email) + '</a>' : '') + '<span>Johannesburg · Pretoria · East Rand</span></div></div>' +
-        '<div><h4>Product</h4><ul><li><a href="product.html">How it works</a></li><li><a href="product.html#features">Features</a></li><li><a href="index.html#try">Live demo</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="pricing.html#calculator">Calculator</a></li></ul></div>' +
-        '<div><h4>Trades</h4><ul>' + tradeLinks + '</ul></div>' +
-        '<div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="faq.html">FAQ</a></li><li><a href="login.html">Log in</a></li><li><a href="login.html?mode=signup">Create an account</a></li></ul></div>' +
-        '<div><h4>Legal</h4><ul><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms of service</a></li><li><a href="privacy.html#recordings">Call recordings</a></li><li><a href="privacy.html#rights">Your POPIA rights</a></li></ul></div>' +
+    var bottom = '<div class="foot-b"><span>© ' + new Date().getFullYear() + ' Ringback. Prices exclude VAT.</span><span>Businesses named “Ridgeway” on this site are fictional demo businesses.</span>' +
+      '<button class="foot-top" type="button">Back to top' + arrow + '</button></div>';
+    var col = function(h, items){ return '<div><h4>' + h + '</h4><ul>' + items.map(function(l){ return '<li><a href="' + l[0] + '">' + (l[2] ? RB.icon(l[2]) : '') + l[1] + '</a></li>'; }).join('') + '</ul></div>'; };
+    var row = function(tag, attrs, label, value, ic){ return '<' + tag + ' class="fc-row" ' + attrs + '><span class="fc-l">' + RB.icon(ic) + label + '</span><b>' + value + '</b>' + arrow + '</' + tag + '>'; };
+    footer.className = 'site-footer' + (isApp ? ' site-footer--app' : '');
+    footer.innerHTML = isApp ? '<div class="wrap">' + bottom + '</div>' : '<div class="wrap">' +
+      '<div class="foot-contact">' +
+        (C.whatsapp ? row('a', 'href="' + RB.wa('Hi Ringback, I have a question.') + '" target="_blank" rel="noopener"', 'WhatsApp', RB.esc(C.phoneDisplay), 'i-wa') : '') +
+        (C.phoneTel ? row('a', 'href="tel:' + RB.esc(C.phoneTel) + '"', 'Call', RB.esc(C.phoneDisplay), 'i-phone') : '') +
+        (aiOK ? row('button', 'type="button" data-open-ai', 'Ask the assistant', 'Chat or talk now', 'i-mic') : '') +
       '</div>' +
-      '<div class="foot-b"><span>© ' + new Date().getFullYear() + ' Ringback. Prices exclude VAT.</span><span>Businesses named "Ridgeway" on this site are fictional demo businesses.</span></div>' +
-      '<div class="wordmark" aria-hidden="true">Ringback</div></div>';
+      '<div class="foot">' +
+        '<div class="foot-brand"><a class="logo" href="index.html">' + LOGO + '</a><p>The AI receptionist for home-service trades in Gauteng. Every call answered, every job booked.</p>' +
+          '<p class="foot-made">Made in Gauteng · Johannesburg · Pretoria · East Rand</p>' + (C.email ? '<a class="foot-mail" href="mailto:' + RB.esc(C.email) + '">' + RB.esc(C.email) + '</a>' : '') + '</div>' +
+        col('Product', [['product.html','How it works'],['product.html#features','Features'],['build.html','Build your assistant'],['index.html#try','Live demo'],['pricing.html','Pricing'],['pricing.html#calculator','Calculator']]) +
+        col('Trades', RB.TRADES.map(function(t){ return ['trades.html#' + t.key, RB.esc(t.label), t.icon]; })) +
+        col('Company', [['about.html','About'],['contact.html','Contact'],['faq.html','FAQ'],['login.html','Log in'],['login.html?mode=signup','Create an account']]) +
+        col('Legal', [['privacy.html','Privacy policy'],['terms.html','Terms of service'],['privacy.html#recordings','Call recordings'],['privacy.html#rights','Your POPIA rights']]) +
+      '</div>' +
+      '<div class="foot-share"><p>Know a tradie who misses calls? <b>Send them Ringback.</b></p><a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="' +
+        RB.wa('Know a tradie who misses calls? Ringback answers them 24/7, sorts emergencies from quotes and books the job: ' + (C.siteUrl || ''), true) + '">' + RB.icon('i-wa') + 'Share on WhatsApp</a></div>' +
+      bottom +
+      /* the wordmark scales by viewBox, so it can't overflow; RICH raises its bars as it scrolls in */
+      '<svg class="wordmark" viewBox="0 0 1200 384" aria-hidden="true" focusable="false"><defs>' +
+        '<pattern id="wmBars" width="12" height="384" patternUnits="userSpaceOnUse"><rect width="6" height="384" fill="rgba(236,243,240,.08)"/></pattern>' +
+        '<clipPath id="wmClip"><text x="600" y="294" text-anchor="middle" textLength="1184" lengthAdjust="spacingAndGlyphs">Ringback</text></clipPath></defs>' +
+        '<g clip-path="url(#wmClip)"><rect class="wm-bars" width="1200" height="384" fill="url(#wmBars)"/><rect class="wm-last" x="1056" width="6" height="384"/></g></svg>' +
+    '</div>';
+    footer.querySelector('.foot-top').addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+      if (main) { if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1'); focusQuiet(main); }
+    });
   }
 
-  /* ---------- floating WhatsApp ---------- */
-  if (!document.body.hasAttribute('data-no-float') && C.whatsapp) {
+  /* ---------- floating WhatsApp (bigger screens) ---------- */
+  if (!body.hasAttribute('data-no-float') && C.whatsapp) {
     var wa = document.createElement('a');
     wa.className = 'wa-float'; wa.href = RB.wa('Hi Ringback, I have a question.'); wa.target = '_blank'; wa.rel = 'noopener';
     wa.setAttribute('aria-label', 'Chat to us on WhatsApp'); wa.innerHTML = RB.icon('i-wa');
-    document.body.appendChild(wa);
+    body.appendChild(wa);
   }
 
-  /* ---------- phone action bar ----------
-     On small screens a bottom bar (trial, ask, WhatsApp) replaces the floating buttons. It slides in once
-     the page hero has scrolled away, so it never covers the headline. */
-  var mbar = null;
-  if (!document.body.hasAttribute('data-no-float')) {
-    mbar = document.createElement('div');
+  /* ---------- action bar (COMPACT), hidden while the hero's main button is on screen ---------- */
+  if (!body.hasAttribute('data-no-float') && !isApp) {
+    var mbar = document.createElement('div');
     mbar.className = 'mbar'; mbar.setAttribute('role', 'region'); mbar.setAttribute('aria-label', 'Quick actions');
-    mbar.innerHTML = (isIn ? '<a class="btn btn-hot" href="dashboard.html">Go to dashboard</a>' : '<a class="btn btn-hot" href="login.html?mode=signup">Start free trial ' + RB.icon('i-arrow') + '</a>') +
-      (!document.body.hasAttribute('data-no-ai') && C.vapiPublicKey ? '<button class="mbar-ic" type="button" data-open-ai aria-label="Ask the Ringback assistant">' + RB.icon('i-mic') + '</button>' : '') +
+    mbar.innerHTML = (menu ? '<button class="mbar-ic" type="button" aria-controls="menu" aria-expanded="false" aria-label="Open menu">' + RB.icon('i-menu') + '</button>' : '') +
+      (isIn ? '<a class="btn btn-hot" href="dashboard.html">Go to dashboard</a>' : '<a class="btn btn-hot" href="login.html?mode=signup">Start free trial' + arrow + '</a>') +
+      (aiOK ? '<button class="mbar-ic" type="button" data-open-ai aria-label="Ask the Ringback assistant">' + RB.icon('i-mic') + '</button>' : '') +
       (C.whatsapp ? '<a class="mbar-ic wa" href="' + RB.wa('Hi Ringback, I have a question.') + '" target="_blank" rel="noopener" aria-label="Chat to us on WhatsApp">' + RB.icon('i-wa') + '</a>' : '');
-    document.body.appendChild(mbar);
-    var syncBar = function(){ document.body.classList.toggle('has-mbar', RB.mq.compact.matches); };
+    body.appendChild(mbar);
+    if (menu) mbar.firstChild.addEventListener('click', function(){ openMenu(this); });
+    var syncBar = function(){ body.classList.toggle('has-mbar', RB.mq.compact.matches); };
     if (RB.mq.compact.addEventListener) RB.mq.compact.addEventListener('change', syncBar); syncBar();
-    var heroEl = document.querySelector('.hero, .phero, .nf');
-    if (heroEl && 'IntersectionObserver' in window) new IntersectionObserver(function(en){ mbar.classList.toggle('show', !en[0].isIntersecting); }, { rootMargin: '-90px 0px 0px 0px' }).observe(heroEl);
-    else { var barScroll = function(){ mbar.classList.toggle('show', window.scrollY > 300); }; window.addEventListener('scroll', barScroll, { passive: true }); barScroll(); }
+    var heroEl = document.querySelector('.hero, .phero, .nf'), heroCta = heroEl && (heroEl.querySelector('.btn-hot') || heroEl);
+    if (heroCta && IO) new IO(function(en){ mbar.classList.toggle('show', !en[0].isIntersecting); }, { rootMargin: '-56px 0px 0px 0px' }).observe(heroCta);
+    else mbar.classList.add('show');
   }
 
   /* ---------- fill contact placeholders ---------- */
-  document.querySelectorAll('[data-wa]').forEach(function(a){ a.href = RB.wa(a.getAttribute('data-wa')); a.target = '_blank'; a.rel = 'noopener'; });
-  document.querySelectorAll('[data-phone]').forEach(function(el){ el.textContent = C.phoneDisplay; });
-  document.querySelectorAll('[data-tel]').forEach(function(a){ a.href = 'tel:' + C.phoneTel; });
-  document.querySelectorAll('[data-email]').forEach(function(el){ if (C.email) { el.textContent = C.email; if (el.tagName === 'A') el.href = 'mailto:' + C.email; } else { var card = el.closest('[data-email-card]'); if (card) card.hidden = true; } });
+  $$('[data-wa]').forEach(function(a){ a.href = RB.wa(a.getAttribute('data-wa')); a.target = '_blank'; a.rel = 'noopener'; });
+  $$('[data-phone]').forEach(function(el){ el.textContent = C.phoneDisplay; });
+  $$('[data-tel]').forEach(function(a){ a.href = 'tel:' + C.phoneTel; });
+  $$('[data-email]').forEach(function(el){ if (C.email) { el.textContent = C.email; if (el.tagName === 'A') el.href = 'mailto:' + C.email; } else { var card = el.closest('[data-email-card]'); if (card) card.hidden = true; } });
 
-  /* ---------- progress bar (not on phones) + pointer spotlight (rich tier only) ---------- */
+  /* ---------- builder draft (written by build.js) ---------- */
+  RB.getDraft = function(){
+    try { var d = JSON.parse(localStorage.getItem('rb_draft')), at = d && d.v === 1 && d.fields && Date.parse(d.savedAt); if (at && Date.now() - at < REF_DAYS) return d; } catch (e) {}
+    return null;
+  };
+  RB.clearDraft = function(){ try { localStorage.removeItem('rb_draft'); } catch (e) {} };
+  var draft = RB.getDraft();
+  $$('[data-draft-pill]').forEach(function(el){
+    el.hidden = !draft; el.innerHTML = '';
+    if (!draft) return;
+    var name = String(draft.fields.business_name || '').trim();
+    el.innerHTML = '<a class="draft-pill" href="build.html"><i></i><span>Your draft' + (name ? ': <b></b>' : '') + ' · Continue</span>' + arrow + '</a>';
+    if (name) el.querySelector('b').textContent = name;
+  });
+
+  /* ---------- founder: only with a real name, photo and note ---------- */
+  var F = C.founder || {};
+  $$('[data-founder]').forEach(function(el){
+    var ok = F.name && F.photo && F.note;
+    el.hidden = !ok; el.innerHTML = '';
+    if (!ok) return;
+    el.classList.add('founder', 'founder--' + (el.dataset.founder === 'compact' ? 'compact' : 'card'));
+    el.innerHTML = '<img src="' + RB.esc(F.photo) + '" alt="' + RB.esc(F.name) + '" width="88" height="88" loading="lazy" decoding="async"><div><b>' + RB.esc(F.name) + (F.role ? ' · ' + RB.esc(F.role) : '') + '</b><p></p>' +
+      (C.whatsapp ? '<a class="btn btn-line btn-sm" href="' + RB.wa('Hi ' + F.name + ', ') + '" target="_blank" rel="noopener">' + RB.icon('i-wa') + 'WhatsApp ' + RB.esc(F.name.split(' ')[0]) + '</a>' : '') + '</div>';
+    el.querySelector('p').textContent = F.note;
+  });
+
+  /* ---------- progress bar (not on phones) + pointer spotlight (RICH) ---------- */
   if (!RB.mq.compact.matches) {
-    var prog = document.createElement('div'); prog.className = 'progress'; prog.setAttribute('aria-hidden','true'); document.body.appendChild(prog);
-    var onScroll = function(){ var h = document.documentElement; prog.style.setProperty('--sp', (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)).toFixed(4)); };
+    var prog = document.createElement('div'); prog.className = 'progress'; prog.setAttribute('aria-hidden','true'); body.appendChild(prog);
+    var onScroll = function(){ prog.style.setProperty('--sp', (root.scrollTop / Math.max(1, root.scrollHeight - root.clientHeight)).toFixed(4)); };
     window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
   }
   if (RB.rich) document.addEventListener('pointermove', function(e){
@@ -286,18 +491,14 @@
     var r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px');
   }, { passive: true });
 
-  /* ---------- skip link: focus the main content without changing the address (the portal routes on #hash) ---------- */
+  /* ---------- skip link: focus main without touching the hash (the portal routes on it) ---------- */
   document.addEventListener('click', function(e){
-    var a = e.target.closest && e.target.closest('a.skip'); if (!a) return;
-    var main = document.getElementById('main'); if (!main) return;
+    var a = e.target.closest && e.target.closest('a.skip'); if (!a || !main) return;
     e.preventDefault(); if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
     main.focus(); main.scrollIntoView();
   });
 
-  /* ---------- segmented controls ----------
-     One thumb slides behind the selected option. RB.seg(el) sets --n (options) and --i (selected index, also
-     data-i) from aria-pressed / aria-selected / aria-checked, and keeps them in step whenever those change.
-     Every .seg on the page is set up here; call RB.seg on any you add later. */
+  /* ---------- segmented controls (RB.seg; every .seg here, call it for ones added later) ---------- */
   RB.seg = function(el){
     if (!el || el._rbSeg) return; el._rbSeg = true;
     function sync(){
@@ -309,11 +510,35 @@
     sync();
     if ('MutationObserver' in window) new MutationObserver(sync).observe(el, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-pressed','aria-selected','aria-checked'] });
   };
-  document.querySelectorAll('.seg').forEach(function(el){ RB.seg(el); });
+  $$('.seg').forEach(function(el){ RB.seg(el); });
 
-  /* ---------- section headings build in word by word ----------
-     Rich tier only, first time each heading is seen. Phones and reduced motion just show the heading. */
-  var revealOK = RB.rich && 'IntersectionObserver' in window;
+  /* ---------- RB.spy: scrollspy for in-page navs (product subnav, trade rail, FAQ index, legal TOC) ---------- */
+  RB.spy = function(nav, o){
+    o = o || {};
+    var x = o.axis === 'x', items = [], seen = {}, active = null;
+    $$('a[href*="#"]', nav).forEach(function(a){ var id = a.pathname === location.pathname && decodeURIComponent(a.hash.slice(1)), t = id && document.getElementById(id); if (t) items.push({ a: a, t: t }); });
+    function mark(it){
+      if (!it) return;
+      active = it;
+      items.forEach(function(i){ var on = i === it; i.a.classList.toggle('is-active', on); if (on) i.a.setAttribute('aria-current', 'true'); else i.a.removeAttribute('aria-current'); });
+      var n = nav.getBoundingClientRect(), r = it.a.getBoundingClientRect();
+      if (x) { var left = r.left - n.left + nav.scrollLeft; nav.style.setProperty('--ind-x', left + 'px'); nav.style.setProperty('--ind-w', r.width + 'px');
+        if (nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: left - (nav.clientWidth - r.width) / 2, behavior: reduced ? 'auto' : 'smooth' }); }
+      else { var top = r.top - n.top + nav.scrollTop; nav.style.setProperty('--ind-y', top + 'px'); nav.style.setProperty('--ind-h', r.height + 'px');
+        if (nav.scrollHeight > nav.clientHeight) nav.scrollTo({ top: top - (nav.clientHeight - r.height) / 2, behavior: reduced ? 'auto' : 'smooth' }); }
+    }
+    if (IO && items.length) {
+      var io = new IO(function(en){
+        en.forEach(function(e){ seen[e.target.id] = e.isIntersecting; });
+        for (var i = 0; i < items.length; i++) if (seen[items[i].t.id]) { if (items[i] !== active) mark(items[i]); return; }
+      }, { rootMargin: '-' + (o.offset || 0) + 'px 0px -55% 0px' });
+      items.forEach(function(i){ io.observe(i.t); });
+    }
+    mark(items[0]);
+    return { refresh: function(){ mark(active); } };
+  };
+
+  /* ---------- motion (RICH only): h2 mask reveal; the home intro flag is set in index.html before first paint ---------- */
   RB.splitWords = function(h){
     var n = 0;
     (function walk(el, hot){
@@ -323,11 +548,13 @@
           node.textContent.split(/(\s+)/).forEach(function(part){
             if (!part) return;
             if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
-            var w = document.createElement('span'); w.className = 'w' + (hot ? ' hot' : ''); w.style.setProperty('--i', n++); w.textContent = part; frag.appendChild(w);
+            var w = document.createElement('span'), wi = document.createElement('span');
+            w.className = 'w'; w.style.setProperty('--i', n++); wi.className = 'wi' + (hot ? ' hot' : ''); wi.textContent = part;
+            w.appendChild(wi); frag.appendChild(w);
           });
           node.parentNode.replaceChild(frag, node);
         } else if (node.nodeType === 1 && node.tagName !== 'BR') {
-          /* a gradient word group: give each word its own gradient so it survives being split */
+          /* gradient phrases get a gradient per word (Android stacked them otherwise) */
           var isHot = node.classList.contains('hot');
           if (isHot) node.classList.remove('hot');
           walk(node, hot || isHot);
@@ -335,77 +562,66 @@
       });
     })(h, false);
   };
-  if (revealOK) {
-    var heads = [].filter.call(document.querySelectorAll('main h2'), function(h){ return !h.closest('.app, .prose, .paper, .faq') && !h.classList.contains('faq-cat'); });
-    var hio = new IntersectionObserver(function(entries){
+  if (RB.rich && IO) {
+    var hio = new IO(function(entries){
       entries.forEach(function(en){ if (en.isIntersecting) { hio.unobserve(en.target); en.target.classList.add('is-in'); } });
     }, { threshold: .3 });
-    heads.forEach(function(h){ RB.splitWords(h); h.classList.add('wr'); hio.observe(h); });
+    $$('main h2').forEach(function(h){ if (h.closest('.app, .prose, .paper, .faq') || h.classList.contains('faq-cat')) return; RB.splitWords(h); h.classList.add('wr'); hio.observe(h); });
   }
+  if (root.classList.contains('intro')) {
+    try { sessionStorage.setItem('rb_intro_seen', '1'); } catch (e) {}
+    setTimeout(function(){ root.classList.remove('intro'); }, 1000);
+  }
+  /* marquees pause off screen; in lite mode they stand still and scroll by hand */
+  $$('.marquee').forEach(function(m){
+    if (RB.lite) m.classList.add('is-static');
+    if (RB.lite || reduced) { m.tabIndex = 0; m.setAttribute('role', 'region'); }
+    if (IO) new IO(function(en){ m.classList.toggle('is-off', !en[0].isIntersecting); }).observe(m);
+  });
 
   /* ---------- count-up (final numbers are shown at rest) ---------- */
-  if ('IntersectionObserver' in window && !reduced) {
-    var io = new IntersectionObserver(function(entries){
+  if (IO && !reduced) {
+    var io = new IO(function(entries){
       entries.forEach(function(en){
         if (!en.isIntersecting) return; io.unobserve(en.target);
         var el = en.target, end = +el.dataset.count, t0 = performance.now();
         (function tick(now){ var k = Math.min(1, (now - t0) / 1100); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); })(t0);
       });
     }, { threshold: .6 });
-    document.querySelectorAll('[data-count]').forEach(function(el){ io.observe(el); });
+    $$('[data-count]').forEach(function(el){ io.observe(el); });
   }
 
-  /* ---------- trade grid (links to trades page); your trade comes first ---------- */
-  var grid = document.getElementById('tradeGrid');
-  RB.tradesInOrder = function(){ var k = RB.getTrade(); return RB.TRADES.filter(function(t){ return t.key === k; }).concat(RB.TRADES.filter(function(t){ return t.key !== k; })); };
-  function buildGrid(){
-    var mine = RB.getTrade();
-    grid.innerHTML = '';
-    RB.tradesInOrder().forEach(function(t){
-      var a = document.createElement('a'); a.className = 'trade spot rv' + (t.key === mine ? ' mine' : ''); a.href = 'trades.html#' + t.key;
-      a.innerHTML = '<span class="ic">' + RB.icon(t.icon) + '</span>' + (t.key === mine ? '<span class="tag ember mine-tag">Your trade</span>' : '') + '<h3>' + RB.esc(t.label) + '</h3><dl><div><dt class="e">Escalates</dt><dd>' + RB.esc(t.catches) + '</dd></div><div><dt class="r">Books</dt><dd>' + RB.esc(t.books) + '</dd></div></dl><span class="go">See how it works ' + RB.icon('i-arrow') + '</span>';
-      grid.appendChild(a);
-    });
-    var more = document.createElement('a'); more.className = 'trade more spot rv'; more.href = 'contact.html';
-    more.innerHTML = '<h3>Another trade?</h3><p class="muted" style="font-size:.92rem">Roofers, glaziers, pool services, appliance repairs, garage doors. If customers phone you, we can set it up.</p><span class="go">Talk to us ' + RB.icon('i-arrow') + '</span>';
-    grid.appendChild(more);
-  }
-  if (grid) { buildGrid(); document.addEventListener('rb:trade', buildGrid); }
-
-  /* ---------- "Hear a real call": sample-call audio with a synced transcript ----------
-     RB.callAudio(trade, { mount, lines, onPlay, onEnd }) puts a player in `mount` once audio/<key>.mp3 loads.
-     If the file is missing the player stays hidden and the transcript works as plain text. */
-  var audioOK = {}, nowPlaying = null;
+  /* ---------- "Hear a real call": example audio with a synced transcript (keys in config.audio only) ---------- */
+  var AUDIO = C.audio || [], audioBad = {}, nowPlaying = null;
   function fmt(sec){ sec = Math.max(0, Math.floor(sec || 0)); return Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2); }
   RB.callAudio = function(t, o){
-    var src = t.audio || ('audio/' + t.key + '.mp3'), mount = o.mount, a = null, dead = false, cues = null;
+    var mount = o.mount, src = t.audio || ('audio/' + t.key + '.mp3'), dead = false, cues = null;
     mount.hidden = true; mount.innerHTML = '';
-    if (audioOK[src] === false) return { destroy: function(){} };
-    a = new Audio(); a.preload = 'metadata';
+    if ((!t.audio && AUDIO.indexOf(t.key) < 0) || audioBad[src]) return { destroy: function(){} };
+    var a = new Audio(); a.preload = RB.lite ? 'none' : 'metadata';
+    mount.innerHTML = '<button type="button" class="hear-btn"></button><div class="hear-mid"><span class="hear-t">Hear this call <span class="faint">· example recording</span></span><input type="range" class="hear-seek" min="0" max="1" step="0.1" value="0" disabled aria-label="Position in the recording"></div><span class="hear-time mono">0:00</span>';
+    var btn = mount.querySelector('.hear-btn'), seek = mount.querySelector('.hear-seek'), time = mount.querySelector('.hear-time');
     function lineEls(){ return o.lines ? [].slice.call(o.lines.children) : []; }
     function estimate(dur){
       var w = t.lines.map(function(l){ return l[1].length + 25; }), sum = w.reduce(function(x, y){ return x + y; }, 0), at = 0;
       return w.map(function(x){ var c = at; at += x / sum * dur; return c; });
     }
-    function current(){ var i = 0; for (var k = 0; k < cues.length; k++) if (a.currentTime >= cues[k] - 0.05) i = k; return i; }
     function mark(){
-      var i = current(), playing = !a.paused || a.currentTime > 0;
+      if (!cues) return;
+      var i = 0, playing = !a.paused || a.currentTime > 0;
+      for (var k = 0; k < cues.length; k++) if (a.currentTime >= cues[k] - 0.05) i = k;
       lineEls().forEach(function(el, k){ el.classList.toggle('on', playing && k === i); });
       seek.value = a.currentTime; time.textContent = fmt(a.currentTime) + ' / ' + fmt(a.duration);
       seek.style.setProperty('--p', (a.currentTime / (a.duration || 1) * 100) + '%');
     }
-    var btn, seek, time;
     function setBtn(){ var on = !a.paused; btn.innerHTML = RB.icon(on ? 'i-pause' : 'i-play'); btn.setAttribute('aria-label', (on ? 'Pause' : 'Play') + ' the example ' + t.label.toLowerCase() + ' call'); mount.classList.toggle('playing', on); }
     function play(){ if (o.onPlay) o.onPlay(); var pr = a.play(); if (pr && pr.catch) pr.catch(function(){}); }
+    btn.addEventListener('click', function(){ if (a.paused) play(); else a.pause(); });
+    seek.addEventListener('input', function(){ a.currentTime = +seek.value; mark(); });
     a.addEventListener('loadedmetadata', function(){
-      if (dead) return;
-      audioOK[src] = true;
+      if (dead || cues) return;
       cues = (t.cues && t.cues.length === t.lines.length) ? t.cues : estimate(a.duration);
-      mount.innerHTML = '<button type="button" class="hear-btn"></button><div class="hear-mid"><span class="hear-t">Hear this call <span class="faint">· example recording</span></span><input type="range" class="hear-seek" min="0" step="0.1" aria-label="Position in the recording"></div><span class="hear-time mono"></span>';
-      btn = mount.querySelector('.hear-btn'); seek = mount.querySelector('.hear-seek'); time = mount.querySelector('.hear-time');
-      seek.max = a.duration; setBtn(); mark();
-      btn.addEventListener('click', function(){ if (a.paused) play(); else a.pause(); });
-      seek.addEventListener('input', function(){ a.currentTime = +seek.value; mark(); });
+      seek.max = a.duration; seek.disabled = false; mark();
       /* each transcript line becomes a button that jumps the recording to that line */
       lineEls().forEach(function(el, k){
         var b = document.createElement('button'); b.type = 'button'; b.className = el.className + ' seekable'; b.innerHTML = el.innerHTML;
@@ -415,49 +631,128 @@
       });
       mount.hidden = false;
     });
-    a.addEventListener('error', function(){ audioOK[src] = false; mount.hidden = true; });
+    a.addEventListener('error', function(){ if (!a.getAttribute('src')) return; audioBad[src] = true; mount.hidden = true; });
     a.addEventListener('play', function(){ if (nowPlaying && nowPlaying !== a) nowPlaying.pause(); nowPlaying = a; });
-    ['play','pause'].forEach(function(ev){ a.addEventListener(ev, function(){ if (btn) { setBtn(); mark(); } }); });
-    a.addEventListener('timeupdate', function(){ if (btn) mark(); });
+    ['play','pause'].forEach(function(ev){ a.addEventListener(ev, function(){ setBtn(); mark(); }); });
+    a.addEventListener('timeupdate', mark);
     a.addEventListener('ended', function(){ lineEls().forEach(function(el){ el.classList.remove('on'); }); if (o.onEnd) o.onEnd(); });
+    setBtn();
+    /* lite mode doesn't fetch until asked, so the (listed) player shows straight away */
+    if (RB.lite) mount.hidden = false;
     a.src = src;
     return { audio: a, destroy: function(){ dead = true; a.pause(); a.removeAttribute('src'); a.load(); mount.hidden = true; mount.innerHTML = ''; } };
   };
 
-  /* ---------- AI assistant (Vapi widget) ---------- */
-  function openAI(){
-    var w = document.querySelector('vapi-widget');
-    var launcher = w && w.querySelector('.vapi-widget-wrapper [style*="cursor: pointer"]');
-    if (w && w.querySelectorAll('button').length) return;
-    if (launcher) { launcher.click(); return; }
-    location.href = 'index.html#try';
+  /* ---------- AI assistant (Vapi), loaded on demand ---------- */
+  var VAPI = 'https://unpkg.com/@vapi-ai/client-sdk-react@0.1.1/dist/embed/widget.umd.js', aiP = null;
+  var launcher = function(w){ return w && w.querySelector('.vapi-widget-wrapper [style*="cursor: pointer"]'); };
+  RB.loadAI = function(){
+    return aiP || (aiP = new Promise(function(res, rej){
+      if (!aiOK) return rej(new Error('The assistant is off on this page'));
+      var vw = document.querySelector('vapi-widget'), done = false;
+      if (!vw) {
+        vw = document.createElement('vapi-widget');
+        var attrs = { 'public-key':C.vapiPublicKey, 'assistant-id':C.vapiAssistantId, mode:'hybrid', theme:'dark', position:'bottom-right', 'border-radius':'large', 'base-bg-color':'#0B1716', 'accent-color':'#FF7A3D', 'cta-button-color':'#FF7A3D', 'cta-button-text-color':'#160A04', title:'Ask Ringback', 'cta-title':'Ask Ringback', 'cta-subtitle':'Chat, talk, or try the demo', 'start-button-text':'Talk to the assistant', 'end-button-text':'End call',
+          'chat-first-message':"Hi, I'm the Ringback assistant. Ask me anything, or type 'try the demo' and pick a trade to hear how I'd handle your calls.",
+          'hybrid-empty-message':"Type a question, or tap the mic to talk. Say 'try the demo' to hear it take a call for your trade.",
+          'chat-placeholder':'Ask about pricing, setup, POPIA...', 'voice-show-transcript':'true', 'consent-required':'true', 'consent-title':'Before we start',
+          'consent-content':"This chat or call is handled by an AI assistant and is recorded so we can reply and follow up with you. Please don't share sensitive personal information. By continuing you agree to this and to our privacy policy.",
+          'consent-storage-key':'ringback_consent' };
+        Object.keys(attrs).forEach(function(k){ vw.setAttribute(k, attrs[k]); });
+        vw.className = 'closed';
+        body.appendChild(vw);
+        if (modalN) vw.setAttribute('inert', '');
+      }
+      /* collapsed launcher = no buttons; CSS hides it when the action bar shows */
+      var finish = function(ok){ if (done) return; done = true; clearTimeout(timer); if (ok) res(vw); else { aiP = null; rej(new Error('The assistant did not load')); } };
+      var sync = function(){ vw.classList.toggle('closed', !vw.querySelector('button')); if (launcher(vw)) finish(true); };
+      if ('MutationObserver' in window) new MutationObserver(sync).observe(vw, { childList: true, subtree: true });
+      var timer = setTimeout(function(){ finish(false); }, 12000);
+      RB.loadScript(VAPI).catch(function(){ finish(false); });
+      sync();
+    }));
+  };
+  function aiFallback(){
+    RB.sheet({ label: 'Assistant', size: 'sm', html: '<div class="stack-m"><h2 class="h-md">The assistant didn\'t load on this connection.</h2><p class="muted">We answer the same questions on WhatsApp or the phone.</p><div class="stack-s">' +
+      (C.whatsapp ? '<a class="btn btn-hot btn-block" href="' + RB.wa('Hi Ringback, I have a question.') + '" target="_blank" rel="noopener">' + RB.icon('i-wa') + 'WhatsApp us</a>' : '') +
+      (C.phoneTel ? '<a class="btn btn-line btn-block" href="tel:' + RB.esc(C.phoneTel) + '">' + RB.icon('i-phone') + 'Call ' + RB.esc(C.phoneDisplay) + '</a>' : '') + '</div></div>' });
   }
-  RB.openAI = openAI;
-  document.addEventListener('click', function(e){ var b = e.target.closest && e.target.closest('[data-open-ai]'); if (b) { e.preventDefault(); openAI(); } });
+  RB.openAI = function(btn){
+    var w = document.querySelector('vapi-widget'), go = function(w){ if (!w.querySelectorAll('button').length && launcher(w)) launcher(w).click(); };
+    if (launcher(w)) return go(w);
+    if (!aiOK) return aiFallback();
+    var busy = btn && btn.classList;
+    if (busy) { btn.classList.add('loading'); btn.setAttribute('aria-busy', 'true'); }
+    var note = RB.toast('Connecting to the assistant…');
+    var end = function(){ note.remove(); if (busy) { btn.classList.remove('loading'); btn.removeAttribute('aria-busy'); } };
+    RB.loadAI().then(function(w){ end(); go(w); }, function(){ end(); aiFallback(); });
+  };
   var prompts = document.getElementById('prompts');
   if (prompts) [].forEach.call(prompts.children, function(b){
     b.addEventListener('click', function(){
       var done = function(){ b.classList.add('copied'); setTimeout(function(){ b.classList.remove('copied'); }, 1600); };
       try { navigator.clipboard.writeText(b.textContent).then(done, done); } catch (e) { done(); }
-      openAI();
+      RB.openAI(b);
     });
   });
-  if (!document.body.hasAttribute('data-no-ai') && C.vapiPublicKey) {
-    var vw = document.createElement('vapi-widget');
-    var attrs = { 'public-key':C.vapiPublicKey, 'assistant-id':C.vapiAssistantId, mode:'hybrid', theme:'dark', position:'bottom-right', 'border-radius':'large', 'base-bg-color':'#0B1716', 'accent-color':'#FF7A3D', 'cta-button-color':'#FF7A3D', 'cta-button-text-color':'#160A04', title:'Ask Ringback', 'cta-title':'Ask Ringback', 'cta-subtitle':'Chat, talk, or try the demo', 'start-button-text':'Talk to the assistant', 'end-button-text':'End call',
-      'chat-first-message':"Hi, I'm the Ringback assistant. Ask me anything, or type 'try the demo' and pick a trade to hear how I'd handle your calls.",
-      'hybrid-empty-message':"Type a question, or tap the mic to talk. Say 'try the demo' to hear it take a call for your trade.",
-      'chat-placeholder':'Ask about pricing, setup, POPIA...', 'voice-show-transcript':'true', 'consent-required':'true', 'consent-title':'Before we start',
-      'consent-content':"This chat or call is handled by an AI assistant and is recorded so we can reply and follow up with you. Please don't share sensitive personal information. By continuing you agree to this and to our privacy policy.",
-      'consent-storage-key':'ringback_consent' };
-    Object.keys(attrs).forEach(function(k){ vw.setAttribute(k, attrs[k]); });
-    document.body.appendChild(vw);
-    /* the collapsed launcher has no buttons; once a chat opens it does. CSS hides the collapsed launcher on phones,
-       where the action bar's Ask button opens it instead. */
-    var syncVw = function(){ vw.classList.toggle('closed', !vw.querySelector('button')); };
-    syncVw();
-    if ('MutationObserver' in window) new MutationObserver(syncVw).observe(vw, { childList: true, subtree: true });
-    var sc = document.createElement('script'); sc.src = 'https://unpkg.com/@vapi-ai/client-sdk-react@0.1.1/dist/embed/widget.umd.js'; sc.async = true; document.body.appendChild(sc);
+  /* a big screen on a good connection may warm the widget up once the page is idle; phones never do */
+  if (aiOK && RB.rich && !RB.lite && net.effectiveType === '4g' && !net.saveData) window.addEventListener('load', function(){
+    setTimeout(function(){ (window.requestIdleCallback || setTimeout)(function(){ RB.loadAI().catch(function(){}); }); }, 3000);
+  });
+
+  /* ---------- lazy hooks: setup call, search, assistant ---------- */
+  function lazy(src, fn, fallback){ return RB.loadScript(src).then(function(){ if (!RB[fn]) throw new Error(fn + ' missing'); }).catch(function(){ location.href = fallback; throw 0; }); }
+  function openSearch(){ closeMenu(); lazy('search.js', 'openSearch', 'faq.html').then(function(){ RB.openSearch(); }, function(){}); }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target : e.target.parentNode, el;
+    if (!t || !t.closest || e.defaultPrevented) return;
+    if ((el = t.closest('[data-open-ai]'))) { e.preventDefault(); RB.openAI(el); }
+    else if ((el = t.closest('[data-setup-call]'))) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault(); el.classList.add('loading');
+      lazy('setupcall.js', 'openSetupCall', el.href || 'contact.html#message').then(function(){ el.classList.remove('loading'); RB.openSetupCall({ source: el.dataset.source || page, trade: RB.getTrade() }); }, function(){ el.classList.remove('loading'); });
+    }
+    else if ((el = t.closest('[data-search]'))) { e.preventDefault(); openSearch(); }
+  });
+  if (!isApp && window.matchMedia('(pointer:fine)').matches) document.addEventListener('keydown', function(e){
+    if (e.defaultPrevented || e.altKey) return;
+    var tg = e.target, field = tg && (tg.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName));
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); openSearch(); }
+    else if (e.key === '/' && !e.metaKey && !e.ctrlKey && !field && page !== 'faq' && !modalN) { e.preventDefault(); openSearch(); }
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && menu && !menu.hidden) closeMenu(); });
+
+  /* ---------- RB.lead: through supabase-js, like the contact form always has ---------- */
+  var LEAD = { name:120, business:120, trade:60, area:120, phone:30, email:200, message:2000, source:40 };
+  var SBJS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js';
+  function leadClient(){
+    if (RB.sb) return Promise.resolve(RB.sb);
+    if (RB.leadClient) return Promise.resolve(RB.leadClient);
+    var make = function(){ return (RB.leadClient = window.supabase.createClient(C.supabaseUrl, C.supabaseKey, { auth: { persistSession: false, autoRefreshToken: false } })); };
+    return window.supabase && window.supabase.createClient ? Promise.resolve(make()) : RB.loadScript(SBJS).then(make);
   }
+  RB.lead = function(row){
+    try {
+      var d = {}, ref = RB.getRef();
+      Object.keys(LEAD).forEach(function(k){ var v = row && row[k] != null ? String(row[k]).trim().slice(0, LEAD[k]) : ''; if (v) d[k] = v; });
+      if (ref) { var tag = ' · Ref: ' + ref; d.message = d.message ? d.message.slice(0, LEAD.message - tag.length) + tag : tag.slice(3); }
+      if (!C.supabaseUrl || !C.supabaseKey) return Promise.resolve(false);
+      return Promise.race([
+        leadClient().then(function(sb){ return sb.from('leads').insert(d); }).then(function(r){ return !!r && !r.error; }),
+        new Promise(function(res){ setTimeout(function(){ res(false); }, 8000); })
+      ]).catch(function(){ return false; });
+    } catch (e) { return Promise.resolve(false); }
+  };
+
+  /* ---------- no signal ---------- */
+  var offBar = null;
+  function offline(on){
+    if (on && !offBar) { offBar = document.createElement('div'); offBar.className = 'offline'; offBar.setAttribute('role', 'status'); body.appendChild(offBar); setTimeout(function(){ if (offBar) offBar.textContent = 'No signal. We\'ll carry on when you\'re back.'; }, 60); }
+    if (!on && offBar) { offBar.remove(); offBar = null; }
+  }
+  window.addEventListener('offline', function(){ offline(true); });
+  window.addEventListener('online', function(){ offline(false); });
+  if (navigator.onLine === false) offline(true);
+
   RB.applyTrade();
 })();
