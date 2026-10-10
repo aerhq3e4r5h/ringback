@@ -176,6 +176,9 @@
     wa.className = 'wa-float'; wa.href = RB.wa('Hi Ringback, I have a question.'); wa.target = '_blank'; wa.rel = 'noopener';
     wa.setAttribute('aria-label', 'Chat to us on WhatsApp'); wa.innerHTML = RB.icon('i-wa');
     document.body.appendChild(wa);
+    var waSmall = window.matchMedia('(max-width: 700px)');
+    var waCheck = function(){ wa.classList.toggle('away', waSmall.matches && window.scrollY < 480); };
+    window.addEventListener('scroll', waCheck, { passive: true }); waSmall.addEventListener && waSmall.addEventListener('change', waCheck); waCheck();
   }
 
   /* ---------- fill contact placeholders ---------- */

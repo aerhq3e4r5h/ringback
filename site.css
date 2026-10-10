@@ -677,3 +677,80 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .console > .anchor{position:absolute;top:0;left:0;width:1px;height:1px}
 .form input[type=file]{padding:9px 10px;cursor:pointer;color:var(--muted)}
 .form input[type=file]::file-selector-button{font:600 .85rem var(--body);color:var(--ink);background:var(--panel-3);border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;margin-right:12px;cursor:pointer}
+
+/* ---------- mobile and touch ----------
+   Phones get a calmer, cheaper page: no scroll-linked reveals, no blurred layers over moving content,
+   no hover states that stick after a tap, and viewport units that ignore the collapsing address bar. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+@supports (overflow:clip){body{overflow-x:clip}}
+@supports (min-height:100svh){
+  body,.auth,.nf{min-height:100svh}
+  .side{height:calc(100svh - 96px)}
+}
+a,button,summary,label,input,select,textarea{touch-action:manipulation}
+.drawer{max-height:calc(100vh - 110px);overflow-y:auto;overscroll-behavior:contain}
+@supports (height:100dvh){.drawer{max-height:calc(100dvh - 110px - env(safe-area-inset-top,0px))}}
+.wa-float{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.toasts{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* touch screens: hover effects only where there is a real pointer */
+@media (hover:none){
+  .btn-hot:hover,.card.lift:hover,a.card:hover,.trade:hover,.contact-card:hover,.mic:hover,.wa-float:hover{transform:none}
+  .trade:hover .go svg,.link:hover svg{transform:none}
+  .spot::before{display:none}
+  .marquee:hover .track{animation-play-state:running}
+}
+
+@media (max-width:700px){
+  /* scroll-driven reveals fight with mobile momentum scrolling and the address bar, so content just sits still */
+  .rv{animation:none!important;opacity:1!important;transform:none!important}
+  /* large blurred, drifting glows and frosted glass are what make scrolling stutter on phones */
+  .orb{filter:none;animation:none!important}
+  .orb.a{width:520px;height:520px;left:20%;top:-260px}
+  .orb.b{display:none}
+  .nav-in{background:rgba(11,23,22,.94);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .drawer{background:var(--bg-2);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 30px 60px -20px rgba(0,0,0,.9)}
+  .toast-card,.save-bar{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .sheet{backdrop-filter:none}
+  html{scroll-padding-top:88px}
+  /* 16px stops iOS from zooming the page in when a field is tapped */
+  .in,.form input:not([type=checkbox]):not([type=radio]):not([type=range]),.form select,.form textarea,.data select{font-size:16px}
+  /* tighter rhythm so phones aren't scrolling through empty space */
+  .sec{padding-block:64px}
+  .hero{padding-top:118px;padding-bottom:64px}
+  .phero{padding-top:128px;padding-bottom:48px}
+  .head{margin-bottom:36px}
+  .lede{font-size:1.06rem}
+  .hero .lede{margin-top:20px}
+  .ctas{margin-top:28px}
+  .ctas .btn{flex:1 1 220px}
+  .proof{margin-top:28px}
+  .card,.step,.plan{padding:22px}
+  .live-r{min-height:320px}
+  .mic{width:150px;height:150px}
+  .ring{width:150px;height:150px;margin:-75px 0 0 -75px}
+  .clock{font-size:3rem}
+  .kpis{gap:8px}
+  .kpi b{font-size:1.6rem}
+  .chart{gap:6px;height:140px}
+  .log div{grid-template-columns:48px 1fr;row-gap:6px}
+  .log div > :last-child{grid-column:2}
+  .every{padding:18px}
+  /* comparison tables scroll sideways; keep the row labels pinned so the columns stay readable */
+  .table-wrap{-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .table-wrap table.cmp{min-width:640px}
+  table.cmp th:first-child,table.cmp td:first-child{position:sticky;left:0;z-index:1;background:var(--bg-2);min-width:150px;max-width:170px}
+  th,td{padding:14px 14px}
+  .wordmark{margin-top:36px}
+  .site-footer{padding-block:56px calc(96px + env(safe-area-inset-bottom,0px))}
+  .wa-float{left:16px;width:48px;height:48px;transition:transform .25s,opacity .25s}
+  /* the floating WhatsApp button waits until the hero has scrolled away so it never sits on top of the headline */
+  .wa-float.away{opacity:0;transform:translateY(12px);pointer-events:none}
+  .otp{gap:6px}
+  .otp input{font-size:1.6rem}
+}
+@media (max-width:380px){
+  .logo{font-size:1.08rem}
+  .nav-in{padding-left:12px;gap:8px}
+  .nav-cta .btn-sm{padding:10px 12px}
+}
