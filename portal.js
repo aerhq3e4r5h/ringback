@@ -292,11 +292,44 @@
       return;
     }
     var tag = { emergency:'red', booked:'mint', callback:'amber', other:'' };
-    $('callsBox').innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>When</th><th>Caller</th><th>Suburb</th><th>Problem</th><th>Outcome</th><th>Recording</th></tr></thead><tbody>' +
+    $('callsBox').innerHTML = callChart() + '<div class="table-wrap"><table class="data"><thead><tr><th>When</th><th>Caller</th><th>Suburb</th><th>Problem</th><th>Outcome</th><th>Recording</th></tr></thead><tbody>' +
       calls.map(function(c){
-        return '<tr><td class="mono">' + RB.esc(fmtTime(c.occurred_at)) + '</td><td>' + RB.esc(c.caller_name || '—') + (c.caller_phone ? '<br><span class="faint mono">' + RB.esc(c.caller_phone) + '</span>' : '') + '</td><td>' + RB.esc(c.suburb || '—') + '</td><td>' + RB.esc(c.problem || '—') + '</td><td><span class="tag ' + (tag[c.call_type] || '') + '">' + RB.esc(c.call_type || 'other') + '</span>' + (c.booked_slot ? '<br><span class="faint mono">' + RB.esc(c.booked_slot) + '</span>' : '') + '</td><td>' + (c.recording_url && /^https:\/\//.test(c.recording_url) ? '<a class="link" target="_blank" rel="noopener" href="' + RB.esc(c.recording_url) + '">Listen</a>' : '—') + '</td></tr>';
+        return '<tr><td class="mono">' + RB.esc(fmtTime(c.occurred_at)) + '</td><td>' + RB.esc(c.caller_name || '—') + (c.caller_phone ? '<br><span class="faint mono">' + RB.esc(c.caller_phone) + '</span>' : '') + '</td><td>' + RB.esc(c.suburb || '—') + '</td><td>' + RB.esc(c.problem || '—') + '</td><td><span class="tag ' + (tag[c.call_type] || '') + '">' + RB.esc(c.call_type || 'other') + '</span>' + (c.booked_slot ? '<br><span class="faint mono">' + RB.esc(c.booked_slot) + '</span>' : '') + '</td><td>' + (c.recording_url && /^https:\/\//.test(c.recording_url) ? '<span class="rec-cell"><button type="button" class="icon-btn rec-btn" data-rec="' + RB.esc(c.recording_url) + '" aria-label="Play the recording of the call from ' + RB.esc(c.caller_name || 'this caller') + '">' + RB.icon('i-play') + '</button><span class="rec-time mono faint"></span><a class="faint" target="_blank" rel="noopener" href="' + RB.esc(c.recording_url) + '" aria-label="Open the recording in a new tab">Open</a></span>' : '—') + '</td></tr>';
       }).join('') + '</tbody></table></div>';
   }
+
+  /* calls per day for the last 14 days, as a small CSS bar chart (weekends in mint) */
+  function callChart(){
+    var days = [], byDay = {}, key = function(d){ return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+    calls.forEach(function(c){ var k = key(new Date(c.occurred_at)); byDay[k] = (byDay[k] || 0) + 1; });
+    for (var i = 13; i >= 0; i--) { var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - i); days.push({ d: d, n: byDay[key(d)] || 0 }); }
+    var top = Math.max.apply(null, days.map(function(x){ return x.n; }).concat([1])), total = days.reduce(function(a, x){ return a + x.n; }, 0);
+    var label = function(x){ return x.d.toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' }); };
+    return '<div class="card call-chart" style="margin-bottom:16px"><div class="report-top"><b>Calls per day</b><span class="faint mono">Last 14 days · ' + total + ' call' + (total === 1 ? '' : 's') + '</span></div>' +
+      '<div class="chart" aria-hidden="true" style="grid-template-columns:repeat(14,1fr);gap:6px">' + days.map(function(x){
+        var we = x.d.getDay() === 0 || x.d.getDay() === 6;
+        return '<div title="' + label(x) + ': ' + x.n + '"><i class="' + (we ? 'night' : '') + (x.n ? '' : ' zero') + '" style="height:' + Math.max(3, Math.round(x.n / top * 100)) + '%"></i><span>' + x.d.getDate() + '</span></div>';
+      }).join('') + '</div>' +
+      '<ul class="sr-only">' + days.map(function(x){ return '<li>' + label(x) + ': ' + x.n + ' call' + (x.n === 1 ? '' : 's') + '</li>'; }).join('') + '</ul>' +
+      '<div class="legend"><span><i></i>Weekdays</span><span><i class="nt"></i>Weekends</span></div></div>';
+  }
+
+  /* in-row recording player: one recording at a time */
+  var recAudio = null, recBtn = null;
+  function recReset(){ if (recBtn) { recBtn.innerHTML = RB.icon('i-play'); recBtn.setAttribute('aria-label', recBtn.getAttribute('aria-label').replace(/^Pause/, 'Play')); recBtn.classList.remove('copied'); recBtn.nextElementSibling.textContent = ''; } }
+  $('callsBox').addEventListener('click', function(e){
+    var b = e.target.closest('[data-rec]'); if (!b) return;
+    if (recBtn === b && recAudio && !recAudio.paused) { recAudio.pause(); return; }
+    if (recAudio) { recAudio.pause(); recReset(); }
+    recBtn = b; recAudio = new Audio(b.dataset.rec);
+    var t = b.nextElementSibling, fmt = function(x){ x = Math.floor(x || 0); return Math.floor(x / 60) + ':' + ('0' + x % 60).slice(-2); };
+    recAudio.addEventListener('play', function(){ b.innerHTML = RB.icon('i-pause'); b.setAttribute('aria-label', b.getAttribute('aria-label').replace(/^Play/, 'Pause')); b.classList.add('copied'); });
+    recAudio.addEventListener('pause', function(){ b.innerHTML = RB.icon('i-play'); b.setAttribute('aria-label', b.getAttribute('aria-label').replace(/^Pause/, 'Play')); b.classList.remove('copied'); });
+    recAudio.addEventListener('timeupdate', function(){ t.textContent = fmt(recAudio.currentTime) + (recAudio.duration ? ' / ' + fmt(recAudio.duration) : ''); });
+    recAudio.addEventListener('ended', function(){ recReset(); });
+    recAudio.addEventListener('error', function(){ recReset(); RB.toast('Couldn\'t play that recording here. Try Open instead.', 'err'); });
+    var pr = recAudio.play(); if (pr && pr.catch) pr.catch(function(){});
+  });
 
   /* ---------- account ---------- */
   function renderAccount(){
