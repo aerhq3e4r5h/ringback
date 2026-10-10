@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin · Ringback</title>
+<meta name="description" content="Ringback admin.">
+<meta property="og:title" content="Admin · Ringback">
+<meta property="og:description" content="Ringback admin.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ringback">
+<meta name="theme-color" content="#07100F">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="admin" data-no-ai data-no-float>
+<header id="site-header"></header>
+<main class="app" style="grid-template-columns:1fr">
+  <div class="pane" style="max-width:1300px;margin-inline:auto;width:100%">
+    <div class="pane-head">
+      <div style="display:grid;gap:10px"><span class="kicker">Owner only</span><h1>Admin</h1></div>
+      <div class="ctas" style="margin-top:0"><a class="btn btn-line btn-sm" href="dashboard.html">My portal</a><button class="btn btn-line btn-sm" type="button" id="refreshBtn">Refresh</button></div>
+    </div>
+    <p class="alert err" id="noAccess" hidden>This page is only for the Ringback owner.</p>
+    <div id="adminBody" hidden style="display:grid;gap:28px">
+      <div class="kpis" id="adminKpis"></div>
+      <section style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Clients</h2><div id="clientsBox"></div></section>
+      <section style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Website enquiries</h2><div id="leadsBox"></div></section>
+      <section style="display:grid;gap:12px"><h2 style="font-size:1.6rem">Account requests</h2><div id="reqBox"></div></section>
+    </div>
+  </div>
+</main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="site.js"></script>
+<script src="auth.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

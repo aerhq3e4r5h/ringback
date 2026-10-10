@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact · Ringback</title>
+<meta name="description" content="Get in touch with Ringback. WhatsApp, call or send us a message about an AI receptionist for your trade in Gauteng. We reply within one working day.">
+<meta property="og:title" content="Contact · Ringback">
+<meta property="og:description" content="Get in touch with Ringback. WhatsApp, call or send us a message about an AI receptionist for your trade in Gauteng. We reply within one working day.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ringback">
+<meta name="theme-color" content="#07100F">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="contact">
+<header id="site-header"></header>
+<main>
+<section class="phero">
+  <div class="orb a"></div>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Contact</span></nav>
+    <span class="kicker">Contact</span>
+    <h1>Let's talk about your <span class="hot">missed calls.</span></h1>
+    <p class="lede">WhatsApp is quickest. We reply within one working day, usually much sooner.</p>
+  </div>
+</section>
+
+<section class="sec tight">
+  <div class="wrap">
+    <div class="contact-grid">
+      <a class="contact-card spot rv" data-wa="Hi Ringback, I'd like to know more." href="#"><span class="ic"><svg><use href="#i-wa"/></svg></span><span class="kicker">WhatsApp</span><span class="v" data-phone>065 234 3106</span><span class="muted">Quickest way to reach us</span></a>
+      <a class="contact-card spot rv" data-tel href="#"><span class="ic"><svg><use href="#i-phone"/></svg></span><span class="kicker">Call</span><span class="v" data-phone>065 234 3106</span><span class="muted">If we're on a job, we'll call you back</span></a>
+      <button class="contact-card spot rv" type="button" data-open-ai style="text-align:left;font:inherit;color:inherit;cursor:pointer"><span class="ic"><svg><use href="#i-mic"/></svg></span><span class="kicker">Ask the assistant</span><span class="v">Talk or chat now</span><span class="muted">Answers about pricing, setup and POPIA, 24/7</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="sec tight" id="message">
+  <div class="wrap split" style="align-items:start">
+    <div class="rv">
+      <span class="kicker">Send a message</span>
+      <h2 style="margin-top:18px">Tell us about your business.</h2>
+      <p class="lede" style="margin-top:18px">We'll come back to you with how Ringback would work for your trade, and set up a free trial week if you want one.</p>
+      <ul class="checks">
+        <li><svg><use href="#i-check"/></svg><span><b>No obligation.</b> Ask anything.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>Gauteng-based.</b> Johannesburg, Pretoria and the East Rand.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>Prefer to do it yourself?</b> <a href="login.html?mode=signup" style="color:var(--ember-2)">Create an account</a> and request your trial in the portal.</span></li>
+      </ul>
+    </div>
+    <form class="form card rv" id="contactForm" novalidate style="padding:28px">
+      <div class="two">
+        <label class="fld"><span>Your name <i class="req">*</i></span><input name="name" autocomplete="name" required maxlength="120"></label>
+        <label class="fld"><span>Business name</span><input name="business" autocomplete="organization" maxlength="120"></label>
+      </div>
+      <div class="two">
+        <label class="fld"><span>Trade</span><select name="trade"><option value="">Choose one</option><option>Plumbing</option><option>Electrical</option><option>Gates and alarms</option><option>Solar and backup power</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
+        <label class="fld"><span>Area</span><input name="area" maxlength="120" placeholder="e.g. Randburg"></label>
+      </div>
+      <div class="two">
+        <label class="fld"><span>Cellphone <i class="req">*</i></span><input name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="082 123 4567"></label>
+        <label class="fld"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="200"></label>
+      </div>
+      <label class="fld"><span>Message</span><textarea name="message" maxlength="2000" placeholder="Roughly how many calls do you miss a week? Anything we should know?"></textarea></label>
+      <label class="check"><input type="checkbox" name="consent" required><span>You can contact me about Ringback using these details. See our <a href="privacy.html">privacy policy</a>.</span></label>
+      <button class="btn btn-hot btn-block" type="submit" id="contactBtn">Send message</button>
+      <p class="form-msg" id="contactMsg" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+</main>
+<footer id="site-footer"></footer>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="site.js"></script>
+<script src="auth.js"></script>
+<script src="contact.js"></script>
+</body>
+</html>

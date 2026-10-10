@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Log in or create an account · Ringback</title>
+<meta name="description" content="Log in to your Ringback client portal or create an account. We email you a 6-digit code, so there's no password to remember.">
+<meta property="og:title" content="Log in or create an account · Ringback">
+<meta property="og:description" content="Log in to your Ringback client portal or create an account. We email you a 6-digit code, so there's no password to remember.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ringback">
+<meta name="theme-color" content="#07100F">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="login" data-no-ai data-no-float>
+<header id="site-header"></header>
+<main class="auth">
+  <aside class="auth-side">
+    <div style="display:grid;gap:20px">
+      <span class="kicker">Client portal</span>
+      <h2>Your calls, your setup, <span class="hot">one place.</span></h2>
+      <ul class="checks" style="margin-top:4px">
+        <li><svg><use href="#i-check"/></svg><span><b>Set up your assistant</b>: services, area, hours, call-out fee, emergency rules.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>Pick a plan</b> and request your free trial week.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>See every call</b> it takes for you, once you're live.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>No password.</b> We email you a 6-digit code each time.</span></li>
+      </ul>
+    </div>
+    <div class="sms" style="max-width:380px"><b>EMERGENCY</b> · Lerato M · Fourways<br>Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</div>
+  </aside>
+
+  <div class="auth-main">
+    <div class="auth-card" id="auth">
+      <div id="stepForm" style="display:grid;gap:22px">
+        <div class="seg" role="tablist" aria-label="Log in or create an account" style="--n:2">
+          <button type="button" role="tab" id="tabLogin" aria-selected="true">Log in</button>
+          <button type="button" role="tab" id="tabSignup" aria-selected="false">Create account</button>
+        </div>
+        <div style="display:grid;gap:10px">
+          <h1 id="authTitle">Welcome back</h1>
+          <p class="muted" id="authSub">Enter your email and we'll send you a 6-digit code. No password needed.</p>
+        </div>
+        <p class="alert warn" id="cfgWarn" hidden>Accounts are being switched on. Please try again shortly, or WhatsApp us.</p>
+        <form class="form" id="authForm" novalidate>
+          <div id="signupFields" hidden style="display:grid;gap:16px">
+            <div class="two">
+              <label class="fld"><span>Your name <i class="req">*</i></span><input id="su-name" autocomplete="name" maxlength="120" placeholder="Pieter van Wyk"></label>
+              <label class="fld"><span>Business name <i class="req">*</i></span><input id="su-biz" autocomplete="organization" maxlength="120" placeholder="Ridgeway Plumbing"></label>
+            </div>
+            <div class="two">
+              <label class="fld"><span>Trade</span><select id="su-trade"><option>Plumbing</option><option>Electrical</option><option>Gates & alarms</option><option>Solar & backup</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
+              <label class="fld"><span>Cellphone</span><input id="su-phone" type="tel" autocomplete="tel" maxlength="30" placeholder="082 123 4567"></label>
+            </div>
+          </div>
+          <label class="fld"><span>Email address</span><input id="email" type="email" autocomplete="email" inputmode="email" required placeholder="you@business.co.za"></label>
+          <label class="check" id="termsRow" hidden><input type="checkbox" id="terms"><span>I agree to the <a href="terms.html" target="_blank">terms of service</a> and <a href="privacy.html" target="_blank">privacy policy</a>.</span></label>
+          <button class="btn btn-hot btn-block" type="submit" id="sendBtn">Send me a code</button>
+          <p class="form-msg" id="formMsg" aria-live="polite"></p>
+        </form>
+        <p class="muted" style="font-size:.92rem" id="switchLine"></p>
+      </div>
+
+      <div id="stepCode" hidden style="display:grid;gap:22px">
+        <button type="button" class="btn btn-ghost btn-sm" id="backBtn" style="justify-self:start;padding-left:0">← Use a different email</button>
+        <div style="display:grid;gap:10px">
+          <span class="ic"><svg><use href="#i-mail"/></svg></span>
+          <h1>Check your email</h1>
+          <p class="muted">We sent a code to <span class="email-pill" id="sentTo"></span>. Enter it below, or just tap the link in the email.</p>
+        </div>
+        <form class="form" id="codeForm" novalidate>
+          <div class="otp" id="otp" role="group" aria-label="One-time code"></div>
+          <button class="btn btn-hot btn-block" type="submit" id="verifyBtn">Verify and continue</button>
+          <p class="form-msg" id="codeMsg" aria-live="polite"></p>
+        </form>
+        <p class="muted" style="font-size:.9rem">Didn't get it? Check your spam folder, or <button type="button" class="linkbtn" id="resendBtn" disabled>resend the code</button> <span id="resendTimer" class="faint"></span></p>
+      </div>
+
+      <p class="faint" style="font-size:.82rem;display:flex;gap:8px;align-items:center"><svg style="width:14px;height:14px"><use href="#i-lock"/></svg>Secured by one-time codes. We'll never ask you for a password.</p>
+    </div>
+  </div>
+</main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="site.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

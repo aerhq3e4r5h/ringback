@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /ringback/dashboard.html
+Disallow: /ringback/admin.html
+Sitemap: https://aerhq3e4r5h.github.io/ringback/sitemap.xml

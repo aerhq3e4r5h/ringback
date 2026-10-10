@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard · Ringback</title>
+<meta name="description" content="Your Ringback client portal.">
+<meta property="og:title" content="Dashboard · Ringback">
+<meta property="og:description" content="Your Ringback client portal.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ringback">
+<meta name="theme-color" content="#07100F">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="dashboard" data-no-ai data-no-float>
+<header id="site-header"></header>
+<main class="app" id="app">
+  <aside class="side" aria-label="Portal">
+    <a href="#overview" data-nav="overview"><svg><use href="#i-home"/></svg>Overview</a>
+    <a href="#setup" data-nav="setup"><svg><use href="#i-sliders"/></svg>Business setup</a>
+    <a href="#plan" data-nav="plan"><svg><use href="#i-card"/></svg>Plan and trial</a>
+    <a href="#calls" data-nav="calls"><svg><use href="#i-list"/></svg>Calls</a>
+    <a href="#account" data-nav="account"><svg><use href="#i-user"/></svg>Account</a>
+    <a href="admin.html" id="adminLink" hidden><svg><use href="#i-lock"/></svg>Admin</a>
+    <span class="grow"></span>
+    <a href="#" data-signout><svg><use href="#i-logout"/></svg>Log out</a>
+    <div class="who"><b id="whoName">Loading…</b><span id="whoEmail"></span></div>
+  </aside>
+
+  <div class="pane">
+    <nav class="tabs-m" aria-label="Portal sections">
+      <a href="#overview" data-nav="overview">Overview</a><a href="#setup" data-nav="setup">Setup</a><a href="#plan" data-nav="plan">Plan</a><a href="#calls" data-nav="calls">Calls</a><a href="#account" data-nav="account">Account</a><a href="admin.html" id="adminLinkM" hidden>Admin</a>
+    </nav>
+
+    <div id="loading" style="display:grid;gap:16px"><div class="skeleton" style="height:48px;width:50%"></div><div class="skeleton" style="height:180px"></div><div class="skeleton" style="height:240px"></div></div>
+    <p class="alert err" id="loadErr" hidden></p>
+
+    <!-- OVERVIEW -->
+    <section data-view="overview" hidden>
+      <div class="pane-head">
+        <div style="display:grid;gap:10px"><span class="kicker" id="greetKicker">Overview</span><h1 id="greet">Welcome</h1></div>
+        <span class="status" id="statusPill"><i></i><span></span></span>
+      </div>
+      <div class="overview">
+        <div class="card" style="gap:18px">
+          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+            <div class="progress-ring" id="ring"><b id="ringVal">0%</b></div>
+            <div style="display:grid;gap:6px;flex:1;min-width:200px"><h3 style="font-size:1.4rem">Getting you live</h3><p id="nextText">Finish these steps and we'll switch Ringback on for your number.</p><div><a class="btn btn-hot btn-sm" id="nextBtn" href="#setup">Next step</a></div></div>
+          </div>
+          <ul class="checklist" id="checklist"></ul>
+        </div>
+        <div style="display:grid;gap:16px;align-content:start">
+          <div class="card"><span class="kicker">Your plan</span><h3 id="planName" style="font-size:1.5rem">Not chosen yet</h3><p id="planNote">Pick the plan that fits. You start with a free trial week either way.</p><a class="link" href="#plan">Manage plan <svg><use href="#i-arrow"/></svg></a></div>
+          <div class="card"><span class="kicker">Calls this month</span><h3 style="font-size:2.4rem" id="callCount">0</h3><p>Calls appear here once Ringback is live on your number.</p><a class="link" href="#calls">View calls <svg><use href="#i-arrow"/></svg></a></div>
+          <div class="card"><span class="kicker">Need a hand?</span><p>WhatsApp us any time and we'll help you get set up.</p><a class="btn btn-line btn-sm" id="helpWa" target="_blank" rel="noopener" href="#"><svg><use href="#i-wa"/></svg>WhatsApp us</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETUP -->
+    <section data-view="setup" hidden>
+      <div class="pane-head">
+        <div style="display:grid;gap:10px"><span class="kicker">Business setup</span><h1>Teach your assistant your business</h1><p class="muted" style="max-width:60ch">This is what your assistant uses to answer calls. Fields marked <i class="req">*</i> are needed before we can switch you on.</p></div>
+        <div style="display:grid;gap:6px;min-width:180px"><span class="mono faint" id="setupPct">0% complete</span><div class="meter"><i id="setupMeter"></i></div></div>
+      </div>
+      <form class="form" id="setupForm" novalidate style="gap:20px">
+        <fieldset class="fieldset"><legend>Your business</legend>
+          <div class="two">
+            <label class="fld"><span>Business name <i class="req">*</i></span><input name="business_name" maxlength="120" required></label>
+            <label class="fld"><span>Trade <i class="req">*</i></span><select name="trade"><option>Plumbing</option><option>Electrical</option><option>Gates & alarms</option><option>Solar & backup</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
+          </div>
+          <div class="two">
+            <label class="fld"><span>Owner's first name</span><input name="owner_name" maxlength="60" placeholder="The name the assistant uses, e.g. Pieter"></label>
+            <label class="fld"><span>Cellphone for alerts <i class="req">*</i></span><input name="phone" type="tel" maxlength="30" required placeholder="082 123 4567"></label>
+          </div>
+          <label class="fld"><span>Services you offer</span><textarea name="services" maxlength="1000" placeholder="e.g. Geyser replacements, leak detection, blocked drains, COCs"></textarea></label>
+          <label class="fld"><span>Services you don't offer</span><textarea name="not_offered" maxlength="1000" placeholder="e.g. No gas work, no solar geysers"></textarea></label>
+        </fieldset>
+
+        <fieldset class="fieldset"><legend>Area and hours</legend>
+          <label class="fld"><span>Suburbs you cover <i class="req">*</i></span><textarea name="service_areas" maxlength="1000" required placeholder="e.g. Randburg, Fourways, Sandton, Northcliff"></textarea></label>
+          <label class="fld"><span>Areas you won't go to</span><input name="excluded_areas" maxlength="300"></label>
+          <label class="fld"><span>Working hours <i class="req">*</i></span><input name="hours" maxlength="200" required placeholder="e.g. Mon–Fri 07:00–17:00, Sat 08:00–12:00"></label>
+          <div class="fld"><span>Do you take after-hours emergencies?</span><div class="chips"><label><input type="radio" name="after_hours" value="yes"><span>Yes</span></label><label><input type="radio" name="after_hours" value="no"><span>No, take a message</span></label></div></div>
+        </fieldset>
+
+        <fieldset class="fieldset"><legend>Fees and emergencies</legend>
+          <div class="two">
+            <label class="fld"><span>Call-out fee, weekdays <i class="req">*</i></span><input name="callout_weekday" maxlength="40" required placeholder="e.g. R650"></label>
+            <label class="fld"><span>Call-out fee, after hours and weekends</span><input name="callout_after" maxlength="40" placeholder="e.g. R950"></label>
+          </div>
+          <label class="fld"><span>What counts as an emergency for you?</span><textarea name="emergencies" maxlength="1000" placeholder="e.g. Burst geysers, water through ceilings, sewage inside, no water at all"></textarea></label>
+          <label class="fld"><span>How soon will you call back on emergencies?</span><select name="callback_promise"><option value="10">Within 10 minutes</option><option value="15" selected>Within 15 minutes</option><option value="20">Within 20 minutes</option><option value="30">Within 30 minutes</option><option value="60">Within an hour</option></select></label>
+        </fieldset>
+
+        <fieldset class="fieldset"><legend>Bookings and language</legend>
+          <div class="two">
+            <label class="fld"><span>How should it handle routine jobs?</span><select name="booking"><option value="calendar">Book into my Google Calendar</option><option value="callback">Take a callback request only</option></select></label>
+            <label class="fld"><span>Google Calendar email</span><input name="calendar_email" type="email" maxlength="200" placeholder="If you want bookings"></label>
+          </div>
+          <div class="fld"><span>Languages <small>(Afrikaans needs the Pro plan; others are in testing)</small></span><div class="chips"><label><input type="checkbox" name="languages" value="English" checked><span>English</span></label><label><input type="checkbox" name="languages" value="Afrikaans"><span>Afrikaans</span></label><label><input type="checkbox" name="languages" value="isiZulu"><span>isiZulu</span></label><label><input type="checkbox" name="languages" value="Sesotho"><span>Sesotho</span></label></div></div>
+        </fieldset>
+
+        <fieldset class="fieldset"><legend>Your rules</legend>
+          <label class="fld"><span>Anything it must always say or do?</span><textarea name="always_say" maxlength="1000" placeholder="e.g. Mention we're registered with the PIRB"></textarea></label>
+          <label class="fld"><span>Anything it must never say or do?</span><textarea name="never_say" maxlength="1000" placeholder="e.g. Never book Sundays"></textarea></label>
+          <label class="fld"><span>Anything else we should know?</span><textarea name="notes" maxlength="1000"></textarea></label>
+        </fieldset>
+
+        <div class="save-bar"><span class="muted" id="saveState">Changes are saved to your account.</span><button class="btn btn-hot btn-sm" type="submit" id="saveBtn">Save details</button></div>
+      </form>
+    </section>
+
+    <!-- PLAN -->
+    <section data-view="plan" hidden>
+      <div class="pane-head"><div style="display:grid;gap:10px"><span class="kicker">Plan and trial</span><h1>Choose your plan</h1><p class="muted">Every plan starts with a free trial week. Prices exclude VAT.</p></div></div>
+      <div class="plans" id="planCards"></div>
+      <div class="card" style="margin-top:20px;gap:14px" id="trialCard">
+        <span class="kicker">Free trial week</span>
+        <h3 style="font-size:1.5rem" id="trialTitle">Ready when you are</h3>
+        <p id="trialText">Once your business details are filled in, request your trial and we'll WhatsApp you to set up call forwarding.</p>
+        <div class="ctas" style="margin-top:4px"><button class="btn btn-hot btn-sm" type="button" id="trialBtn">Request my free trial week</button><a class="btn btn-line btn-sm" id="trialWa" target="_blank" rel="noopener" href="#"><svg><use href="#i-wa"/></svg>WhatsApp us</a></div>
+      </div>
+    </section>
+
+    <!-- CALLS -->
+    <section data-view="calls" hidden>
+      <div class="pane-head"><div style="display:grid;gap:10px"><span class="kicker">Calls</span><h1>Calls Ringback took for you</h1></div></div>
+      <div class="kpis" id="callKpis" style="margin-bottom:16px"></div>
+      <div id="callsBox"></div>
+    </section>
+
+    <!-- ACCOUNT -->
+    <section data-view="account" hidden>
+      <div class="pane-head"><div style="display:grid;gap:10px"><span class="kicker">Account</span><h1>Your account</h1></div></div>
+      <div class="grid-2" style="align-items:start">
+        <form class="form card" id="accountForm" novalidate>
+          <h3>Your details</h3>
+          <label class="fld"><span>Email</span><input id="acEmail" type="email" disabled></label>
+          <label class="fld"><span>Your name</span><input id="acName" maxlength="120" autocomplete="name"></label>
+          <button class="btn btn-hot btn-sm" type="submit" style="justify-self:start">Save</button>
+        </form>
+        <div style="display:grid;gap:16px">
+          <div class="card"><h3>Your data</h3><p>Download a copy of everything we hold for your account, as a JSON file.</p><button class="btn btn-line btn-sm" type="button" id="dlBtn" style="align-self:flex-start"><svg><use href="#i-download"/></svg>Download my data</button></div>
+          <div class="card"><h3>Delete account</h3><p>We'll delete your account, business details and call history, and confirm by email. This can't be undone.</p>
+            <div id="delArea" style="display:grid;gap:10px">
+              <button class="btn btn-danger btn-sm" type="button" id="delBtn" style="justify-self:start"><svg><use href="#i-trash"/></svg>Request deletion</button>
+            </div>
+          </div>
+          <div class="card"><h3>Log out</h3><p>Log out of the portal on this device.</p><button class="btn btn-line btn-sm" type="button" data-signout style="align-self:flex-start"><svg><use href="#i-logout"/></svg>Log out</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="site.js"></script>
+<script src="auth.js"></script>
+<script src="portal.js"></script>
+</body>
+</html>
