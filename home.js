@@ -74,11 +74,23 @@
   function stopAuto(){ autoOn = false; clearTimeout(autoTimer); consoleEl.classList.remove('auto'); }
   var start = 0, h = location.hash.replace('#','');
   TRADES.forEach(function(t, i){ if (t.key === h) start = i; });
+  /* Keep the console the same height for every trade so the page never jumps when it switches. */
+  var callIn = consoleEl.querySelector('.call-in'), toastEl = $('toastCard');
+  function lockHeight(){
+    callIn.style.minHeight = ''; toastEl.style.minHeight = '';
+    var hi = 0, ht = 0;
+    TRADES.forEach(function(t, j){ show(j, false); hi = Math.max(hi, callIn.offsetHeight); ht = Math.max(ht, toastEl.offsetHeight); });
+    callIn.style.minHeight = hi + 'px'; toastEl.style.minHeight = ht + 'px';
+  }
+  lockHeight();
   show(start, false);
+  var lockW = innerWidth, lockT = null;
+  window.addEventListener('resize', function(){ if (innerWidth === lockW) return; lockW = innerWidth; clearTimeout(lockT); lockT = setTimeout(function(){ var c = current; lockHeight(); show(c, false); }, 200); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ var c = current; lockHeight(); show(c, false); });
   startAuto();
 
   var rot = $('rot').children, ri = 0;
-  if (!reduced) setInterval(function(){ var o = rot[ri]; o.classList.remove('on'); o.classList.add('out'); setTimeout(function(){ o.classList.remove('out'); }, 500); ri = (ri + 1) % rot.length; rot[ri].classList.add('on'); }, 2400);
+  if (!reduced) setInterval(function(){ var o = rot[ri]; o.classList.remove('on'); o.classList.add('leaving'); setTimeout(function(){ o.classList.remove('leaving'); }, 500); ri = (ri + 1) % rot.length; rot[ri].classList.add('on'); }, 2400);
 
   ['trackA','trackB'].forEach(function(id){ var t = $(id); t.innerHTML += t.innerHTML; });
 })();

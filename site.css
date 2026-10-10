@@ -122,7 +122,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .rot{display:inline-grid;vertical-align:bottom}
 .rot > span{grid-area:1/1;transition:opacity .35s,transform .45s}
 .rot > span:not(.on){opacity:0;transform:translateY(.4em)}
-.rot > span.out{transform:translateY(-.4em)}
+.rot > span.leaving{transform:translateY(-.4em)}
 .rot > span.on{transition-delay:.18s}
 .hero .lede{margin-top:26px}
 .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
