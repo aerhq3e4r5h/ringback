@@ -18,14 +18,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ringback">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="app.css">
 </head>
-<body data-page="login" data-no-ai data-no-float>
+<body data-page="login" data-no-ai data-no-float data-app>
+<a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
-<main class="auth">
+<main id="main" class="auth">
   <aside class="auth-side">
     <div style="display:grid;gap:20px">
       <span class="kicker">Client portal</span>
@@ -53,7 +54,7 @@
           <p class="muted" id="authSub">Enter your email and we'll send you a 6-digit code. No password needed.</p>
         </div>
         <p class="alert warn" id="cfgWarn" hidden>Accounts are being switched on. Please try again shortly, or WhatsApp us.</p>
-        <form class="form" id="authForm" novalidate>
+        <form class="form" id="authForm" novalidate onsubmit="return false">
           <div id="signupFields" hidden style="display:grid;gap:16px">
             <div class="two">
               <label class="fld"><span>Your name <i class="req">*</i></span><input id="su-name" autocomplete="name" maxlength="120" placeholder="Pieter van Wyk"></label>
@@ -79,7 +80,7 @@
           <h1>Check your email</h1>
           <p class="muted">We sent a code to <span class="email-pill" id="sentTo"></span>. Enter it below, or just tap the link in the email.</p>
         </div>
-        <form class="form" id="codeForm" novalidate>
+        <form class="form" id="codeForm" novalidate onsubmit="return false">
           <div class="otp" id="otp" role="group" aria-label="One-time code"></div>
           <button class="btn btn-hot btn-block" type="submit" id="verifyBtn">Verify and continue</button>
           <p class="form-msg" id="codeMsg" aria-live="polite"></p>
@@ -91,9 +92,9 @@
     </div>
   </div>
 </main>
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
-<script src="site.js"></script>
-<script src="auth.js"></script>
+<script src="config.js" defer></script>
+<script src="site.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js" defer></script>
+<script src="auth.js" defer></script>
 </body>
 </html>

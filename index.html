@@ -9,16 +9,24 @@
 <meta property="og:description" content="Ringback answers the calls your business misses, 24/7. It spots emergencies, books jobs into your calendar and alerts you in under a minute. Built for plumbers, electricians and home-service trades in Gauteng.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ringback">
+<link rel="canonical" href="https://aerhq3e4r5h.github.io/ringback/">
+<meta property="og:url" content="https://aerhq3e4r5h.github.io/ringback/">
+<meta property="og:image" content="https://aerhq3e4r5h.github.io/ringback/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ringback: every call answered, every job booked. AI receptionist for trades in Gauteng.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#07100F">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
 </head>
 <body data-page="index">
+<a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
-<main id="top">
+<main id="main">
+<span id="top"></span>
 
 <section class="hero">
   <div class="orb a"></div><div class="orb b"></div>
@@ -28,14 +36,14 @@
       <h1>Every call answered.<br>Every job <span class="rot hot" id="rot"><span class="on">booked.</span><span>caught.</span><span>kept.</span><span>yours.</span></span></h1>
       <p class="lede">Ringback picks up every call your business misses, in your name, day or night. It knows an emergency from a quote request, tells callers how to stay safe, books the job, and alerts you in under a minute.</p>
       <div class="ctas">
-        <a class="btn btn-hot" href="login.html?mode=signup">Start your free trial week <svg><use href="#i-arrow"/></svg></a>
-        <button class="btn btn-line" type="button" data-open-ai><svg><use href="#i-mic"/></svg>Talk to it now</button>
+        <a class="btn btn-hot" href="login.html?mode=signup">Start your free trial week <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <button class="btn btn-line" type="button" data-open-ai><svg aria-hidden="true"><use href="#i-mic"/></svg>Talk to it now</button>
       </div>
       <div class="proof">
-        <span class="chip"><svg><use href="#i-check"/></svg>Keep your own number</span>
-        <span class="chip"><svg><use href="#i-check"/></svg>Live in one visit</span>
-        <span class="chip"><svg><use href="#i-check"/></svg>POPIA-aware</span>
-        <span class="chip"><svg><use href="#i-check"/></svg>English and Afrikaans</span>
+        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>Keep your own number</span>
+        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>Live in one visit</span>
+        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>POPIA-aware</span>
+        <span class="chip"><svg aria-hidden="true"><use href="#i-check"/></svg>English and Afrikaans</span>
       </div>
       <label class="tpick" id="heroTrade"></label>
     </div>
@@ -58,7 +66,7 @@
             </div>
             <div class="lock" aria-hidden="true"><span class="lock-date">Call ended · handled by Ringback</span><span class="lock-time" id="lTime">21:48</span></div>
             <div class="toast-card" id="toastCard" role="note" data-kind="emergency">
-              <div class="toast-top"><span class="t-app"><svg><use href="#i-chat"/></svg></span><b id="tKind">● Emergency alert</b><span>SMS · now</span></div>
+              <div class="toast-top"><span class="t-app"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><b id="tKind">● Emergency alert</b><span>SMS · now</span></div>
               <strong id="tWho">Lerato M · Fourways</strong><br><span id="tBody">Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</span>
             </div>
             <span class="ph-home" aria-hidden="true"></span>
@@ -94,7 +102,7 @@
   </div>
 </div>
 
-<section class="sec" style="padding-bottom:0">
+<section class="sec">
   <div class="wrap">
     <div class="stats rv">
       <div class="stat"><b class="hot">24/7</b><span>Answers nights, weekends and public holidays</span></div>
@@ -120,7 +128,7 @@
     <div class="night rv" id="night">
       <div class="night-top">
         <span class="kicker">An example day</span>
-        <div class="seg seg-sm" role="group" aria-label="Show the day" style="--n:2"><button type="button" aria-pressed="true" data-night="off">Without Ringback</button><button type="button" aria-pressed="false" data-night="on">With Ringback</button></div>
+        <div class="seg seg-sm seg--status" role="group" aria-label="Show the day" style="--n:2"><button type="button" aria-pressed="true" data-night="off">Without Ringback</button><button type="button" aria-pressed="false" data-night="on">With Ringback</button></div>
       </div>
       <div class="timeline">
         <div class="tl"><time>07:30</time><b>On the road</b><div class="swap"><span class="off-v">Driving to the first job. You can't answer safely. <em class="tag red">Missed · quote, about R1,800</em></span><span class="on-v">It picks up, takes the details and texts you a callback request. <em class="tag mint">Callback request sent</em></span></div></div>
@@ -135,16 +143,16 @@
   </div>
 </section>
 
-<section class="sec tight" id="features">
+<section class="sec" id="features">
   <div class="wrap">
     <div class="head rv">
       <span class="kicker">The product</span>
       <h2>A front desk that never sleeps, never calls in sick, and never misses a call.</h2>
-      <a class="link" href="product.html">See how it all works <svg><use href="#i-arrow"/></svg></a>
+      <a class="link" href="product.html">See how it all works <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
     <div class="bento">
-      <div class="card c-4 glow spot rv">
-        <span class="ic"><svg><use href="#i-chat"/></svg></span>
+      <div class="card c-4 spot rv">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-chat"/></svg></span>
         <h3>Sorts every call in seconds</h3>
         <p>Set up for how your trade talks. It knows a burst pipe from a dripping tap, and a tripped board from a quote request. When it isn't sure, it treats the call as urgent.</p>
         <div class="ui triage-ui">
@@ -154,7 +162,7 @@
         </div>
       </div>
       <div class="card c-2 spot rv">
-        <span class="ic"><svg><use href="#i-phone"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#i-phone"/></svg></span>
         <h3>Answers 24/7</h3>
         <p>Nights, weekends, public holidays. Several calls at once is fine.</p>
         <div class="ui"><div class="clock">24<small>/</small>7</div></div>
@@ -178,13 +186,13 @@
         <div class="ui blocked"><div><s>"We can get you to #1 on Google"</s><span class="tag">Filtered</span></div><div><s>"Is this the pizza place?"</s><span class="tag">Filtered</span></div></div>
       </div>
       <div class="card c-3 spot rv">
-        <span class="ic"><svg><use href="#i-shield"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span>
         <h3>Your name, your rules</h3>
         <p>Answers as your business. Quotes only your call-out fee. Never promises a price or an arrival time you haven't set. Says it's an AI if anyone asks.</p>
         <div class="ui row-tags"><span class="tag">Call-out fee only</span><span class="tag">Your service area</span><span class="tag">Your hours</span><span class="tag">Your emergency rules</span></div>
       </div>
-      <div class="card c-3 glow spot rv">
-        <span class="ic"><svg><use href="#i-user"/></svg></span>
+      <div class="card c-3 spot rv">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span>
         <h3>Your own client portal</h3>
         <p>Log in to fill in your business details, pick a plan, request your trial, pay invoices and see every call the assistant takes.</p>
         <div class="ui row-tags"><a class="tag ember" href="login.html?mode=signup" style="text-decoration:none">Create an account →</a><span class="tag">Email login codes</span><span class="tag">Invoices</span><span class="tag">Call history</span></div>
@@ -193,7 +201,7 @@
   </div>
 </section>
 
-<section class="sec tight" id="trades">
+<section class="sec" id="trades">
   <div class="wrap">
     <div class="head rv">
       <span class="kicker">Built for your trade</span>
@@ -204,11 +212,11 @@
   </div>
 </section>
 
-<section class="sec tight" id="try">
+<section class="sec" id="try">
   <div class="wrap">
     <div class="live rv">
       <div class="live-l">
-        <span class="kicker">Live demo · not a recording</span>
+        <span class="kicker is-live">Live demo · not a recording</span>
         <h2>Don't take our word for it. Talk to it.</h2>
         <ol class="live-steps">
           <li><i>01</i><span><b>Tap the mic</b> or type in the chat. It works in your browser.</span></li>
@@ -227,14 +235,14 @@
       </div>
       <div class="live-r">
         <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
-        <button class="mic" type="button" data-open-ai aria-label="Start talking to the Ringback assistant"><svg><use href="#i-mic"/></svg></button>
+        <button class="mic" type="button" data-open-ai aria-label="Start talking to the Ringback assistant"><svg aria-hidden="true"><use href="#i-mic"/></svg></button>
         <span class="mic-cap">Tap to talk or chat</span>
       </div>
     </div>
   </div>
 </section>
 
-<section class="sec tight" id="how">
+<section class="sec" id="how">
   <div class="wrap">
     <div class="head c rv">
       <span class="kicker">How it works</span>
@@ -245,31 +253,31 @@
       <div class="step spot rv"><span class="n">02</span><h3>We set it up with you</h3><p>We build your assistant and set up call forwarding on your phone. Calls you miss go to Ringback; calls you answer don't change.</p><span class="when">Day 1 · 10 minutes</span></div>
       <div class="step spot rv"><span class="n">03</span><h3>You get the jobs</h3><p>Every call arrives as an SMS with a recording, and shows up in your portal. We tune it with you weekly for the first month.</p><span class="when">From day 1</span></div>
     </div>
-    <p style="text-align:center;margin-top:28px"><a class="link" href="product.html">The full walkthrough <svg><use href="#i-arrow"/></svg></a></p>
+    <p style="text-align:center;margin-top:28px"><a class="link" href="product.html">The full walkthrough <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
   </div>
 </section>
 
-<section class="sec tight">
+<section class="sec">
   <div class="wrap">
     <div class="grid-3">
-      <a class="card spot rv" href="pricing.html"><span class="kicker">Pricing</span><h3 style="font-size:1.6rem">From R2,500 a month</h3><p>Three simple plans in rand, a free trial week, and a founding partner offer for our first three businesses.</p><span class="link" style="margin-top:auto">See plans <svg><use href="#i-arrow"/></svg></span></a>
-      <a class="card spot rv" href="pricing.html#calculator"><span class="kicker">Calculator</span><h3 style="font-size:1.6rem">What are missed calls costing you?</h3><p>Plug in your own numbers and see the monthly and yearly cost of calls that ring out.</p><span class="link" style="margin-top:auto">Work it out <svg><use href="#i-arrow"/></svg></span></a>
-      <a class="card spot rv" href="faq.html"><span class="kicker">FAQ</span><h3 style="font-size:1.6rem">Questions owners ask</h3><p>Will customers know it's AI? What about POPIA? What if it gets an emergency wrong? Straight answers.</p><span class="link" style="margin-top:auto">Read the answers <svg><use href="#i-arrow"/></svg></span></a>
+      <a class="card spot rv" href="pricing.html"><span class="kicker">Pricing</span><h3 style="font-size:1.6rem">From R2,500 a month</h3><p>Three simple plans in rand, a free trial week, and a founding partner offer for our first three businesses.</p><span class="link" style="margin-top:auto">See plans <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
+      <a class="card spot rv" href="pricing.html#calculator"><span class="kicker">Calculator</span><h3 style="font-size:1.6rem">What are missed calls costing you?</h3><p>Plug in your own numbers and see the monthly and yearly cost of calls that ring out.</p><span class="link" style="margin-top:auto">Work it out <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
+      <a class="card spot rv" href="faq.html"><span class="kicker">FAQ</span><h3 style="font-size:1.6rem">Questions owners ask</h3><p>Will customers know it's AI? What about POPIA? What if it gets an emergency wrong? Straight answers.</p><span class="link" style="margin-top:auto">Read the answers <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
     </div>
   </div>
 </section>
 
-<section class="sec tight">
+<section class="sec">
   <div class="wrap">
-    <div class="final rv">
+    <div class="final surface-hot rv">
       <div>
         <span class="kicker">Start this week</span>
         <h2 style="margin-top:18px">Stop losing jobs to <span class="hot">voicemail.</span></h2>
         <p class="lede">Create your account, tell us about your business, and we'll put Ringback on your own number for a free trial week.</p>
       </div>
       <div style="display:grid;gap:12px;justify-items:start">
-        <a class="btn btn-hot" href="login.html?mode=signup">Create your account <svg><use href="#i-arrow"/></svg></a>
-        <a class="btn btn-line" data-wa="Hi Ringback, I'd like to know more about a free trial week." href="contact.html"><svg><use href="#i-wa"/></svg>WhatsApp us instead</a>
+        <a class="btn btn-hot" href="login.html?mode=signup">Create your account <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-line" data-wa="Hi Ringback, I'd like to know more about a free trial week." href="contact.html"><svg aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp us instead</a>
         <span class="faint mono">Already a client? <a href="login.html" style="color:var(--ember-2)">Log in</a></span>
       </div>
     </div>
@@ -278,8 +286,8 @@
 
 </main>
 <footer id="site-footer"></footer>
-<script src="config.js"></script>
-<script src="site.js"></script>
-<script src="home.js"></script>
+<script src="config.js" defer></script>
+<script src="site.js" defer></script>
+<script src="home.js" defer></script>
 </body>
 </html>

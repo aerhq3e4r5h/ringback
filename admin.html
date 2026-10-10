@@ -12,14 +12,15 @@
 <meta name="theme-color" content="#07100F">
 <meta name="robots" content="noindex">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="app.css">
 </head>
-<body data-page="admin" data-no-ai data-no-float>
+<body data-page="admin" data-no-ai data-no-float data-app>
+<a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
-<main class="app" style="grid-template-columns:1fr">
+<main id="main" class="app" style="grid-template-columns:1fr">
   <div class="pane" style="max-width:1300px;margin-inline:auto;width:100%">
     <div class="pane-head">
       <div style="display:grid;gap:10px"><span class="kicker">Owner only</span><h1>Admin</h1></div>
@@ -47,10 +48,10 @@
     </div>
   </div>
 </main>
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
-<script src="site.js"></script>
-<script src="auth.js"></script>
-<script src="admin.js"></script>
+<script src="config.js" defer></script>
+<script src="site.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js" defer></script>
+<script src="auth.js" defer></script>
+<script src="admin.js" defer></script>
 </body>
 </html>

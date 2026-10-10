@@ -9,16 +9,23 @@
 <meta property="og:description" content="Get in touch with Ringback. WhatsApp, call or send us a message about an AI receptionist for your trade in Gauteng. We reply within one working day.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ringback">
+<link rel="canonical" href="https://aerhq3e4r5h.github.io/ringback/contact.html">
+<meta property="og:url" content="https://aerhq3e4r5h.github.io/ringback/contact.html">
+<meta property="og:image" content="https://aerhq3e4r5h.github.io/ringback/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ringback: every call answered, every job booked. AI receptionist for trades in Gauteng.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#07100F">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
 </head>
 <body data-page="contact">
+<a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
-<main>
+<main id="main">
 <section class="phero">
   <div class="orb a"></div>
   <div class="wrap">
@@ -29,29 +36,29 @@
   </div>
 </section>
 
-<section class="sec tight">
+<section class="sec">
   <div class="wrap">
     <div class="contact-grid">
-      <a class="contact-card spot rv" data-wa="Hi Ringback, I'd like to know more." href="#"><span class="ic"><svg><use href="#i-wa"/></svg></span><span class="kicker">WhatsApp</span><span class="v" data-phone>065 234 3106</span><span class="muted">Quickest way to reach us</span></a>
-      <a class="contact-card spot rv" data-tel href="#"><span class="ic"><svg><use href="#i-phone"/></svg></span><span class="kicker">Call</span><span class="v" data-phone>065 234 3106</span><span class="muted">If we're on a job, we'll call you back</span></a>
-      <button class="contact-card spot rv" type="button" data-open-ai style="text-align:left;font:inherit;color:inherit;cursor:pointer"><span class="ic"><svg><use href="#i-mic"/></svg></span><span class="kicker">Ask the assistant</span><span class="v">Talk or chat now</span><span class="muted">Answers about pricing, setup and POPIA, 24/7</span></button>
+      <a class="contact-card spot rv" data-wa="Hi Ringback, I'd like to know more." href="#"><span class="ic"><svg aria-hidden="true"><use href="#i-wa"/></svg></span><span class="kicker">WhatsApp</span><span class="v" data-phone>065 234 3106</span><span class="muted">Quickest way to reach us</span></a>
+      <a class="contact-card spot rv" data-tel href="#"><span class="ic"><svg aria-hidden="true"><use href="#i-phone"/></svg></span><span class="kicker">Call</span><span class="v" data-phone>065 234 3106</span><span class="muted">If we're on a job, we'll call you back</span></a>
+      <button class="contact-card spot rv" type="button" data-open-ai style="text-align:left;font:inherit;color:inherit;cursor:pointer"><span class="ic"><svg aria-hidden="true"><use href="#i-mic"/></svg></span><span class="kicker">Ask the assistant</span><span class="v">Talk or chat now</span><span class="muted">Answers about pricing, setup and POPIA, 24/7</span></button>
     </div>
   </div>
 </section>
 
-<section class="sec tight" id="message">
+<section class="sec" id="message">
   <div class="wrap split" style="align-items:start">
     <div class="rv">
       <span class="kicker">Send a message</span>
       <h2 style="margin-top:18px">Tell us about your business.</h2>
       <p class="lede" style="margin-top:18px">We'll come back to you with how Ringback would work for your trade, and set up a free trial week if you want one.</p>
       <ul class="checks">
-        <li><svg><use href="#i-check"/></svg><span><b>No obligation.</b> Ask anything.</span></li>
-        <li><svg><use href="#i-check"/></svg><span><b>Gauteng-based.</b> Johannesburg, Pretoria and the East Rand.</span></li>
-        <li><svg><use href="#i-check"/></svg><span><b>Prefer to do it yourself?</b> <a href="login.html?mode=signup" style="color:var(--ember-2)">Create an account</a> and request your trial in the portal.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>No obligation.</b> Ask anything.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Gauteng-based.</b> Johannesburg, Pretoria and the East Rand.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Prefer to do it yourself?</b> <a href="login.html?mode=signup" style="color:var(--ember-2)">Create an account</a> and request your trial in the portal.</span></li>
       </ul>
     </div>
-    <form class="form card rv" id="contactForm" novalidate style="padding:28px">
+    <form class="form card rv" id="contactForm" novalidate style="padding:28px" onsubmit="return false">
       <div class="two">
         <label class="fld"><span>Your name <i class="req">*</i></span><input name="name" autocomplete="name" required maxlength="120"></label>
         <label class="fld"><span>Business name</span><input name="business" autocomplete="organization" maxlength="120"></label>
@@ -71,7 +78,7 @@
     </form>
   </div>
 </section>
-<section class="sec tight" id="areas">
+<section class="sec" id="areas">
   <div class="wrap split">
     <div class="rv">
       <span class="kicker">Where we work</span>
@@ -102,7 +109,7 @@
           <text x="218" y="112" text-anchor="middle" fill="#ECF3F0" font-family="Geist, system-ui, sans-serif" font-size="14" font-weight="600">Pretoria</text>
           <text x="150" y="268" text-anchor="middle" fill="#ECF3F0" font-family="Geist, system-ui, sans-serif" font-size="14" font-weight="600">Johannesburg</text>
           <text x="300" y="275" text-anchor="middle" fill="#ECF3F0" font-family="Geist, system-ui, sans-serif" font-size="14" font-weight="600">East Rand</text>
-          <text x="206" y="192" text-anchor="middle" fill="#5F7570" font-family="Geist Mono, monospace" font-size="10" letter-spacing=".5">MIDRAND</text>
+          <text x="206" y="192" text-anchor="middle" fill="#839792" font-family="Geist Mono, monospace" font-size="10" letter-spacing=".5">MIDRAND</text>
         </svg>
       <figcaption>Where we work · simplified map, not to scale</figcaption>
     </figure>
@@ -110,10 +117,10 @@
 </section>
 </main>
 <footer id="site-footer"></footer>
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
-<script src="site.js"></script>
-<script src="auth.js"></script>
-<script src="contact.js"></script>
+<script src="config.js" defer></script>
+<script src="site.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js" defer></script>
+<script src="auth.js" defer></script>
+<script src="contact.js" defer></script>
 </body>
 </html>
