@@ -26,13 +26,16 @@
 <a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
 <main id="main">
-<section class="phero">
+<section class="phero phero--split">
   <div class="wrap">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>How it works</span></nav>
-    <span class="kicker">The product</span>
-    <h1>From missed call to <span class="hot">booked job</span> in under a minute.</h1>
-    <p class="lede">Ringback sits behind your existing number. When you can't pick up, it answers in your business name, works out what the caller needs, and makes sure you hear about it straight away.</p>
-    <div class="subnav"><a href="#flow">The call flow</a><a href="#features">Features</a><a href="#how">Getting set up</a><a href="#forwarding">Call forwarding</a><a href="#report">Monthly report</a><a href="#compare">Compared</a></div>
+    <div class="phero-copy">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">How it works</span></nav>
+      <span class="kicker">The product</span>
+      <h1>From missed call to <span class="hot">booked job</span> in under a minute.</h1>
+      <p class="lede">Ringback sits behind your existing number. When you can't pick up, it answers in your business name, works out what the caller needs, and makes sure you hear about it straight away.</p>
+      <nav class="subnav" aria-label="On this page"><a href="#flow">The call flow</a><a href="#features">Features</a><a href="#how">Getting set up</a><a href="#forwarding">Call forwarding</a><a href="#report">Monthly report</a><a href="#compare">Compared</a></nav>
+    </div>
+    <div class="phero-art" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -40,16 +43,16 @@
   <div class="wrap">
     <div class="head rv"><span class="kicker">The call flow</span><h2>What happens when your phone rings out</h2></div>
     <div class="flow rv">
-      <div class="flow-node"><span class="n">01</span><h4>A customer calls you</h4><p>On your normal cellphone number. You answer if you can.</p></div>
-      <div class="flow-node"><span class="n">02</span><h4>It forwards after ~20s</h4><p>Unanswered, busy or unreachable calls go to Ringback.</p></div>
-      <div class="flow-node hl"><span class="n">03</span><h4>Ringback answers</h4><p>In your business name. It says the call is recorded and asks what's wrong.</p></div>
-      <div class="flow-node"><span class="n">04</span><h4>It acts</h4><p>Emergency: safety steps and an urgent alert. Routine: books a slot. Quote: takes a callback.</p></div>
-      <div class="flow-node"><span class="n">05</span><h4>You get the details</h4><p>An SMS with name, number, suburb, problem and a recording. It's logged in your portal.</p></div>
+      <div class="flow-node"><span class="n">01</span><h3>A customer calls you</h3><p>On your normal cellphone number. You answer if you can.</p></div>
+      <div class="flow-node"><span class="n">02</span><h3>It forwards after ~20s</h3><p>Unanswered, busy or unreachable calls go to Ringback.</p></div>
+      <div class="flow-node hl"><span class="n">03</span><h3>Ringback answers</h3><p>In your business name. It says the call is recorded and asks what's wrong.</p></div>
+      <div class="flow-node"><span class="n">04</span><h3>It acts</h3><p>Emergency: safety steps and an urgent alert. Routine: books a slot. Quote: takes a callback.</p></div>
+      <div class="flow-node"><span class="n">05</span><h3>You get the details</h3><p>An SMS with name, number, suburb, problem and a recording. It's logged in your portal.</p></div>
     </div>
   </div>
 </section>
 
-<section class="sec" id="features">
+<section class="sec band" id="features">
   <div class="wrap">
     <div class="head rv"><span class="kicker">Features</span><h2>Everything a good receptionist does, at 2 a.m. on a Sunday.</h2></div>
     <div class="grid-3">
@@ -74,10 +77,11 @@
       <div class="step spot rv"><span class="n">02</span><h3>We build and test it</h3><p>We set up your assistant, run test calls for your trade, and set up call forwarding on your phone with you.</p><span class="when">Day 1 · 10 minutes of your time</span></div>
       <div class="step spot rv"><span class="n">03</span><h3>We tune it weekly</h3><p>For the first month we review calls with you every week and adjust what it says. You can change your details in the portal any time.</p><span class="when">Weeks 1 to 4</span></div>
     </div>
+    <p class="center mt-l"><a class="link" href="contact.html#message" data-setup-call data-source="product">Rather we set it up with you? <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
   </div>
 </section>
 
-<section class="sec" id="forwarding">
+<section class="sec band" id="forwarding">
   <div class="wrap">
     <div class="head rv">
       <span class="kicker">Call forwarding</span>
@@ -85,6 +89,7 @@
       <p class="lede">Pick your network and when calls should forward, then dial the code. You keep your number, the calls you answer don't change, and the same kind of code switches it off. We'll do it with you at setup if you'd rather.</p>
     </div>
     <div class="rv" data-forward-guide></div>
+    <p class="mt-m"><a class="link" href="contact.html#message" data-setup-call data-source="product">Rather we set it up with you? <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
   </div>
 </section>
 
@@ -92,16 +97,18 @@
   <div class="wrap report-wrap">
     <div class="rv">
       <span class="kicker">Proof, every month</span>
-      <h2 style="margin-top:18px">See exactly what it earned you.</h2>
-      <p class="lede" style="margin-top:20px">Every call is logged in your portal on every plan. On Pro, you also get a monthly report you can read in two minutes.</p>
+      <h2>See exactly what it earned you.</h2>
+      <p class="lede mt-m">Every call is logged in your portal on every plan. On Pro, you also get a monthly report you can read in two minutes.</p>
       <ul class="checks">
         <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Every call logged</b> with a summary, a recording and what happened next.</span></li>
         <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>After-hours split out</b>, so you see the work you'd have missed.</span></li>
         <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Emergencies and bookings counted</b>, in rand where we can.</span></li>
       </ul>
     </div>
-    <div class="report rv" aria-label="Example monthly report">
-      <div class="report-top"><b>Monthly report · <span data-trade-text="biz">Ridgeway Plumbing</span></b><span class="example">Example · not real client data</span></div>
+    <div class="report screen rv" role="group" aria-label="Example monthly report">
+      <div class="screen-bar"><span>Example · not real client data</span></div>
+      <div class="screen-body">
+      <div class="report-top"><b>Monthly report · <span data-trade-text="biz">Ridgeway Plumbing</span></b></div>
       <div class="kpis">
         <div class="kpi hl"><small>Calls answered</small><b data-count="148">148</b></div>
         <div class="kpi"><small>After hours</small><b data-count="63">63</b></div>
@@ -110,20 +117,21 @@
       </div>
       <div>
         <div class="chart" aria-hidden="true">
-          <div><i style="height:50%"></i><span>Mon</span></div><div><i style="height:38%"></i><span>Tue</span></div><div><i style="height:35%"></i><span>Wed</span></div><div><i style="height:44%"></i><span>Thu</span></div><div><i style="height:56%"></i><span>Fri</span></div><div><i class="night" style="height:74%"></i><span>Sat</span></div><div><i class="night" style="height:62%"></i><span>Sun</span></div>
+          <div><i style="--h:50%"></i><span>Mon</span></div><div><i style="--h:38%"></i><span>Tue</span></div><div><i style="--h:35%"></i><span>Wed</span></div><div><i style="--h:44%"></i><span>Thu</span></div><div><i style="--h:56%"></i><span>Fri</span></div><div><i class="night" style="--h:74%"></i><span>Sat</span></div><div><i class="night" style="--h:62%"></i><span>Sun</span></div>
         </div>
-        <div class="legend" style="margin-top:12px"><span><i></i>Weekday calls</span><span><i class="nt"></i>Weekend calls</span></div>
+        <div class="legend mt-s"><span><i></i>Weekday calls</span><span><i class="nt"></i>Weekend calls</span></div>
       </div>
       <div class="log" data-trade-log>
         <div><time>21:47</time><span>Burst geyser · Fourways</span><span class="tag red">Alerted</span></div>
         <div><time>14:10</time><span>Blocked drain · Randburg</span><span class="tag mint">Booked</span></div>
         <div><time>09:32</time><span>COC for house sale · Sandton</span><span class="tag amber">Callback</span></div>
       </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="sec" id="compare">
+<section class="sec band" id="compare">
   <div class="wrap">
     <div class="head rv"><span class="kicker">Compared</span><h2>Better than voicemail. A fraction of a salary.</h2></div>
     <div class="table-wrap rv" tabindex="0" role="region" aria-label="Ringback compared with voicemail, a receptionist and an answering service">
@@ -149,7 +157,7 @@
     <div class="grid-4">
       <div class="card spot rv"><span class="ic"><svg aria-hidden="true"><use href="#i-cloud"/></svg></span><h3>Load-shedding proof</h3><p>It runs in the cloud, so it keeps answering when your office has no power.</p></div>
       <div class="card spot rv"><span class="ic"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><h3>Knows the area</h3><p>Checks callers are in your service area before booking.</p></div>
-      <div class="card spot rv"><span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><h3>POPIA-aware</h3><p>Recording notices, 90-day deletion and a written agreement. <a href="privacy.html" style="color:var(--ember-2)">Privacy policy</a></p></div>
+      <div class="card spot rv"><span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><h3>POPIA-aware</h3><p>Recording notices, 90-day deletion and a written agreement. <a href="privacy.html">Privacy policy</a></p></div>
       <div class="card spot rv"><span class="ic"><svg aria-hidden="true"><use href="#i-rand"/></svg></span><h3>Priced in rand</h3><p>A fixed monthly price. No dollar surprises on your invoice.</p></div>
     </div>
   </div>
@@ -158,8 +166,8 @@
 <section class="sec">
   <div class="wrap">
     <div class="final surface-hot rv">
-      <div><span class="kicker">Ready?</span><h2 style="margin-top:18px">Hear it, then try it free.</h2><p class="lede">Talk to the assistant right now, or create your account and we'll put it on your number for a free trial week.</p></div>
-      <div style="display:grid;gap:12px;justify-items:start">
+      <div><span class="kicker">Ready?</span><h2>Hear it, then try it free.</h2><p class="lede">Talk to the assistant right now, or create your account and we'll put it on your number for a free trial week.</p></div>
+      <div class="cta-col">
         <a class="btn btn-hot" href="login.html?mode=signup">Create your account <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
         <button class="btn btn-line" type="button" data-open-ai><svg aria-hidden="true"><use href="#i-mic"/></svg>Talk to the assistant</button>
       </div>

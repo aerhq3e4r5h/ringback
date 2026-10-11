@@ -41,11 +41,13 @@
         '<div class="two"><label class="fld"><span>Number to forward to <small>' + (lock ? 'From your Ringback setup' : 'the Ringback number we give you') + '</small></span><input type="tel" inputmode="tel" autocomplete="off" class="fwd-num" placeholder="e.g. 010 123 4567" maxlength="20"' + (lock ? ' readonly' : '') + '></label>' +
         '<label class="fld fwd-ring"><span>Ring for</span><select class="fwd-sec">' + [5,10,15,20,25,30].map(function(x){ return '<option value="' + x + '"' + (x === 20 ? ' selected' : '') + '>' + x + ' seconds</option>'; }).join('') + '</select></label></div>' +
       '</div>' +
-      '<div class="fwd-out" aria-live="polite">' +
+      '<div class="fwd-out screen" aria-live="polite">' +
+        '<div class="screen-bar"><span class="fwd-bar"></span></div>' +
+        '<div class="fwd-body">' +
         '<div class="fwd-code"><span class="lbl">Dial this to switch it on</span><div class="fwd-row"><code class="fwd-on"></code><button type="button" class="icon-btn fwd-copy" data-which="on" aria-label="Copy the code to switch forwarding on">' + RB.icon('i-copy') + '</button></div></div>' +
         '<div class="fwd-code"><span class="lbl">Dial this to switch it off</span><div class="fwd-row"><code class="fwd-off"></code><button type="button" class="icon-btn fwd-copy" data-which="off" aria-label="Copy the code to switch forwarding off">' + RB.icon('i-copy') + '</button></div></div>' +
         '<p class="fwd-note"></p>' +
-      '</div>';
+      '</div></div>';
     var q = function(s){ return el.querySelector(s); };
     if (opts.number) q('.fwd-num').value = String(opts.number);
     function render(){
@@ -55,6 +57,7 @@
       var raw = q('.fwd-num').value.replace(/[^\d+]/g, ''), ok = /^(\+27|0)\d{9}$/.test(raw);
       var num = ok ? raw : '[number]', sec = q('.fwd-sec').value;
       q('.fwd-hint').textContent = type.hint;
+      q('.fwd-bar').textContent = 'Your codes · ' + net.name;
       q('.fwd-ring').hidden = !type.ring;
       q('.fwd-on').textContent = (ov.on || type.on).replace('{n}', num).replace('{s}', sec);
       q('.fwd-off').textContent = ov.off || type.off;

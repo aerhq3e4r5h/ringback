@@ -390,10 +390,11 @@
   if (footer) {
     var bottom = '<div class="foot-b"><span>© ' + new Date().getFullYear() + ' Ringback. Prices exclude VAT.</span><span>Businesses named “Ridgeway” on this site are fictional demo businesses.</span>' +
       '<button class="foot-top" type="button">Back to top' + arrow + '</button></div>';
-    var col = function(h, items){ return '<div><h4>' + h + '</h4><ul>' + items.map(function(l){ return '<li><a href="' + l[0] + '">' + (l[2] ? RB.icon(l[2]) : '') + l[1] + '</a></li>'; }).join('') + '</ul></div>'; };
+    var col = function(h, items){ return '<div><h3>' + h + '</h3><ul>' + items.map(function(l){ return '<li><a href="' + l[0] + '">' + (l[2] ? RB.icon(l[2]) : '') + l[1] + '</a></li>'; }).join('') + '</ul></div>'; };
     var row = function(tag, attrs, label, value, ic){ return '<' + tag + ' class="fc-row" ' + attrs + '><span class="fc-l">' + RB.icon(ic) + label + '</span><b>' + value + '</b>' + arrow + '</' + tag + '>'; };
     footer.className = 'site-footer' + (isApp ? ' site-footer--app' : '');
     footer.innerHTML = isApp ? '<div class="wrap">' + bottom + '</div>' : '<div class="wrap">' +
+      '<h2 class="sr-only">Contact us and site links</h2>' +
       '<div class="foot-contact">' +
         (C.whatsapp ? row('a', 'href="' + RB.wa('Hi Ringback, I have a question.') + '" target="_blank" rel="noopener"', 'WhatsApp', RB.esc(C.phoneDisplay), 'i-wa') : '') +
         (C.phoneTel ? row('a', 'href="tel:' + RB.esc(C.phoneTel) + '"', 'Call', RB.esc(C.phoneDisplay), 'i-phone') : '') +

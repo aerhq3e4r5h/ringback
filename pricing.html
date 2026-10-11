@@ -26,17 +26,19 @@
 <a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
 <main id="main">
-<section class="phero c">
+<section class="phero phero--center">
   <div class="wrap">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Pricing</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Pricing</span></nav>
     <span class="kicker">Pricing</span>
     <h1>One recovered job <span class="hot">pays for months.</span></h1>
     <p class="lede">Simple monthly plans in rand. Prices exclude VAT. Every plan starts with a free trial week on your own number.</p>
+    <div data-draft-pill hidden></div>
   </div>
 </section>
 
 <section class="sec" id="plans">
   <div class="wrap">
+    <h2 class="sr-only">Plans</h2>
     <div class="plans">
       <div class="plan star rv">
         <span class="ribbon">3 places</span>
@@ -80,6 +82,7 @@
         <a class="btn btn-line" href="login.html?mode=signup&plan=pro">Start free trial week</a>
       </div>
     </div>
+    <div class="mt-m" data-founder="card" hidden></div>
     <div class="every rv">
       <span><svg aria-hidden="true"><use href="#i-check"/></svg>Keep your own number</span>
       <span><svg aria-hidden="true"><use href="#i-check"/></svg>Set up for your trade</span>
@@ -90,7 +93,7 @@
   </div>
 </section>
 
-<section class="sec">
+<section class="sec band" id="compare">
   <div class="wrap">
     <div class="head rv"><span class="kicker">Compare plans</span><h2>What's in each plan</h2></div>
     <div class="table-wrap rv" tabindex="0" role="region" aria-label="What is in each plan">
@@ -144,16 +147,16 @@
           <div><dt>Ringback Starter</dt><dd>R2,500</dd></div>
           <div><dt>Jobs needed to cover it</dt><dd id="breakeven">1</dd></div>
         </dl>
-        <a class="btn btn-line btn-sm" id="shareWa" href="#" target="_blank" rel="noopener" style="justify-self:start;align-self:flex-start"><svg aria-hidden="true"><use href="#i-wa"/></svg>Share on WhatsApp</a>
+        <a class="btn btn-line btn-sm" id="shareWa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Share on WhatsApp</a>
       </div>
     </div>
     <p class="note">Missed calls per week × share that are real jobs × share you'd win × average job value × 4.3 weeks. Starting values are a conservative example, not a promise.</p>
   </div>
 </section>
 
-<section class="sec">
+<section class="sec band">
   <div class="wrap faq-grid">
-    <div class="rv"><span class="kicker">Pricing questions</span><h2 style="margin-top:18px">The money bits, plainly.</h2><p class="lede" style="margin-top:18px">More answers on the <a href="faq.html" style="color:var(--ember-2)">FAQ page</a>.</p></div>
+    <div class="rv"><span class="kicker">Pricing questions</span><h2>The money bits, plainly.</h2><p class="lede mt-m">More answers on the <a href="faq.html">FAQ page</a>.</p></div>
     <div class="faq rv">
       <details open><summary>How does the free trial week work?</summary><p>Create an account, fill in your business details and request your trial in the portal. We set Ringback up on your number for 7 days at no cost. If you don't want to continue, we switch it off. No card needed to start.</p></details>
       <details><summary>What happens if I go over my minutes?</summary><p>Extra minutes are R5 each. We'll warn you before you get close, and help you move plans if that works out cheaper.</p></details>
@@ -170,7 +173,8 @@
       <span class="kicker">Start this week</span>
       <h2>Try it on your own number, free for a week.</h2>
       <p class="lede">Create your account in a minute. We'll do the rest with you.</p>
-      <div class="ctas" style="justify-content:center"><a class="btn btn-hot" href="login.html?mode=signup">Create your account <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn-line" href="contact.html">Talk to us first</a></div>
+      <div class="ctas"><a class="btn btn-hot" href="login.html?mode=signup">Create your account <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn-line" href="contact.html">Talk to us first</a></div>
+      <a class="link mt-s" href="contact.html#message" data-setup-call data-source="pricing">Rather we set it up with you? <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
   </div>
 </section>

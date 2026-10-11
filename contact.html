@@ -28,7 +28,7 @@
 <main id="main">
 <section class="phero">
   <div class="wrap">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Contact</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Contact</span></nav>
     <span class="kicker">Contact</span>
     <h1>Let's talk about your <span class="hot">missed calls.</span></h1>
     <p class="lede">WhatsApp is quickest. We reply within one working day, usually much sooner.</p>
@@ -40,24 +40,26 @@
     <div class="contact-grid">
       <a class="contact-card spot rv" data-wa="Hi Ringback, I'd like to know more." href="#"><span class="ic"><svg aria-hidden="true"><use href="#i-wa"/></svg></span><span class="kicker">WhatsApp</span><span class="v" data-phone>065 234 3106</span><span class="muted">Quickest way to reach us</span></a>
       <a class="contact-card spot rv" data-tel href="#"><span class="ic"><svg aria-hidden="true"><use href="#i-phone"/></svg></span><span class="kicker">Call</span><span class="v" data-phone>065 234 3106</span><span class="muted">If we're on a job, we'll call you back</span></a>
-      <button class="contact-card spot rv" type="button" data-open-ai style="text-align:left;font:inherit;color:inherit;cursor:pointer"><span class="ic"><svg aria-hidden="true"><use href="#i-mic"/></svg></span><span class="kicker">Ask the assistant</span><span class="v">Talk or chat now</span><span class="muted">Answers about pricing, setup and POPIA, 24/7</span></button>
+      <button class="contact-card spot rv" type="button" data-open-ai><span class="ic"><svg aria-hidden="true"><use href="#i-mic"/></svg></span><span class="kicker">Ask the assistant</span><span class="v">Talk or chat now</span><span class="muted">Answers about pricing, setup and POPIA, 24/7</span></button>
     </div>
   </div>
 </section>
 
-<section class="sec" id="message">
-  <div class="wrap split" style="align-items:start">
+<section class="sec band" id="message">
+  <div class="wrap split top">
     <div class="rv">
       <span class="kicker">Send a message</span>
-      <h2 style="margin-top:18px">Tell us about your business.</h2>
-      <p class="lede" style="margin-top:18px">We'll come back to you with how Ringback would work for your trade, and set up a free trial week if you want one.</p>
+      <h2>Tell us about your business.</h2>
+      <p class="lede mt-m">We'll come back to you with how Ringback would work for your trade, and set up a free trial week if you want one.</p>
       <ul class="checks">
         <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>No obligation.</b> Ask anything.</span></li>
         <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Gauteng-based.</b> Johannesburg, Pretoria and the East Rand.</span></li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Prefer to do it yourself?</b> <a href="login.html?mode=signup" style="color:var(--ember-2)">Create an account</a> and request your trial in the portal.</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Prefer to do it yourself?</b> <a href="login.html?mode=signup">Create an account</a> and request your trial in the portal.</span></li>
       </ul>
     </div>
-    <form class="form card rv" id="contactForm" novalidate style="padding:28px" onsubmit="return false">
+    <div class="stack-l">
+    <div data-founder="card" hidden></div>
+    <form class="form card surface-hot rv" id="contactForm" novalidate onsubmit="return false">
       <div class="two">
         <label class="fld"><span>Your name <i class="req">*</i></span><input name="name" autocomplete="name" required maxlength="120"></label>
         <label class="fld"><span>Business name</span><input name="business" autocomplete="organization" maxlength="120"></label>
@@ -75,17 +77,18 @@
       <button class="btn btn-hot btn-block" type="submit" id="contactBtn">Send message</button>
       <p class="form-msg" id="contactMsg" aria-live="polite"></p>
     </form>
+    </div>
   </div>
 </section>
 <section class="sec" id="areas">
   <div class="wrap split">
     <div class="rv">
       <span class="kicker">Where we work</span>
-      <h2 style="margin-top:18px">Local to Gauteng, by design.</h2>
-      <p class="lede" style="margin-top:18px">We set Ringback up with you in person or on a call, and your assistant knows these suburbs by name. Outside these areas? Ask us anyway.</p>
+      <h2>Local to Gauteng, by design.</h2>
+      <p class="lede mt-m">We set Ringback up with you in person or on a call, and your assistant knows these suburbs by name. Outside these areas? Ask us anyway.</p>
       <ul class="area-list"><li><b>Pretoria</b><span>Pretoria, Centurion</span></li><li><b>Johannesburg</b><span>Johannesburg, Sandton, Randburg</span></li><li><b>East Rand</b><span>Benoni, Boksburg, Kempton Park</span></li></ul>
     </div>
-    <figure class="area-map rv" style="margin:0">
+    <figure class="area-map rv">
         <svg viewBox="0 0 380 380" role="img" aria-labelledby="mapT">
           <title id="mapT">Simplified map of Gauteng showing the three areas we cover: Pretoria in the north, Johannesburg in the centre and the East Rand to the east.</title>
           <defs>
