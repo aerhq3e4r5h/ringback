@@ -26,38 +26,35 @@
 <a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
 <main id="main">
-<section class="phero phero--center">
+<section class="phero phero--center pr-hero">
   <div class="wrap">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Pricing</span></nav>
-    <span class="kicker">Pricing</span>
     <h1>One recovered job <span class="hot">pays for months.</span></h1>
-    <p class="lede">Simple monthly plans in rand. Prices exclude VAT. Every plan starts with a free trial week on your own number.</p>
+    <p class="pr-sub">Rand, excl. VAT · Free trial week on your own number</p>
     <div data-draft-pill hidden></div>
   </div>
 </section>
 
-<section class="sec" id="plans">
+<section class="sec pr-top" id="plans" aria-labelledby="plansH">
   <div class="wrap">
-    <h2 class="sr-only">Plans</h2>
-    <div class="plans">
-      <div class="plan star rv">
-        <span class="ribbon">3 places</span>
-        <div><h3>Founding partner</h3><p class="d">For our first three businesses.</p></div>
-        <div class="price"><b>R1,500</b><span>/mo for 60 days</span></div>
-        <p class="spots" id="spots" hidden></p>
-        <p class="setup">No setup fee · review + 2 referrals if you're happy</p>
-        <ul>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Everything in Starter</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Weekly call reviews with you</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Help shape what we build next</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Stop at day 60, no questions</li>
-        </ul>
-        <a class="btn btn-hot" href="login.html?mode=signup&plan=founding">Apply to be a partner</a>
-      </div>
-      <div class="plan rv">
-        <div><h3>Starter</h3><p class="d">Missed and after-hours calls, handled.</p></div>
-        <div class="price"><b>R2,500</b><span>/month</span></div>
-        <p class="setup">R3,500 once-off setup · 250 minutes</p>
+    <h2 class="sr-only" id="plansH">Plans</h2>
+    <div class="founding surface-hot">
+      <div class="fo-l"><span class="kicker">Founding partner</span><p>For our first three businesses</p></div>
+      <div class="fo-c"><p class="fo-price"><b class="num">R1,500</b><span>/mo for 60 days</span></p><p class="fo-terms">No setup fee · review + 2 referrals if you're happy</p></div>
+      <div class="fo-r"><p class="spots" id="spots" hidden></p><a class="btn btn-hot" href="login.html?mode=signup&amp;plan=founding">Apply to be a partner <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    </div>
+    <div class="mt-m" data-founder="card" hidden></div>
+
+    <details class="finder" id="finder">
+      <summary><span class="fi-t"><b>Which plan fits?</b><span>A guide, not a quote · four quick questions</span></span><span class="fi-go">Find my plan</span></summary>
+      <div class="fi-body" id="finderBody"></div>
+    </details>
+
+    <div class="plans2">
+      <article class="plan" data-plan="starter">
+        <div class="pl-h"><h3>Starter</h3><p class="d">For a one-person business or a small team. Missed and after-hours calls, handled.</p></div>
+        <p class="price"><b class="num">R2,500</b><span>/month<br>excl. VAT</span></p>
+        <p class="setup">R3,500 once-off setup · 250 minutes a month</p>
         <ul>
           <li><svg aria-hidden="true"><use href="#i-check"/></svg>Missed and after-hours calls</li>
           <li><svg aria-hidden="true"><use href="#i-check"/></svg>Emergency SMS alerts</li>
@@ -66,23 +63,23 @@
           <li><svg aria-hidden="true"><use href="#i-check"/></svg>Spam and sales-call filtering</li>
           <li><svg aria-hidden="true"><use href="#i-check"/></svg>Client portal with call history</li>
         </ul>
-        <a class="btn btn-line" href="login.html?mode=signup&plan=starter">Start free trial week</a>
-      </div>
-      <div class="plan rv">
-        <div><h3>Pro</h3><p class="d">A full front desk for a growing team.</p></div>
-        <div class="price"><b>R4,500</b><span>/month</span></div>
-        <p class="setup">R5,500 once-off setup · 600 minutes</p>
-        <ul>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Everything in Starter</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>English and Afrikaans</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Google review requests</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Follow-up on callers who didn't book</li>
-          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Monthly results report</li>
+        <a class="btn btn-line" href="login.html?mode=signup&amp;plan=starter">Start free trial week</a>
+      </article>
+      <article class="plan" data-plan="pro">
+        <div class="pl-h"><h3>Pro</h3><p class="d">For teams with more calls, Afrikaans-speaking callers and follow-ups to chase.</p></div>
+        <p class="price"><b class="num">R4,500</b><span>/month<br>excl. VAT</span></p>
+        <p class="setup">R5,500 once-off setup · 600 minutes a month</p>
+        <ul class="adds">
+          <li class="adds-h">Everything in Starter. Pro adds:</li>
+          <li><svg aria-hidden="true"><use href="#i-plus"/></svg>English and Afrikaans</li>
+          <li><svg aria-hidden="true"><use href="#i-plus"/></svg>Google review requests</li>
+          <li><svg aria-hidden="true"><use href="#i-plus"/></svg>Follow-up on callers who didn't book</li>
+          <li><svg aria-hidden="true"><use href="#i-plus"/></svg>Monthly results report</li>
+          <li><svg aria-hidden="true"><use href="#i-plus"/></svg>350 more minutes a month</li>
         </ul>
-        <a class="btn btn-line" href="login.html?mode=signup&plan=pro">Start free trial week</a>
-      </div>
+        <a class="btn btn-line" href="login.html?mode=signup&amp;plan=pro">Start free trial week</a>
+      </article>
     </div>
-    <div class="mt-m" data-founder="card" hidden></div>
     <div class="every rv">
       <span><svg aria-hidden="true"><use href="#i-check"/></svg>Keep your own number</span>
       <span><svg aria-hidden="true"><use href="#i-check"/></svg>Set up for your trade</span>
@@ -96,23 +93,33 @@
 <section class="sec band" id="compare">
   <div class="wrap">
     <div class="head rv"><span class="kicker">Compare plans</span><h2>What's in each plan</h2></div>
-    <div class="table-wrap rv" tabindex="0" role="region" aria-label="What is in each plan">
+    <div class="seg cmp-seg" role="group" aria-label="Plan to show in the table">
+      <button type="button" data-show="founding" aria-pressed="false">Founding</button>
+      <button type="button" data-show="starter" aria-pressed="true">Starter</button>
+      <button type="button" data-show="pro" aria-pressed="false">Pro</button>
+    </div>
+    <div class="table-wrap cmp-wrap rv" data-show="starter" tabindex="0" role="region" aria-label="What is in each plan">
       <table class="cmp">
-        <thead><tr><th scope="col"></th><th scope="col">Founding partner</th><th scope="col">Starter</th><th scope="col" class="us">Pro</th></tr></thead>
+        <thead><tr><td></td><th scope="col" class="c-f">Founding partner</th><th scope="col" class="c-s">Starter</th><th scope="col" class="c-p us">Pro</th></tr></thead>
         <tbody>
-          <tr><td>Monthly price</td><td>R1,500 for 60 days</td><td>R2,500</td><td class="us">R4,500</td></tr>
-          <tr><td>Once-off setup</td><td>Free</td><td>R3,500</td><td class="us">R5,500</td></tr>
-          <tr><td>Minutes included</td><td>250</td><td>250</td><td class="us">600</td></tr>
-          <tr><td>Missed and after-hours calls</td><td class="yes"><span class="sr-only">Yes</span></td><td class="yes"><span class="sr-only">Yes</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Emergency SMS alerts</td><td class="yes"><span class="sr-only">Yes</span></td><td class="yes"><span class="sr-only">Yes</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Google Calendar booking</td><td class="yes"><span class="sr-only">Yes</span></td><td class="yes"><span class="sr-only">Yes</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Client portal and call history</td><td class="yes"><span class="sr-only">Yes</span></td><td class="yes"><span class="sr-only">Yes</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Afrikaans</td><td class="nil"><span class="sr-only">No</span></td><td class="nil"><span class="sr-only">No</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Google review requests</td><td class="nil"><span class="sr-only">No</span></td><td class="nil"><span class="sr-only">No</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Follow-up on callers who didn't book</td><td class="nil"><span class="sr-only">No</span></td><td class="nil"><span class="sr-only">No</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Monthly results report</td><td class="nil"><span class="sr-only">No</span></td><td class="nil"><span class="sr-only">No</span></td><td class="us yes"><span class="sr-only">Yes</span></td></tr>
-          <tr><td>Weekly call reviews with us</td><td class="y">For 60 days</td><td>First month</td><td class="us">First month</td></tr>
-          <tr><td>Contract</td><td>Stop at day 60</td><td>3-month minimum</td><td class="us">3-month minimum</td></tr>
+          <tr class="cmp-g"><th scope="colgroup" colspan="4">Price</th></tr>
+          <tr><th scope="row">Monthly price</th><td class="c-f">R1,500 for 60 days</td><td class="c-s">R2,500</td><td class="c-p us">R4,500</td></tr>
+          <tr><th scope="row">Once-off setup</th><td class="c-f">Free</td><td class="c-s">R3,500</td><td class="c-p us">R5,500</td></tr>
+          <tr class="cmp-g"><th scope="colgroup" colspan="4">Calls</th></tr>
+          <tr><th scope="row">Minutes included</th><td class="c-f">250</td><td class="c-s">250</td><td class="c-p us">600</td></tr>
+          <tr><th scope="row">Missed and after-hours calls</th><td class="c-f yes"><span class="sr-only">Yes</span></td><td class="c-s yes"><span class="sr-only">Yes</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Emergency SMS alerts</th><td class="c-f yes"><span class="sr-only">Yes</span></td><td class="c-s yes"><span class="sr-only">Yes</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Google Calendar booking</th><td class="c-f yes"><span class="sr-only">Yes</span></td><td class="c-s yes"><span class="sr-only">Yes</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Client portal and call history</th><td class="c-f yes"><span class="sr-only">Yes</span></td><td class="c-s yes"><span class="sr-only">Yes</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Afrikaans</th><td class="c-f nil"><span class="sr-only">No</span></td><td class="c-s nil"><span class="sr-only">No</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr class="cmp-g"><th scope="colgroup" colspan="4">Extras</th></tr>
+          <tr><th scope="row">Google review requests</th><td class="c-f nil"><span class="sr-only">No</span></td><td class="c-s nil"><span class="sr-only">No</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Follow-up on callers who didn't book</th><td class="c-f nil"><span class="sr-only">No</span></td><td class="c-s nil"><span class="sr-only">No</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Monthly results report</th><td class="c-f nil"><span class="sr-only">No</span></td><td class="c-s nil"><span class="sr-only">No</span></td><td class="c-p us yes"><span class="sr-only">Yes</span></td></tr>
+          <tr><th scope="row">Weekly call reviews with us</th><td class="c-f">For 60 days</td><td class="c-s">First month</td><td class="c-p us">First month</td></tr>
+          <tr class="cmp-g"><th scope="colgroup" colspan="4">Terms</th></tr>
+          <tr><th scope="row">Contract</th><td class="c-f">Stop at day 60</td><td class="c-s">3-month minimum</td><td class="c-p us">3-month minimum</td></tr>
+          <tr><th scope="row">Extra minutes</th><td class="c-f">R5 each</td><td class="c-s">R5 each</td><td class="c-p us">R5 each</td></tr>
         </tbody>
       </table>
     </div>
@@ -124,29 +131,35 @@
     <div class="head rv">
       <span class="kicker">Missed-call calculator</span>
       <h2>What are missed calls costing you?</h2>
-      <p class="lede">Drag the sliders to match your business. Not sure how many you miss? Check your phone's call log for last week.</p>
+      <p class="lede">Drag the sliders, use − and +, or tap a value to type it. Not sure how many you miss? Check your phone's call log for last week.</p>
     </div>
     <div class="calc rv">
+      <p class="calc-strip" aria-hidden="true">Example estimate: <b>≈ <span id="stripV">R0</span></b> a month lost</p>
       <form id="calc" onsubmit="return false">
-        <div class="range"><label for="missed">Missed calls per week <output id="o-missed" for="missed"></output></label><input type="range" id="missed" min="1" max="40" step="1" value="8"></div>
-        <div class="range"><label for="real">Share that are real jobs <output id="o-real" for="real"></output></label><input type="range" id="real" min="10" max="100" step="5" value="50"></div>
-        <div class="range"><label for="win">Share you'd win if answered <output id="o-win" for="win"></output></label><input type="range" id="win" min="10" max="100" step="5" value="50"></div>
-        <div class="range"><label for="value">Average job value <output id="o-value" for="value"></output></label><input type="range" id="value" min="500" max="15000" step="250" value="2500"></div>
+        <div class="range" data-unit=""><div class="rng-l"><label for="missed">Missed calls per week</label><output id="o-missed" for="missed" tabindex="0" role="button" aria-label="Missed calls per week: tap to type a number"></output></div><div class="rng"><button type="button" class="stp" data-d="-1" aria-label="Fewer missed calls" aria-controls="missed">−</button><div class="rng-t"><input type="range" id="missed" min="1" max="40" step="1" value="8"><span class="bub" aria-hidden="true"></span></div><button type="button" class="stp" data-d="1" aria-label="More missed calls" aria-controls="missed">+</button></div></div>
+        <div class="range" data-unit="%"><div class="rng-l"><label for="real">Share that are real jobs</label><output id="o-real" for="real" tabindex="0" role="button" aria-label="Share that are real jobs: tap to type a number"></output></div><div class="rng"><button type="button" class="stp" data-d="-1" aria-label="Lower share of real jobs" aria-controls="real">−</button><div class="rng-t"><input type="range" id="real" min="10" max="100" step="5" value="50"><span class="bub" aria-hidden="true"></span></div><button type="button" class="stp" data-d="1" aria-label="Higher share of real jobs" aria-controls="real">+</button></div></div>
+        <div class="range" data-unit="%"><div class="rng-l"><label for="win">Share you'd win if answered</label><output id="o-win" for="win" tabindex="0" role="button" aria-label="Share you'd win: tap to type a number"></output></div><div class="rng"><button type="button" class="stp" data-d="-1" aria-label="Lower share you'd win" aria-controls="win">−</button><div class="rng-t"><input type="range" id="win" min="10" max="100" step="5" value="50"><span class="bub" aria-hidden="true"></span></div><button type="button" class="stp" data-d="1" aria-label="Higher share you'd win" aria-controls="win">+</button></div></div>
+        <div class="range" data-unit="R"><div class="rng-l"><label for="value">Average job value</label><output id="o-value" for="value" tabindex="0" role="button" aria-label="Average job value: tap to type a number"></output></div><div class="rng"><button type="button" class="stp" data-d="-1" aria-label="Lower job value" aria-controls="value">−</button><div class="rng-t"><input type="range" id="value" min="500" max="15000" step="250" value="2500"><span class="bub" aria-hidden="true"></span></div><button type="button" class="stp" data-d="1" aria-label="Higher job value" aria-controls="value">+</button></div></div>
       </form>
       <div class="out" aria-live="polite">
-        <span class="lbl">Work lost to missed calls / month</span>
-        <span class="big-num" id="lost">R0</span>
-        <div class="bars" aria-hidden="true">
-          <div class="bar-row"><span>Lost per month</span><b id="bMonthV"></b><i><u id="bMonth"></u></i></div>
-          <div class="bar-row"><span>Lost per year</span><b id="bYearV"></b><i><u id="bYear"></u></i></div>
-          <div class="bar-row us"><span>Ringback Starter, first year with setup</span><b id="bCostV"></b><i><u id="bCost"></u></i></div>
+        <div class="screen receipt">
+          <div class="screen-bar"><span>Example estimate · your numbers</span></div>
+          <div class="screen-body">
+            <span class="lbl">Work lost to missed calls / month</span>
+            <span class="big-num" id="lost">R0</span>
+            <div class="bars" aria-hidden="true">
+              <div class="bar-row"><span>Lost per month</span><b id="bMonthV"></b><i><u id="bMonth"></u></i></div>
+              <div class="bar-row"><span>Lost per year</span><b id="bYearV"></b><i><u id="bYear"></u></i></div>
+              <div class="bar-row us"><span>Ringback Starter, first year with setup</span><b id="bCostV"></b><i><u id="bCost"></u></i></div>
+            </div>
+            <dl class="leaders">
+              <div><dt>Per year</dt><dd id="yearly">R0</dd></div>
+              <div><dt>Jobs lost per month</dt><dd id="jobs">0</dd></div>
+              <div><dt>Ringback Starter</dt><dd>R2,500</dd></div>
+              <div><dt>Jobs needed to cover it</dt><dd id="breakeven">1</dd></div>
+            </dl>
+          </div>
         </div>
-        <dl>
-          <div><dt>Per year</dt><dd id="yearly">R0</dd></div>
-          <div><dt>Jobs lost per month</dt><dd id="jobs">0</dd></div>
-          <div><dt>Ringback Starter</dt><dd>R2,500</dd></div>
-          <div><dt>Jobs needed to cover it</dt><dd id="breakeven">1</dd></div>
-        </dl>
         <a class="btn btn-line btn-sm" id="shareWa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Share on WhatsApp</a>
       </div>
     </div>
@@ -155,21 +168,29 @@
 </section>
 
 <section class="sec band">
-  <div class="wrap faq-grid">
-    <div class="rv"><span class="kicker">Pricing questions</span><h2>The money bits, plainly.</h2><p class="lede mt-m">More answers on the <a href="faq.html">FAQ page</a>.</p></div>
-    <div class="faq rv">
-      <details open><summary>How does the free trial week work?</summary><p>Create an account, fill in your business details and request your trial in the portal. We set Ringback up on your number for 7 days at no cost. If you don't want to continue, we switch it off. No card needed to start.</p></details>
-      <details><summary>What happens if I go over my minutes?</summary><p>Extra minutes are R5 each. We'll warn you before you get close, and help you move plans if that works out cheaper.</p></details>
-      <details><summary>Is there a contract?</summary><p>A 3-month minimum after your trial, then month-to-month with 30 days' notice. The founding partner plan can stop at day 60.</p></details>
-      <details><summary>Do the call costs from forwarding cost me extra?</summary><p>Forwarded calls are billed by your cellphone network at your normal rates, the same as forwarding to any other number. Check your contract or bundle.</p></details>
-      <details><summary>How do I pay?</summary><p>By EFT, monthly in advance. Your invoices appear in your client portal under Billing, with our banking details. Use the invoice number as your reference, then tap "I've paid" so we can match it.</p></details>
+  <div class="wrap faq-grid pr-faq">
+    <div>
+      <div class="rv"><span class="kicker">Pricing questions</span><h2>The money bits, plainly.</h2><p class="lede mt-m">More answers on the <a href="faq.html">FAQ page</a>.</p></div>
+      <div class="faq mt-l rv">
+        <details><summary>How does the free trial week work?</summary><p>Create an account, fill in your business details and request your trial in the portal. We set Ringback up on your number for 7 days at no cost. If you don't want to continue, we switch it off. No card needed to start.</p></details>
+        <details><summary>What happens if I go over my minutes?</summary><p>Extra minutes are R5 each. We'll warn you before you get close, and help you move plans if that works out cheaper.</p></details>
+        <details><summary>Is there a contract?</summary><p>A 3-month minimum after your trial, then month-to-month with 30 days' notice. The founding partner plan can stop at day 60.</p></details>
+        <details><summary>Do the call costs from forwarding cost me extra?</summary><p>Forwarded calls are billed by your cellphone network at your normal rates, the same as forwarding to any other number. Check your contract or bundle.</p></details>
+        <details><summary>How do I pay?</summary><p>By EFT, monthly in advance. Your invoices appear in your client portal under Billing, with our banking details. Use the invoice number as your reference, then tap "I've paid" so we can match it.</p></details>
+      </div>
+    </div>
+    <div class="trial card" id="trial" aria-labelledby="trialH">
+      <span class="kicker">Plan your free week</span>
+      <h3 id="trialH">When would you like to start?</h3>
+      <p class="muted">Pick a day and we'll lay out the week. You can add the two dates that matter to your calendar.</p>
+      <div class="tr-body" id="trialBody"><p class="faint">Loading the planner…</p></div>
     </div>
   </div>
 </section>
 
 <section class="sec">
   <div class="wrap">
-    <div class="final c surface-hot rv">
+    <div class="final c rv">
       <span class="kicker">Start this week</span>
       <h2>Try it on your own number, free for a week.</h2>
       <p class="lede">Create your account in a minute. We'll do the rest with you.</p>
@@ -183,5 +204,7 @@
 <script src="config.js" defer></script>
 <script src="site.js" defer></script>
 <script src="pricing.js" defer></script>
+<script src="planfinder.js" defer></script>
+<script src="trial.js" defer></script>
 </body>
 </html>

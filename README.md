@@ -195,6 +195,58 @@ Run these once in the Supabase SQL editor (read the comments at the top of each 
 
 <!-- @@track:features -->
 
+## Features
+
+Pricing tools, the assistant builder, the setup-call sheet, site search and the scenario explorer. Their styles sit
+between the `@@track:features` markers at the end of `site.css`.
+
+| File | Where | What it does |
+| --- | --- | --- |
+| `pricing.js` | pricing | Calculator (steppers, tap a value to type it, sticky strip on phones), comparison switcher, founding places counter |
+| `planfinder.js` | pricing `#finder` | "Which plan fits?": estimated minutes, both plan costs, a recommendation |
+| `trial.js` | pricing `#trial` | "Plan your free week": dated timeline and a `ringback-trial.ics` file with two all-day reminders |
+| `build.html`, `build.js` | build | "Build your assistant": a live preview of the wording; writes `rb_draft` |
+| `setupcall.js` | on demand | "Rather we set it up with you?" sheet (`[data-setup-call]`); sends a `setup_call` lead through `RB.lead` |
+| `search.js` | on demand | Site search and command palette (`[data-search]`, Ctrl/Cmd+K, `/`); reads FAQ questions from `faq.html` |
+| `scenarios.js` | trades, build | Scenario templates (`RB.SCENARIOS`, `RB.renderScenario`) and the "What does it say when…" explorer |
+
+**Please check this wording against the real Vapi assistant prompt.** Everything the assistant "says" on the site lives in
+two places:
+
+- `scenarios.js`: `RB.SCENARIOS` holds the booking, price, outside-the-area, sales call, "is this a robot?", Afrikaans
+  and emergency templates. `EMERG` holds each trade's emergency call: the caller's problem, the safety step the assistant
+  gives, and the SMS summary. The outside-the-area example uses Vereeniging (`OUTSIDE`).
+- `site.js` (`RB.TRADES`): each trade's own example call, shown as "This trade's example" on the trades page.
+
+Each template only shows behaviour the FAQ already claims: it gives the call-out fee only (FAQ `q-prices`), checks the
+suburb against your service area before booking, turns away sales calls politely with no SMS, says it's an AI if asked
+(`q-ai`), gives only basic safety steps (`q-safety`) and speaks Afrikaans on Pro (`q-languages`). Tell us anything the
+real assistant doesn't do and we'll change or remove it. **The Afrikaans transcript needs a check by a first-language
+speaker** before you rely on it. The builder preview (build.html) fills the same templates with the visitor's own
+business name, first name, suburbs, call-out fees, call-back time, after-hours choice and booking choice; with
+"no after-hours call-outs" the emergency call becomes "I've taken a message… marked urgent", and with "take a callback"
+the booking call promises a call back within the chosen minutes. On the trades page the call-out fee is an example,
+R650. The builder never plays audio and never uses the browser's speech voice.
+
+**Plan finder assumptions** (`planfinder.js`): missed calls a week are taken at the band midpoints 3, 10, 22 and 40;
+a month is 4.3 weeks; the call length is the visitor's choice of about 2, 3 or 5 minutes (default 3). Minutes a month =
+calls × 4.3 × minutes, rounded. Cost = the plan's monthly fee + every minute over its allowance (250 Starter, 600 Pro)
+× R5 (`RB.EXTRA_MIN_CENTS`). With `config.vatRate` above 0 an "about R… incl. VAT" line is added; set it to 0 to hide it.
+It recommends Pro only when the visitor wants Afrikaans or follow-ups, review requests and the monthly report, and it
+says plainly that at R5 a minute Starter plus extra minutes always costs less than Pro. The founding partner line only
+appears when the founding_spots query returns real places left.
+
+**Trial planner** (`trial.js`): the setup call is the next weekday after the chosen start (weekends roll to Monday;
+public holidays aren't modelled, so the card says we'll confirm the day). Days 1–7 run from the setup day, and day 7
+asks whether to continue, as in the terms. Check this matches how you handle day 7 and the first invoice.
+
+**Setup-call requests** arrive in the `leads` table with `source = 'setup_call'` and a message such as
+`Network: MTN · Wants: forwarding, trial · Best: weekday morning · Contact: WhatsApp · From: pricing`.
+There are no booking slots: we reply within one working day to agree a time.
+
+**Search** (`search.js`): the page and section list is static (keep it in step when pages change); FAQ questions are
+read from `faq.html` on first open and link to each question's `id` (or to `faq.html?q=` when it has none).
+
 <!-- @@track:pages -->
 
 ## Performance budget
