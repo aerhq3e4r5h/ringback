@@ -111,7 +111,7 @@
     var q = data.reqs;
     $('reqBox').innerHTML = !q.length ? '<div class="empty"><h3>No requests</h3><p>Deletion and support requests from clients appear here.</p></div>' :
       '<div class="table-wrap"><table class="data"><thead><tr><th>When</th><th>Client</th><th>Request</th><th>Note</th><th>Done</th></tr></thead><tbody>' +
-      q.map(function(x){ var who = client(x.user_id); return '<tr' + (x.handled ? ' class="a-done"' : '') + '><td class="mono">' + d(x.created_at) + '</td><td>' + RB.esc(who.business_name || who.email || x.user_id) + '</td><td><span class="tag ' + (x.kind === 'delete_account' ? 'red' : '') + '">' + RB.esc(x.kind === 'delete_account' ? 'Delete account' : x.kind) + '</span></td><td>' + RB.esc(x.note || '—') + '</td><td><input type="checkbox" class="a-check" data-req="' + RB.esc(x.id) + '"' + (x.handled ? ' checked' : '') + ' aria-label="Mark handled"></td></tr>'; }).join('') + '</tbody></table></div>';
+      q.map(function(x){ var who = client(x.user_id); return '<tr' + (x.handled ? ' class="a-done"' : '') + '><td class="mono">' + d(x.created_at) + '</td><td>' + RB.esc(who.business_name || who.email || x.user_id) + '</td><td><span class="tag ' + (x.kind === 'delete_account' ? 'red' : x.kind === 'change_plan' ? 'amber' : '') + '">' + RB.esc(x.kind === 'delete_account' ? 'Delete account' : x.kind === 'change_plan' ? 'Change plan' : x.kind) + '</span></td><td>' + RB.esc(x.note || '—') + '</td><td><input type="checkbox" class="a-check" data-req="' + RB.esc(x.id) + '"' + (x.handled ? ' checked' : '') + ' aria-label="Mark handled"></td></tr>'; }).join('') + '</tbody></table></div>';
     $('reqBox').querySelectorAll('[data-req]').forEach(function(cb){
       cb.addEventListener('change', async function(){ var r = await sb.from('requests').update({ handled: cb.checked }).eq('id', cb.dataset.req); if (r.error) { cb.checked = !cb.checked; RB.toast('Couldn\'t update', 'err'); } else data.reqs.forEach(function(x){ if (String(x.id) === cb.dataset.req) x.handled = cb.checked; }); });
     });
@@ -222,7 +222,8 @@
 
   function monthly(){
     var per = period(new Date());
-    var live = data.clients.filter(function(c){ return c.status === 'live' && PLANS[c.plan]; });
+    /* clients paying by card are billed automatically by Paystack, so they never get an EFT invoice here */
+    var live = data.clients.filter(function(c){ return c.status === 'live' && PLANS[c.plan] && !(c.plan_active && ['active','past_due','non_renewing'].indexOf(c.billing_status) >= 0); });
     var have = {}; data.invoices.forEach(function(i){ if (i.kind === 'monthly' && i.period === per && i.status !== 'void') have[i.user_id] = 1; });
     var todo = live.filter(function(c){ return !have[c.id]; });
     var terms = data.billing.payment_terms_days != null ? data.billing.payment_terms_days : 7, due = new Date(); due.setDate(due.getDate() + terms);

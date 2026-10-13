@@ -192,6 +192,9 @@ Log-in codes only reach real customers once Supabase sends through your own emai
 
 ## SQL files to run
 
+- `supabase/billing.sql`: card payments, plan limits and usage (run after `calls_followup.sql` and `protect_status.sql`).
+  The full Paystack + Vapi setup is in [`supabase/BILLING-SETUP.md`](supabase/BILLING-SETUP.md).
+
 Run these once in the Supabase SQL editor (read the comments at the top of each first):
 
 - `supabase/founding_spots.sql`: the founding places counter on the pricing page. Until it runs, the counter stays

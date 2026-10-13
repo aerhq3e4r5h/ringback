@@ -60,7 +60,9 @@
         <div class="stack-s"><span class="kicker" id="greetKicker">Overview</span><h1 id="greet">Welcome</h1></div>
         <span class="status" id="statusPill"><i></i><span></span></span>
       </div>
+      <div id="billNotice"></div>
       <div id="goLiveOv"></div>
+      <div id="usageOv"></div>
       <div id="installCard"></div>
       <div class="overview">
         <div class="card stack-m">
@@ -163,6 +165,7 @@
     <!-- PLAN -->
     <section data-view="plan" hidden>
       <div class="pane-head"><div class="stack-s"><span class="kicker">Plan and trial</span><h1>Choose your plan</h1><p class="muted">Every plan starts with a free trial week. Prices exclude VAT.</p></div></div>
+      <div id="subCard"></div>
       <div class="plans" id="planCards"></div>
       <div class="card stack-s mt-l" id="trialCard">
         <span class="kicker">Free trial week</span>
@@ -176,7 +179,9 @@
     <!-- BILLING -->
     <section data-view="billing" hidden>
       <div class="pane-head"><div class="stack-s"><span class="kicker">Billing</span><h1>Invoices and payments</h1><p class="muted p-intro">Pay by EFT with the invoice number as your reference, then tap <b>I've paid</b> so we can match it. You can add proof of payment if you like.</p></div></div>
+      <div id="subCardBill"></div>
       <div class="screen p-screen"><div class="screen-bar"><span>Billing summary</span></div><div class="kpis screen-body" id="billKpis"></div></div>
+      <div id="usageBill"></div>
       <div class="bill-grid mt-l">
         <div class="stack-s p-min">
           <h2 class="h-sm">Your invoices</h2>
@@ -238,5 +243,6 @@
 <script src="auth.js" defer></script>
 <script src="forward.js" defer></script>
 <script src="portal.js" defer></script>
+<script src="billing-portal.js" defer></script>
 </body>
 </html>

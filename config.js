@@ -35,5 +35,9 @@ window.RB_CONFIG = {
   testCallWaitMinutes: 5,
 
   /* Optional line under the portal's 'Refer another business' card, e.g. a thank-you you really offer. Empty hides it. */
-  referralNote: ''
+  referralNote: '',
+
+  /* Card payments through Paystack (portal "Pay by card", usage meter, admin subscriptions).
+     Leave false until you've finished supabase/BILLING-SETUP.md; then set it to true. */
+  payments: false
 };

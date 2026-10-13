@@ -1,0 +1,14 @@
+# Edge Function settings for `supabase functions deploy`. paystack-webhook, billing-daily and vapi-calls are called by
+# Paystack, the daily cron and Vapi, which don't send a Supabase login, so they check their own signature/secret instead.
+[functions.paystack-webhook]
+verify_jwt = false
+
+[functions.billing-daily]
+verify_jwt = false
+
+[functions.vapi-calls]
+verify_jwt = false
+
+# billing checks the caller's login itself (so browser CORS preflights always get through)
+[functions.billing]
+verify_jwt = false

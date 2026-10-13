@@ -547,3 +547,21 @@ body.has-appbar .pane-head > .status{display:none}
 .a-acts .btn{flex:0 0 auto}
 .a-cards{align-items:start}
 /* @@track:portal:end */
+
+/* ---------- card billing (billing-portal.js, billing-admin.js) ---------- */
+.bp-slot{margin-bottom:var(--sp-5)}
+.bp-head{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);flex-wrap:wrap}
+.bp-card .bank{margin:0}
+.bp-card .ctas{margin-top:var(--sp-2)}
+.bp-card .btn svg{width:16px;height:16px}
+.bp-num{display:flex;align-items:baseline;gap:var(--sp-2);flex-wrap:wrap}
+.bp-num .num{font-size:2.6rem;line-height:1}
+.bp-usage .meter{height:10px;min-width:0}
+.bp-usage.near .meter i{background:var(--amber)}
+.bp-usage.over .meter i{background:linear-gradient(90deg,var(--ember),var(--red))}
+.bp-change{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--sp-3);margin-top:var(--sp-3);padding-top:var(--sp-3);border-top:1px solid var(--line)}
+.bp-change .fld{flex:1 1 220px}
+.bp-change .p-small{flex-basis:100%;margin:0}
+.bp-note{display:block}
+.bp-note .bars-loader{display:inline-flex;vertical-align:middle;margin-right:var(--sp-2)}
+#subscriptions .kv{margin-bottom:var(--sp-4)}

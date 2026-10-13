@@ -29,7 +29,7 @@
     <p class="alert err" id="noAccess" hidden>This page is only for the Ringback owner.</p>
     <div id="adminLoading" class="p-load" role="status"><span class="bars-loader" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>Loading…</span></div>
     <div id="adminBody" class="a-body" hidden>
-      <nav class="subnav" aria-label="Admin sections"><a href="#clients">Clients</a><a href="#billing">Billing</a><a href="#enquiries">Enquiries</a><a href="#requests">Requests</a></nav>
+      <nav class="subnav" aria-label="Admin sections"><a href="#clients">Clients</a><a href="#subscriptions" id="subsNav" hidden>Subscriptions</a><a href="#billing">Billing</a><a href="#enquiries">Enquiries</a><a href="#requests">Requests</a></nav>
       <div class="kpis kpis-6" id="adminKpis"></div>
       <div class="a-cards">
         <form class="card form" id="inviteForm" novalidate>
@@ -42,6 +42,7 @@
         </form>
         <div class="card"><span class="kicker">Login emails</span><h3 class="h-sm">Check login emails arrive</h3><p>Work through the inbox checklist on Gmail, iPhone Mail and Outlook.</p><div><a class="btn btn-line btn-sm" href="login.html?check=1">Open the checklist</a></div></div>
       </div>
+      <section id="subscriptions" hidden><div class="a-bar"><h2 class="h-md">Card subscriptions</h2><div class="ctas a-acts"><button class="btn btn-line btn-sm" type="button" id="setupPlansBtn">Create Paystack plans</button></div></div><div id="planCodes"></div><div id="subsBox"></div></section>
       <section id="clients"><h2 class="h-md">Clients</h2><div id="clientsBox"></div></section>
       <section id="billing">
         <div class="a-bar">
@@ -64,5 +65,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js" defer></script>
 <script src="auth.js" defer></script>
 <script src="admin.js" defer></script>
+<script src="billing-admin.js" defer></script>
 </body>
 </html>
