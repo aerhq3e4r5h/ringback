@@ -22,14 +22,24 @@
 <header id="site-header"></header>
 <main id="main" class="nf">
   <div class="nf-in">
-    <div class="code hot">404</div>
-    <h1>This line went to voicemail.</h1>
-    <p class="lede">The page you're looking for doesn't exist or has moved. Unlike your customers, we'll put you through.</p>
-    <div class="ctas"><a class="btn btn-hot" href="index.html">Back to home</a><a class="btn btn-line" href="contact.html">Contact us</a></div>
+    <span class="kicker nf-code">Error 404 · no answer</span>
+    <svg class="art nf-art" viewBox="0 0 400 100" role="img" aria-label="A flat-lined call waveform with a single blip"><use href="art.svg#art-voicemail"/></svg>
+    <h1>This line went to <span class="hot">voicemail.</span></h1>
+    <p class="lede">The page you're looking for doesn't exist or has moved. Unlike your customers, we'll put you through: pick a number.</p>
+    <nav class="dial" aria-label="Where to next"><p class="dial-hint" aria-hidden="true">Press a number on your keyboard</p><ul class="dial-pad"><li><a class="dk" href="index.html" data-digit="1"><b>1</b><span>Home</span></a></li><li><a class="dk" href="product.html" data-digit="2"><b>2</b><span>Product</span></a></li><li><a class="dk" href="trades.html" data-digit="3"><b>3</b><span>Trades</span></a></li><li><a class="dk" href="pricing.html" data-digit="4"><b>4</b><span>Pricing</span></a></li><li><a class="dk" href="index.html#try" data-digit="5"><b>5</b><span>Live demo</span></a></li><li><a class="dk" href="faq.html" data-digit="6"><b>6</b><span>FAQ</span></a></li><li><a class="dk" href="about.html" data-digit="7"><b>7</b><span>About</span></a></li><li><a class="dk" href="contact.html" data-digit="8"><b>8</b><span>Contact</span></a></li><li><a class="dk" href="pricing.html#calculator" data-digit="9"><b>9</b><span>Calculator</span></a></li><li class="dk-deco" aria-hidden="true"><span class="dk"><b>*</b></span></li><li><a class="dk" href="login.html" data-digit="0"><b>0</b><span>Log in</span></a></li><li class="dk-deco" aria-hidden="true"><span class="dk"><b>#</b></span></li></ul></nav>
   </div>
 </main>
 <footer id="site-footer"></footer>
 <script src="config.js" defer></script>
 <script src="site.js" defer></script>
+<script>
+/* 404 dial pad: on a fine pointer, a digit key (no modifiers, not in a field) follows that key's link */
+if (window.matchMedia('(pointer:fine)').matches) document.addEventListener('keydown', function(e){
+  if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented || !/^[0-9]$/.test(e.key)) return;
+  var el = document.activeElement; if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) || document.querySelector('.rb-sheet')) return;
+  var a = document.querySelector('.dial-pad a[data-digit="' + e.key + '"]'); if (!a) return;
+  e.preventDefault(); a.classList.add('is-pressed'); location.href = a.href;
+});
+</script>
 </body>
 </html>

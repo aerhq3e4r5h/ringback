@@ -6,10 +6,10 @@
   var items = [].slice.call(list.querySelectorAll('details[id]')), heads = [].slice.call(list.querySelectorAll('.faq-cat'));
   var countEl = document.getElementById('faqCount'), none = document.getElementById('faqNone'), filters = document.getElementById('faqFilters'), index = document.getElementById('faqIndex');
   var total = items.length, cat = '', openedBySearch = [];
-  /* each question knows its category (the .faq-cat heading above it) */
+  /* each question knows its category */
   items.forEach(function(d){
-    var n = d.previousElementSibling; while (n && !n.classList.contains('faq-cat')) n = n.previousElementSibling;
-    d.dataset.cat = n ? n.id : '';
+    var g = d.closest('.faq-group'); /* the category is its section's id (start, calls, money, privacy, account) */
+    d.dataset.cat = g ? g.id : '';
     var a = d.querySelector('.faq-a');
     if (a) a.insertAdjacentHTML('beforeend', '<button class="faq-link" type="button" aria-label="Copy link to this question" title="Copy link">' + (RB.icon ? RB.icon('i-link') : '') + '</button>');
   });
@@ -52,7 +52,7 @@
       if (hit) { shown++; per[d.dataset.cat] = (per[d.dataset.cat] || 0) + 1; }
       if (hit && re) { if (!d.open) { d.open = true; openedBySearch.push(d); } mark(d, re); }
     });
-    heads.forEach(function(h){ h.hidden = !per[h.id]; });
+    heads.forEach(function(h){ var g = h.closest('.faq-group'); if (g) g.hidden = !per[g.id]; else h.hidden = !per[h.id]; });
     if (index) index.querySelectorAll('a').forEach(function(a){ var c = a.querySelector('.c'), n = per[a.hash.slice(1)] || 0; if (c) c.textContent = n; a.classList.toggle('is-empty', !n); });
     if (countEl) countEl.textContent = (q || cat) ? 'Showing ' + shown + ' of ' + total + ' questions' + (q ? ' for “' + fs.value.trim() + '”' : '') : 'Showing ' + total + ' questions';
     if (none) none.hidden = shown > 0;
@@ -82,7 +82,9 @@
 
   /* scrollspy over the category index: a vertical list on desktop, a sticky chip bar under COMPACT */
   var spy = null, spies = {};
-  function offset(){ var top = parseFloat(getComputedStyle(index).top) || 0; return RB.mq && RB.mq.compact.matches ? top + index.offsetHeight + 12 : 110; }
+  /* never above where an anchor jump lands (html scroll-padding-top), so the tapped category is the one marked */
+  function offset(){ var top = parseFloat(getComputedStyle(index).top) || 0, pad = (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0) + 2;
+    return Math.max(pad, RB.mq && RB.mq.compact.matches ? top + index.offsetHeight + 12 : 110); }
   function startSpy(){
     if (!index || !RB.spy) return;
     var axis = RB.mq && RB.mq.compact.matches ? 'x' : 'y';

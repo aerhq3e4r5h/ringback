@@ -4,7 +4,9 @@
 
   /* in-page tabs: scrollspy along x, offset by the nav and the bar itself */
   var bar = $('.ptabs'), tabs = $('#productTabs');
-  if (bar && tabs && RB.spy) RB.spy(tabs, { axis: 'x', offset: (parseFloat(getComputedStyle(bar).top) || 0) + bar.offsetHeight + 8 });
+  /* the band starts just below where an anchor jump lands (html scroll-padding-top), so a tapped tab is the one marked */
+  var pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  if (bar && tabs && RB.spy) RB.spy(tabs, { axis: 'x', offset: Math.max((parseFloat(getComputedStyle(bar).top) || 0) + bar.offsetHeight + 8, pad + 2) });
 
   /* "See it handle awkward calls": the visitor's saved trade, else plumbing */
   var awk = $('#awkwardLink');

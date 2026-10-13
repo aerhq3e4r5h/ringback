@@ -197,6 +197,48 @@ Run these once in the Supabase SQL editor (read the comments at the top of each 
 
 <!-- @@track:pages -->
 
+## Pages
+
+**Illustrations.** `art.svg` is a `<symbol>` sprite of line drawings (seven trades, plus `art-callpath`,
+`art-phone-rings`, `art-calendar`, `art-sms`, `art-shield`, `art-gauteng` and `art-voicemail`). Use it as
+`<svg class="art" viewBox="…" aria-hidden="true"><use href="art.svg#art-plumbing"/></svg>` when decorative, or with
+`role="img" aria-label="…"` when it carries meaning. Colours come from `--art-line`, `--surface-3` and the status
+tokens, so they can be changed per use. Keep it under 40 KB, with no filters, masks or animation.
+
+**FAQ ids.** Every question in `faq.html` has an id, so `faq.html#id` opens and highlights it and
+`faq.html?q=term` filters. Other pages link to these, so **never rename them**:
+`q-ai`, `q-prices`, `q-languages`, `q-safety`, `q-emergency-wrong`, `q-busy`, `q-trial`, `q-forwarding-cost`, `q-popia`, `q-code`, `q-minutes`, `q-contract`.
+The rest are `q-` plus the first five words of the question:
+`q-what-is-ringback`, `q-which-trades-do-you-work`, `q-how-long-does-setup-take`, `q-do-i-need-a-new`, `q-can-i-listen-to-the`, `q-how-much-does-it-cost`, `q-how-do-i-pay`, `q-who-can-see-my-customers`, `q-can-i-delete-my-account`, `q-how-do-i-log-in`, `q-can-i-change-my-business`, `q-where-do-i-find-my`.
+Add new questions with a new id in the same style, and update the count in the hero ("Showing N questions") and the
+category counts in the index.
+
+**Legal pages.** `legal.js` shows the reading time (words in the article ÷ 220, rounded up), the Print button and the
+contents scrollspy. Update the "Last updated" date by hand when the text changes. The privacy policy's
+"Browser storage" section lists every key the site keeps on the device: update it when a feature adds one.
+
+**Link previews (`og/*.png`).** `og/og.html?v=home|pricing|trades|product` renders each 1200×630 frame with the
+self-hosted fonts. To regenerate after changing it, serve the repo so it is reachable at `/ringback/`, then screenshot
+each frame with headless Chromium (Playwright is a dev-only tool and is not committed):
+
+```sh
+mkdir -p /tmp/og && ln -sfn "$PWD" /tmp/og/ringback && python3 -m http.server 8814 --directory /tmp/og &
+node -e "
+const { chromium } = require('playwright');
+(async () => {
+  const b = await chromium.launch(), p = await b.newPage({ viewport: { width: 1200, height: 630 } });
+  for (const v of ['home', 'pricing', 'trades', 'product']) {
+    await p.goto('http://localhost:8814/ringback/og/og.html?v=' + v);
+    await p.waitForSelector('body[data-ready]');
+    await p.locator('#frame').screenshot({ path: 'og/' + v + '.png' });
+  }
+  await b.close();
+})();"
+```
+
+Each PNG must stay at 300 KB or less. Only real claims and prices go on them: no ratings, counts or "trusted by".
+WhatsApp caches previews, so a changed image may take a while to show on links that were already shared.
+
 ## Performance budget
 
 A first visit to the home page on a phone should transfer **200 KB or less, excluding images**:
