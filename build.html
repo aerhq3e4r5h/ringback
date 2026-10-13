@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build your assistant · Ringback</title>
+<meta name="description" content="See how Ringback would answer your calls, using your own business name, suburbs and call-out fee. Nothing is saved until you create an account.">
+<meta property="og:title" content="Build your assistant · Ringback">
+<meta property="og:description" content="See how Ringback would answer your calls, using your own business name, suburbs and call-out fee.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ringback">
+<link rel="canonical" href="https://aerhq3e4r5h.github.io/ringback/build.html">
+<meta property="og:url" content="https://aerhq3e4r5h.github.io/ringback/build.html">
+<meta property="og:image" content="https://aerhq3e4r5h.github.io/ringback/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ringback: an AI receptionist for home-service trades in Gauteng.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#07100F">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="build">
+<a class="skip" href="#main">Skip to content</a>
+<header id="site-header"></header>
+<main id="main">
+<section class="phero phero--center bld-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Build your assistant</span></nav>
+    <span class="kicker">Preview</span>
+    <h1>Build your <span class="hot">assistant.</span></h1>
+    <p class="lede">See how Ringback would answer your calls, using your own details. Nothing is saved until you create an account; it stays on this device.</p>
+  </div>
+</section>
+
+<section class="sec" id="builder">
+  <div class="wrap bld">
+    <form class="form bld-form" id="bldForm" onsubmit="return false" novalidate>
+      <h2 class="h-md">Your details</h2>
+      <p class="faint bld-opt">Only the business name is needed. Everything else is optional.</p>
+      <label class="fld"><span>Business name <i class="req" aria-hidden="true">*</i></span><input name="business_name" autocomplete="organization" maxlength="80" placeholder="e.g. Mokoena Plumbing" required></label>
+      <label class="fld"><span>Your first name <small>(who callers are told will call back)</small></span><input name="owner_name" autocomplete="given-name" maxlength="40" placeholder="e.g. Sipho"></label>
+      <fieldset class="bfs">
+        <legend>Your trade</legend>
+        <div class="bchips bchips--trade" id="bTrade"></div>
+      </fieldset>
+      <label class="fld"><span>Suburbs you cover <small>(separate with commas)</small></span><input name="service_areas" autocomplete="off" maxlength="300" placeholder="e.g. Fourways, Randburg, Sandton"></label>
+      <div class="bld-areas" id="bAreas" aria-hidden="true"></div>
+      <div class="two">
+        <label class="fld"><span>Call-out fee, weekdays</span><input name="callout_weekday" autocomplete="off" inputmode="text" maxlength="40" placeholder="e.g. R650"></label>
+        <label class="fld"><span>Call-out fee, after hours</span><input name="callout_after" autocomplete="off" inputmode="text" maxlength="40" placeholder="e.g. R950"></label>
+      </div>
+      <fieldset class="bfs">
+        <legend>Do you take urgent call-outs after hours?</legend>
+        <div class="bchips">
+          <label><input type="radio" name="after_hours" value="yes" checked><span>Yes, alert me</span></label>
+          <label><input type="radio" name="after_hours" value="no"><span>No, take a message</span></label>
+        </div>
+      </fieldset>
+      <label class="fld"><span>You'll call back within</span>
+        <select name="callback_promise" autocomplete="off">
+          <option value="10">10 minutes</option><option value="15" selected>15 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option>
+        </select>
+      </label>
+      <fieldset class="bfs">
+        <legend>Routine jobs</legend>
+        <div class="bchips">
+          <label><input type="radio" name="booking" value="calendar" checked><span>Book into my calendar</span></label>
+          <label><input type="radio" name="booking" value="callback"><span>Take a callback</span></label>
+        </div>
+      </fieldset>
+      <a class="btn btn-line btn-block bld-jump" href="#preview">See your preview <span aria-hidden="true">↓</span></a>
+    </form>
+
+    <div class="bld-side" id="preview" tabindex="-1">
+      <div class="screen bld-screen">
+        <div class="screen-bar"><span>Preview of the wording · example caller</span></div>
+        <div class="screen-body">
+          <div class="seg bld-seg" role="group" aria-label="Which call to preview">
+            <button type="button" data-k="emergency" aria-pressed="true">Emergency</button>
+            <button type="button" data-k="booking" aria-pressed="false">Booking</button>
+            <button type="button" data-k="price" aria-pressed="false">Price</button>
+          </div>
+          <div class="bld-live" aria-live="polite">
+            <div class="lines" id="bLines"></div>
+            <div class="triage" id="bTags"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen sms-screen">
+        <div class="screen-bar"><span id="bSmsBar">Example · SMS alert to you</span></div>
+        <div class="sms" id="bSms"></div>
+      </div>
+      <div class="bld-rules" id="bRules" aria-label="Rules it follows"></div>
+      <p class="faint bld-note">Your real assistant is built and tested with you at setup. This preview only shows the wording.</p>
+      <div class="bld-ctas">
+        <a class="btn btn-hot" id="bCreate" href="login.html?mode=signup&amp;from=build">Create my account with these details <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-line" id="bWa" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Send these to us on WhatsApp</a>
+        <button class="btn btn-line" type="button" data-open-ai><svg aria-hidden="true"><use href="#i-mic"/></svg>Talk to the live demo</button>
+        <button class="btn btn-ghost" type="button" id="bClear"><svg aria-hidden="true"><use href="#i-trash"/></svg>Clear my details</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer id="site-footer"></footer>
+<script src="config.js" defer></script>
+<script src="site.js" defer></script>
+<script src="scenarios.js" defer></script>
+<script src="build.js" defer></script>
+</body>
+</html>
