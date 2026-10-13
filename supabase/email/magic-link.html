@@ -1,0 +1,57 @@
+<!-- Supabase → Authentication → Emails → Templates → "Magic Link". Subject: Your Ringback login code -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="supported-color-schemes" content="dark light">
+<title>Your Ringback login code</title>
+</head>
+<body style="margin:0;padding:0;background-color:#07100F;-webkit-text-size-adjust:100%;text-size-adjust:100%;">
+<div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;mso-hide:all;font-size:1px;line-height:1px;color:#07100F;">{{ .Token }} is your Ringback code. It expires in 10 minutes.&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#07100F;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;width:100%;background-color:#0B1716;border:1px solid #1D2E2C;border-radius:16px;">
+<tr><td style="padding:28px 24px 8px 24px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td valign="middle" style="padding-right:10px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="height:24px;"><tr>
+<td valign="middle" style="padding-right:3px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="3" height="8" style="width:3px;height:8px;background-color:#FF7A3D;border-radius:2px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle" style="padding-right:3px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="3" height="15" style="width:3px;height:15px;background-color:#FF7A3D;border-radius:2px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle" style="padding-right:3px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="3" height="22" style="width:3px;height:22px;background-color:#FF7A3D;border-radius:2px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle" style="padding-right:3px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="3" height="15" style="width:3px;height:15px;background-color:#FF7A3D;border-radius:2px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="3" height="8" style="width:3px;height:8px;background-color:#FF7A3D;border-radius:2px;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+</tr></table>
+</td>
+<td valign="middle" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ECF3F0;letter-spacing:-0.02em;">Ringback</td>
+</tr></table>
+</td></tr>
+<tr><td style="padding:20px 24px 0 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#ECF3F0;">
+<p style="margin:0 0 12px 0;">{{ if .Data.full_name }}Hi {{ .Data.full_name }},{{ else }}Hi,{{ end }}</p>
+<p style="margin:0 0 20px 0;color:#C5D3CE;">Here is your code to log in to Ringback.</p>
+</td></tr>
+<tr><td align="center" style="padding:0 24px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #FF7A3D;border-radius:12px;background-color:#050B0B;">
+<tr><td align="center" style="padding:14px 10px 14px 20px;font-family:ui-monospace,Menlo,Consolas,'Courier New',monospace;font-size:32px;line-height:1.1;font-weight:700;letter-spacing:0.3em;color:#ECF3F0;white-space:nowrap;">{{ .Token }}</td></tr>
+</table>
+</td></tr>
+<tr><td style="padding:16px 24px 0 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#ECF3F0;">
+<p style="margin:0 0 4px 0;">Type it on the Ringback log-in page.</p>
+<p style="margin:0;font-size:14px;color:#93A6A1;">It expires in 10 minutes and works once.</p>
+</td></tr>
+<tr><td style="padding:24px 24px 0 24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td align="center" height="44" style="height:44px;border:1px solid #2E4442;border-radius:999px;">
+<a href="https://aerhq3e4r5h.github.io/ringback/login.html?th={{ .TokenHash }}" style="display:block;padding:12px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:20px;font-weight:600;color:#ECF3F0;text-decoration:none;">Or tap to finish logging in</a>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:28px 24px 28px 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.55;color:#93A6A1;">
+<p style="margin:0 0 8px 0;border-top:1px solid #1D2E2C;padding-top:20px;">Didn't ask for this? Ignore this email. Nobody can log in without this code.</p>
+<p style="margin:0;">Questions? WhatsApp <a href="https://wa.me/27652343106" style="color:#ECF3F0;text-decoration:underline;">065 234 3106</a></p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
