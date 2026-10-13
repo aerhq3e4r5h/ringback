@@ -1,6 +1,7 @@
 /* Owner-only admin: clients, billing, website enquiries and account requests. Access is enforced by the database. */
 (async function(){
-  var RB = window.RB, sb = RB.sb, $ = function(id){ return document.getElementById(id); };
+  var RB = window.RB, sb = RB.sb, C = window.RB_CONFIG || {}, $ = function(id){ return document.getElementById(id); };
+  var $$ = function(q, el){ return [].slice.call((el || document).querySelectorAll(q)); };
   var user = await RB.requireUser(); if (!user) return;
   var isAdmin = await sb.rpc('is_admin');
   $('adminLoading').hidden = true;
@@ -37,7 +38,9 @@
     var first = sheet.querySelector('select,input,textarea,button:not([data-close])') || sheet.querySelector('button'); if (first) first.focus();
     return { el: sheet, close: close };
   }
-  function head(title){ return '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 style="font-size:1.6rem">' + RB.esc(title) + '</h2><button class="btn btn-line btn-sm" type="button" data-close>Close</button></div>'; }
+  function head(title){ return '<div class="a-sheet-head"><h2 class="h-md">' + RB.esc(title) + '</h2><button class="btn btn-line btn-sm" type="button" data-close>Close</button></div>'; }
+  function authMsg(err){ if (RB.authError) { try { var m = RB.authError(err); if (m) return typeof m === 'string' ? m : (m.text || m.message || ''); } catch (e) {} } return (err && (err.message || err.msg)) || 'Something went wrong.'; }
+  var SOURCES = { contact:['','Contact form'], signup_fallback:['amber','Sign-up fallback'], setup_call:['mint','Setup call'] }, leadSrc = 'all';
 
   async function load(){
     var r = await Promise.all([
@@ -71,7 +74,7 @@
           '<td>' + RB.esc(x.full_name || '—') + '<br><span class="faint mono">' + RB.esc(x.email || '') + '</span>' + (x.phone ? '<br><span class="mono">' + RB.esc(x.phone) + '</span>' : '') + '</td>' +
           '<td>' + RB.esc(x.trade || '—') + '</td><td>' + RB.esc(x.plan && PLANS[x.plan] ? PLANS[x.plan].name : '—') + '</td><td class="mono">' + Math.round(n / 6 * 100) + '%</td><td class="mono">' + d(x.trial_requested_at) + '</td>' +
           '<td><select data-status="' + x.id + '" aria-label="Status for ' + RB.esc(x.business_name || '') + '">' + STATUSES.map(function(st){ return '<option' + (st === x.status ? ' selected' : '') + '>' + st + '</option>'; }).join('') + '</select></td>' +
-          '<td style="white-space:nowrap"><button class="btn btn-line btn-sm" type="button" data-view="' + i + '">Details</button> <button class="btn btn-line btn-sm" type="button" data-bill="' + x.id + '">Invoice</button>' + (wa ? ' <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + wa + '">WhatsApp</a>' : '') + '</td></tr>';
+          '<td class="a-nowrap"><button class="btn btn-line btn-sm" type="button" data-view="' + i + '">Details</button> <button class="btn btn-line btn-sm" type="button" data-bill="' + x.id + '">Invoice</button>' + (wa ? ' <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + wa + '">WhatsApp</a>' : '') + '</td></tr>';
       }).join('') + '</tbody></table></div>';
     $('clientsBox').querySelectorAll('[data-status]').forEach(function(sel){
       sel.addEventListener('change', async function(){
@@ -87,14 +90,18 @@
     renderInvoices();
 
     /* enquiries */
-    var l = data.leads;
-    $('leadsBox').innerHTML = !l.length ? '<div class="empty"><h3>No enquiries yet</h3><p>Messages from the contact form appear here.</p></div>' :
+    var srcs = [['all','All']].concat(Object.keys(SOURCES).map(function(k){ return [k, SOURCES[k][1]]; }));
+    $('leadFilter').innerHTML = data.leads.length ? srcs.map(function(x){ var n = data.leads.filter(function(y){ return x[0] === 'all' || y.source === x[0]; }).length; return '<button type="button" class="fchip" data-src="' + x[0] + '" aria-pressed="' + (leadSrc === x[0]) + '">' + x[1] + ' <span class="n">' + n + '</span></button>'; }).join('') : '';
+    $$('[data-src]', $('leadFilter')).forEach(function(b){ b.onclick = function(){ leadSrc = b.dataset.src; render(); }; });
+    var l = data.leads.filter(function(x){ return leadSrc === 'all' || x.source === leadSrc; });
+    $('leadsBox').innerHTML = !l.length ? '<div class="empty"><h3>' + (data.leads.length ? 'None from this source' : 'No enquiries yet') + '</h3><p>' + (data.leads.length ? 'Try another filter.' : 'Messages from the contact form, sign-up fallback and setup-call requests appear here.') + '</p></div>' :
       '<div class="table-wrap"><table class="data"><thead><tr><th>When</th><th>Name</th><th>Business</th><th>Phone / email</th><th>Message</th><th>Done</th></tr></thead><tbody>' +
       l.map(function(x){
         var wa = waLink(x.phone, 'Hi ' + (x.name || '').split(' ')[0] + ', thanks for contacting Ringback.');
-        return '<tr' + (x.handled ? ' style="opacity:.55"' : '') + '><td class="mono">' + d(x.created_at) + '</td><td><b>' + RB.esc(x.name) + '</b></td><td>' + RB.esc(x.business || '—') + '<br><span class="faint">' + RB.esc([x.trade, x.area].filter(Boolean).join(' · ')) + '</span></td>' +
+        var src = SOURCES[x.source];
+        return '<tr' + (x.handled ? ' class="a-done"' : '') + '><td class="mono">' + d(x.created_at) + '</td><td><b>' + RB.esc(x.name) + '</b>' + (x.source ? '<br><span class="tag ' + (src ? src[0] : '') + '">' + RB.esc(src ? src[1] : x.source) + '</span>' : '') + '</td><td>' + RB.esc(x.business || '—') + '<br><span class="faint">' + RB.esc([x.trade, x.area].filter(Boolean).join(' · ')) + '</span></td>' +
           '<td>' + (wa ? '<a class="link" target="_blank" rel="noopener" href="' + wa + '">' + RB.esc(x.phone) + '</a>' : RB.esc(x.phone || '—')) + (x.email ? '<br><span class="faint mono">' + RB.esc(x.email) + '</span>' : '') + '</td>' +
-          '<td style="max-width:360px">' + RB.esc(x.message || '—') + '</td><td><input type="checkbox" data-lead="' + x.id + '"' + (x.handled ? ' checked' : '') + ' aria-label="Mark handled" style="width:18px;height:18px;accent-color:var(--ember)"></td></tr>';
+          '<td class="a-msg">' + RB.esc(x.message || '—') + '</td><td><input type="checkbox" class="a-check" data-lead="' + RB.esc(x.id) + '"' + (x.handled ? ' checked' : '') + ' aria-label="Mark handled"></td></tr>';
       }).join('') + '</tbody></table></div>';
     $('leadsBox').querySelectorAll('[data-lead]').forEach(function(cb){
       cb.addEventListener('change', async function(){ var r = await sb.from('leads').update({ handled: cb.checked }).eq('id', cb.dataset.lead); if (r.error) { cb.checked = !cb.checked; RB.toast('Couldn\'t update', 'err'); } else { data.leads.forEach(function(x){ if (String(x.id) === cb.dataset.lead) x.handled = cb.checked; }); render(); } });
@@ -104,7 +111,7 @@
     var q = data.reqs;
     $('reqBox').innerHTML = !q.length ? '<div class="empty"><h3>No requests</h3><p>Deletion and support requests from clients appear here.</p></div>' :
       '<div class="table-wrap"><table class="data"><thead><tr><th>When</th><th>Client</th><th>Request</th><th>Note</th><th>Done</th></tr></thead><tbody>' +
-      q.map(function(x){ var who = client(x.user_id); return '<tr' + (x.handled ? ' style="opacity:.55"' : '') + '><td class="mono">' + d(x.created_at) + '</td><td>' + RB.esc(who.business_name || who.email || x.user_id) + '</td><td><span class="tag ' + (x.kind === 'delete_account' ? 'red' : '') + '">' + RB.esc(x.kind === 'delete_account' ? 'Delete account' : x.kind) + '</span></td><td>' + RB.esc(x.note || '—') + '</td><td><input type="checkbox" data-req="' + x.id + '"' + (x.handled ? ' checked' : '') + ' aria-label="Mark handled" style="width:18px;height:18px;accent-color:var(--ember)"></td></tr>'; }).join('') + '</tbody></table></div>';
+      q.map(function(x){ var who = client(x.user_id); return '<tr' + (x.handled ? ' class="a-done"' : '') + '><td class="mono">' + d(x.created_at) + '</td><td>' + RB.esc(who.business_name || who.email || x.user_id) + '</td><td><span class="tag ' + (x.kind === 'delete_account' ? 'red' : '') + '">' + RB.esc(x.kind === 'delete_account' ? 'Delete account' : x.kind) + '</span></td><td>' + RB.esc(x.note || '—') + '</td><td><input type="checkbox" class="a-check" data-req="' + RB.esc(x.id) + '"' + (x.handled ? ' checked' : '') + ' aria-label="Mark handled"></td></tr>'; }).join('') + '</tbody></table></div>';
     $('reqBox').querySelectorAll('[data-req]').forEach(function(cb){
       cb.addEventListener('change', async function(){ var r = await sb.from('requests').update({ handled: cb.checked }).eq('id', cb.dataset.req); if (r.error) { cb.checked = !cb.checked; RB.toast('Couldn\'t update', 'err'); } else data.reqs.forEach(function(x){ if (String(x.id) === cb.dataset.req) x.handled = cb.checked; }); });
     });
@@ -115,20 +122,20 @@
     $('bankWarn').hidden = !!data.billing.account_number;
     var list = data.invoices.filter(function(i){ return filter === 'all' || (filter === 'open' ? (i.status === 'due' || i.status === 'pending') : i.status === filter); });
     $('invFilter').querySelectorAll('[data-f]').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.f === filter)); });
-    if (!list.length) { $('invBox').innerHTML = '<div class="empty"><span class="ic">' + RB.icon('i-receipt') + '</span><h3>' + (data.invoices.length ? 'Nothing here' : 'No invoices yet') + '</h3><p style="max-width:48ch">' + (data.invoices.length ? 'No invoices match this filter.' : 'Create a setup or monthly invoice for a client. They\'ll see it in their portal under Billing, with your banking details.') + '</p></div>'; return; }
+    if (!list.length) { $('invBox').innerHTML = '<div class="empty"><span class="ic">' + RB.icon('i-receipt') + '</span><h3>' + (data.invoices.length ? 'Nothing here' : 'No invoices yet') + '</h3><p class="p-measure">' + (data.invoices.length ? 'No invoices match this filter.' : 'Create a setup or monthly invoice for a client. They\'ll see it in their portal under Billing, with your banking details.') + '</p></div>'; return; }
     $('invBox').innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>Invoice</th><th>Client</th><th>Description</th><th>Amount</th><th>Due</th><th>Status</th><th>Proof</th><th></th></tr></thead><tbody>' +
       list.map(function(i){
         var st = INV[invState(i)] || INV.due, cl = client(i.user_id);
         var acts = i.status === 'pending' ? '<button class="btn btn-hot btn-sm" type="button" data-act="paid" data-id="' + i.id + '">Confirm paid</button> <button class="btn btn-line btn-sm" type="button" data-act="due" data-id="' + i.id + '">Not received</button>' :
           i.status === 'due' ? '<button class="btn btn-line btn-sm" type="button" data-act="paid" data-id="' + i.id + '">Mark paid</button> <button class="btn btn-ghost btn-sm" type="button" data-act="void" data-id="' + i.id + '">Cancel</button>' :
           i.status === 'paid' ? '<button class="btn btn-ghost btn-sm" type="button" data-act="due" data-id="' + i.id + '">Undo paid</button>' : '';
-        return '<tr' + (i.status === 'void' ? ' style="opacity:.55"' : '') + '><td><b class="mono">' + RB.esc(i.number) + '</b><br><span class="faint mono">' + dd(i.issued_at.slice(0, 10)) + '</span></td>' +
+        return '<tr' + (i.status === 'void' ? ' class="a-done"' : '') + '><td><b class="mono">' + RB.esc(i.number) + '</b><br><span class="faint mono">' + dd(i.issued_at.slice(0, 10)) + '</span></td>' +
           '<td>' + RB.esc(clientName(cl)) + (cl.email ? '<br><span class="faint mono">' + RB.esc(cl.email) + '</span>' : '') + '</td>' +
           '<td>' + RB.esc(i.description) + (i.client_note ? '<br><span class="faint">Client: ' + RB.esc(i.client_note) + '</span>' : '') + '</td>' +
-          '<td class="mono" style="white-space:nowrap">' + RB.money(total(i)) + (i.vat_cents ? '<br><span class="faint">incl. ' + RB.money(i.vat_cents) + ' VAT</span>' : '') + '</td>' +
+          '<td class="mono a-nowrap">' + RB.money(total(i)) + (i.vat_cents ? '<br><span class="faint">incl. ' + RB.money(i.vat_cents) + ' VAT</span>' : '') + '</td>' +
           '<td class="mono">' + dd(i.due_date) + '</td><td><span class="tag ' + st[0] + '">' + st[1] + '</span>' + (i.status === 'paid' ? '<br><span class="faint mono">' + dd(i.paid_at && i.paid_at.slice(0, 10)) + '</span>' : i.status === 'pending' ? '<br><span class="faint mono">Sent ' + dd(i.client_paid_at && i.client_paid_at.slice(0, 10)) + '</span>' : '') + '</td>' +
           '<td>' + (i.proof_path ? '<button class="linkbtn" type="button" data-proof="' + RB.esc(i.proof_path) + '">View</button>' : '<span class="faint">—</span>') + '</td>' +
-          '<td style="white-space:nowrap">' + acts + ' <a class="btn btn-ghost btn-sm" href="invoice.html?id=' + i.id + '">Open</a></td></tr>';
+          '<td class="a-nowrap">' + acts + ' <a class="btn btn-ghost btn-sm" href="invoice.html?id=' + i.id + '">Open</a></td></tr>';
       }).join('') + '</tbody></table></div>';
     $('invBox').querySelectorAll('[data-act]').forEach(function(b){ b.addEventListener('click', function(){ invAction(b); }); });
     $('invBox').querySelectorAll('[data-proof]').forEach(function(b){ b.addEventListener('click', function(){ viewProof(b.dataset.proof); }); });
@@ -175,8 +182,8 @@
       '<label class="check"><input type="checkbox" name="vat"' + (data.billing.vat_registered ? ' checked' : '') + '><span>Add 15% VAT' + (data.billing.vat_registered ? '' : ' (only if you\'re VAT-registered)') + '</span></label>' +
       '<label class="fld"><span>Note to client <small>(optional, shown on the invoice)</small></span><input name="note" maxlength="500"></label>' +
       '<p class="mono" id="invTotal"></p><p class="form-msg" id="invMsg" aria-live="polite"></p>' +
-      '<div class="ctas" style="margin-top:0"><button class="btn btn-hot" type="submit">Create invoice</button><button class="btn btn-line" type="button" data-close>Cancel</button></div>' +
-      '<p class="faint" style="font-size:.84rem">The client sees it straight away under Billing in their portal.</p></form>', 'New invoice');
+      '<div class="ctas a-acts"><button class="btn btn-hot" type="submit">Create invoice</button><button class="btn btn-line" type="button" data-close>Cancel</button></div>' +
+      '<p class="faint p-small">The client sees it straight away under Billing in their portal.</p></form>', 'New invoice');
     var f = s.el.querySelector('#invForm'), E = f.elements;
     function cents(){ var v = parseFloat(String(E.namedItem('amount').value).replace(/[^\d.]/g, '')); return isFinite(v) ? Math.round(v * 100) : 0; }
     function showTotal(){ var a = cents(), vat = E.namedItem('vat').checked ? Math.round(a * 0.15) : 0; s.el.querySelector('#invTotal').textContent = a ? 'Total: ' + RB.money(a + vat) + (vat ? ' (incl. ' + RB.money(vat) + ' VAT)' : '') : ''; }
@@ -209,7 +216,7 @@
     });
   }
   function showNotify(inv, wa){
-    var s = openSheet(head('Invoice ' + inv.number + ' created') + '<p class="muted">' + (wa ? 'Let the client know it\'s waiting in their portal.' : 'The client can see it in their portal under Billing.') + '</p><div class="ctas" style="margin-top:0">' + (wa ? '<a class="btn btn-hot" target="_blank" rel="noopener" href="' + wa + '">' + RB.icon('i-wa') + 'WhatsApp the client</a>' : '') + '<a class="btn btn-line" href="invoice.html?id=' + inv.id + '">View invoice</a><button class="btn btn-ghost" type="button" data-close>Done</button></div>', 'Invoice created');
+    var s = openSheet(head('Invoice ' + inv.number + ' created') + '<p class="muted">' + (wa ? 'Let the client know it\'s waiting in their portal.' : 'The client can see it in their portal under Billing.') + '</p><div class="ctas a-acts">' + (wa ? '<a class="btn btn-hot" target="_blank" rel="noopener" href="' + wa + '">' + RB.icon('i-wa') + 'WhatsApp the client</a>' : '') + '<a class="btn btn-line" href="invoice.html?id=' + inv.id + '">View invoice</a><button class="btn btn-ghost" type="button" data-close>Done</button></div>', 'Invoice created');
     var a = s.el.querySelector('a[target]'); if (a) a.addEventListener('click', function(){ setTimeout(s.close, 300); });
   }
 
@@ -222,8 +229,8 @@
     var vat = !!data.billing.vat_registered;
     var sum = todo.reduce(function(a, c){ var m = PLANS[c.plan].monthly; return a + m + (vat ? Math.round(m * 0.15) : 0); }, 0);
     var s = openSheet(head('Invoices for ' + monthName(per)) +
-      (todo.length ? '<p class="muted">Creates a monthly invoice for each live client who doesn\'t have one for ' + monthName(per) + ' yet. Due ' + dd(ymd(due)) + (vat ? ', plus VAT' : '') + '.</p><dl class="kv">' + todo.map(function(c){ return '<dt>' + RB.esc(clientName(c)) + '</dt><dd>' + RB.esc(PLANS[c.plan].name) + ' · ' + RB.money(PLANS[c.plan].monthly) + '</dd>'; }).join('') + '</dl><p class="mono">Total ' + RB.money(sum) + '</p><div class="ctas" style="margin-top:0"><button class="btn btn-hot" type="button" id="goMonthly">Create ' + todo.length + ' invoice' + (todo.length > 1 ? 's' : '') + '</button><button class="btn btn-line" type="button" data-close>Cancel</button></div>' :
-      '<p class="muted">' + (live.length ? 'Every live client already has an invoice for ' + monthName(per) + '.' : 'No live clients with a plan yet. Set a client\'s status to "live" once they\'re paying.') + '</p><div class="ctas" style="margin-top:0"><button class="btn btn-line" type="button" data-close>Close</button></div>'), 'Monthly invoices');
+      (todo.length ? '<p class="muted">Creates a monthly invoice for each live client who doesn\'t have one for ' + monthName(per) + ' yet. Due ' + dd(ymd(due)) + (vat ? ', plus VAT' : '') + '.</p><dl class="kv">' + todo.map(function(c){ return '<dt>' + RB.esc(clientName(c)) + '</dt><dd>' + RB.esc(PLANS[c.plan].name) + ' · ' + RB.money(PLANS[c.plan].monthly) + '</dd>'; }).join('') + '</dl><p class="mono">Total ' + RB.money(sum) + '</p><div class="ctas a-acts"><button class="btn btn-hot" type="button" id="goMonthly">Create ' + todo.length + ' invoice' + (todo.length > 1 ? 's' : '') + '</button><button class="btn btn-line" type="button" data-close>Cancel</button></div>' :
+      '<p class="muted">' + (live.length ? 'Every live client already has an invoice for ' + monthName(per) + '.' : 'No live clients with a plan yet. Set a client\'s status to "live" once they\'re paying.') + '</p><div class="ctas a-acts"><button class="btn btn-line" type="button" data-close>Close</button></div>'), 'Monthly invoices');
     var go = s.el.querySelector('#goMonthly'); if (!go) return;
     go.addEventListener('click', async function(){
       go.classList.add('loading');
@@ -245,7 +252,7 @@
       '<div class="two"><label class="fld"><span>Payment terms (days)</span><input name="payment_terms_days" type="number" min="0" max="60" value="' + (b.payment_terms_days != null ? b.payment_terms_days : 7) + '"></label><label class="fld"><span>VAT number</span><input name="vat_number" maxlength="20" value="' + RB.esc(b.vat_number || '') + '" placeholder="Only if VAT-registered"></label></div>' +
       '<label class="check"><input type="checkbox" name="vat_registered"' + (b.vat_registered ? ' checked' : '') + '><span>I\'m VAT-registered (adds 15% VAT to new invoices and shows "Tax invoice")</span></label>' +
       '<label class="fld"><span>Note on every invoice <small>(optional)</small></span><textarea name="invoice_note" maxlength="500" placeholder="e.g. Thank you for your business.">' + RB.esc(b.invoice_note || '') + '</textarea></label>' +
-      '<p class="form-msg" id="setMsg" aria-live="polite"></p><div class="ctas" style="margin-top:0"><button class="btn btn-hot" type="submit">Save payment details</button><button class="btn btn-line" type="button" data-close>Cancel</button></div></form>', 'Payment details');
+      '<p class="form-msg" id="setMsg" aria-live="polite"></p><div class="ctas a-acts"><button class="btn btn-hot" type="submit">Save payment details</button><button class="btn btn-line" type="button" data-close>Cancel</button></div></form>', 'Payment details');
     var f = s.el.querySelector('#setForm'), E = f.elements;
     f.addEventListener('submit', async function(e){
       e.preventDefault();
@@ -265,16 +272,69 @@
 
   function showClient(x){
     var s = x.setup || {};
+    var refBy = s.referred_by && /^[0-9a-f]{8}$/.test(s.referred_by) ? data.clients.filter(function(c){ return String(c.id).replace(/-/g, '').slice(0, 8).toLowerCase() === s.referred_by; })[0] : null;
     var rows = [['Business', x.business_name], ['Name', x.full_name], ['Email', x.email], ['Cell', x.phone], ['Trade', x.trade], ['Plan', x.plan && PLANS[x.plan] ? PLANS[x.plan].name : ''], ['Status', x.status], ['Trial requested', d(x.trial_requested_at)]]
+      .concat(s.preferred_start ? [['Asked to start', dd(String(s.preferred_start).slice(0, 10))]] : [])
+      .concat(s.referred_by ? [['Referred by', refBy ? clientName(refBy) : 'Code ' + s.referred_by + ' (no matching client)']] : [])
       .concat(Object.keys(LABELS).map(function(k){ var v = s[k]; return [LABELS[k], Array.isArray(v) ? v.join(', ') : v]; }));
     var mine = data.invoices.filter(function(i){ return i.user_id === x.id; });
+    var loginLink = (C.siteUrl || location.href.replace(/[^/]*$/, '')) + 'login.html?email=' + encodeURIComponent(x.email || '');
     var sh = openSheet(head(x.business_name || 'Client') +
+      '<form class="form a-login" id="rbNumForm" novalidate><label class="fld"><span>Ringback number for this client <small>(shows the Go-live card in their portal)</small></span><input name="num" type="tel" inputmode="tel" maxlength="20" value="' + RB.esc(s.ringback_number || '') + '" placeholder="e.g. 010 123 4567"></label><div><button class="btn btn-line btn-sm" type="submit">Save number</button></div></form>' +
+      '<p class="mono" id="todoLine" hidden></p>' +
       '<dl class="kv">' + rows.map(function(r){ return '<dt>' + RB.esc(r[0]) + '</dt><dd>' + RB.esc(r[1] || '—') + '</dd>'; }).join('') + '</dl>' +
+      (x.email ? '<div class="a-login"><h3 class="h-sm">Log-in help</h3><div class="a-filter"><button class="btn btn-line btn-sm" type="button" data-otp>Email a login code</button><button class="btn btn-line btn-sm" type="button" data-link>Copy login link</button></div><p class="form-msg" id="otpMsg" aria-live="polite"></p></div>' : '') +
       '<h3>Invoices</h3>' + (mine.length ? '<dl class="kv">' + mine.map(function(i){ return '<dt class="mono">' + RB.esc(i.number) + '</dt><dd>' + RB.esc(i.description) + ' · ' + RB.money(total(i)) + ' · ' + (INV[invState(i)] || INV.due)[1] + '</dd>'; }).join('') + '</dl>' : '<p class="muted">None yet.</p>') +
-      '<div class="ctas" style="margin-top:0"><button class="btn btn-hot btn-sm" type="button" data-newinv>New invoice</button><button class="btn btn-line btn-sm" type="button" data-copy>Copy setup as text</button></div>', 'Client details');
-    sh.el.querySelector('[data-copy]').addEventListener('click', function(){ RB.copy(rows.map(function(r){ return r[0] + ': ' + (r[1] || '—'); }).join('\n')); });
-    sh.el.querySelector('[data-newinv]').addEventListener('click', function(){ sh.close(); newInvoice(x.id); });
+      '<div class="ctas a-acts"><button class="btn btn-hot btn-sm" type="button" data-newinv>New invoice</button><button class="btn btn-line btn-sm" type="button" data-copy>Copy setup as text</button></div>', 'Client details');
+    var q = function(sel){ return sh.el.querySelector(sel); };
+    q('[data-copy]').addEventListener('click', function(){ RB.copy(rows.map(function(r){ return r[0] + ': ' + (r[1] || '—'); }).join('\n')); });
+    q('[data-newinv]').addEventListener('click', function(){ sh.close(); newInvoice(x.id); });
+    /* the Ringback number is merged into setup: never replace the whole object */
+    q('#rbNumForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      var v = this.elements.namedItem('num').value.trim(), btn = this.querySelector('[type=submit]');
+      if (v && !/^(\+27|0)\d{9}$/.test(v.replace(/[^\d+]/g, ''))) { RB.toast('That doesn\'t look like a South African number.', 'err'); return; }
+      btn.classList.add('loading');
+      var cur = await sb.from('profiles').select('setup').eq('id', x.id).maybeSingle();
+      var base = cur.error || !cur.data ? (x.setup || {}) : (cur.data.setup || {});
+      var setup = Object.assign({}, base); if (v) setup.ringback_number = v; else delete setup.ringback_number;
+      var r = await sb.from('profiles').update({ setup: setup }).eq('id', x.id).select().maybeSingle();
+      btn.classList.remove('loading');
+      if (r.error || !r.data) return RB.toast('Couldn\'t save the number. ' + (r.error ? r.error.message : ''), 'err');
+      data.clients = data.clients.map(function(c){ return c.id === r.data.id ? r.data : c; }); x = r.data;
+      RB.toast(v ? 'Number saved. The client sees the Go-live card once their status is setting up, trial or live.' : 'Number removed', 'ok');
+    });
+    /* still to call back: only when calls_followup.sql has run and calls are readable */
+    sb.from('calls').select('id,call_type,handled_at').eq('user_id', x.id).limit(1000).then(function(r){
+      if (r.error || !r.data || !r.data.length || !Object.prototype.hasOwnProperty.call(r.data[0], 'handled_at')) return;
+      var n = r.data.filter(function(c){ return !c.handled_at && (c.call_type === 'emergency' || c.call_type === 'callback'); }).length, el = q('#todoLine');
+      if (el) { el.hidden = false; el.textContent = 'Still to call back: ' + n + ' (of ' + r.data.length + ' calls)'; }
+    });
+    var otpB = q('[data-otp]');
+    if (otpB) otpB.addEventListener('click', async function(){
+      var msg = q('#otpMsg'); otpB.classList.add('loading'); msg.className = 'form-msg'; msg.textContent = '';
+      var r = await sb.auth.signInWithOtp({ email: x.email, options: { shouldCreateUser: false, emailRedirectTo: (C.siteUrl || '') + 'dashboard.html' } });
+      otpB.classList.remove('loading');
+      if (r.error) { msg.className = 'form-msg err'; msg.textContent = authMsg(r.error); return; }
+      msg.className = 'form-msg ok'; msg.textContent = 'Code sent to ' + x.email + '. It works for ' + (C.otpExpiryMinutes || 10) + ' minutes.';
+    });
+    var linkB = q('[data-link]');
+    if (linkB) linkB.addEventListener('click', function(){ RB.copy(loginLink, linkB); });
   }
+
+  /* invite: one email with a log-in code; the account is created when they enter it */
+  $('inviteForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var f = this, email = f.elements.namedItem('email').value.trim().toLowerCase(), biz = f.elements.namedItem('business').value.trim(), msg = $('inviteMsg'), btn = f.querySelector('[type=submit]');
+    msg.className = 'form-msg err';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Enter a valid email address.'; f.elements.namedItem('email').focus(); return; }
+    btn.classList.add('loading'); msg.textContent = '';
+    var r = await sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true, data: { business_name: biz }, emailRedirectTo: (C.siteUrl || '') + 'dashboard.html' } });
+    btn.classList.remove('loading');
+    if (r.error) { msg.textContent = authMsg(r.error); return; }
+    msg.className = 'form-msg ok'; msg.textContent = 'Invite sent to ' + email + '. Ask them to enter the code on the log-in page: ' + (C.siteUrl || '') + 'login.html?email=' + encodeURIComponent(email);
+    f.reset();
+  });
 
   $('newInvBtn').addEventListener('click', function(){ newInvoice(); });
   $('monthlyBtn').addEventListener('click', monthly);
