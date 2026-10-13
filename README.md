@@ -193,6 +193,40 @@ Run these once in the Supabase SQL editor (read the comments at the top of each 
 
 <!-- @@track:portal -->
 
+## Portal and admin
+
+**SQL files to run** (Supabase → SQL editor, once each; both are safe to re-run and explain themselves at the top):
+
+- `supabase/calls_followup.sql`: adds `handled_at`, `summary`, `transcript` and `duration_seconds` to `calls`, and the
+  `client_mark_call()` function. Until it runs, the portal hides "Mark as called back", the "Still to call back" chip
+  and KPI, and the admin count. Have your call webhook fill `summary`, `transcript` (plain text, lines starting
+  `Caller:`/`User:` or `Assistant:`/`AI:`) and `duration_seconds`; the call drawer shows each one only when present.
+- `supabase/protect_status.sql`: a trigger that keeps `profiles.status` unchanged when a logged-in non-admin updates
+  their own profile. Admin changes and service-role webhooks are unaffected. The file says how to test and remove it.
+- `supabase/founding_spots.sql` (above) also feeds the portal's plan cards. Without it they show no places count.
+
+**Ringback number.** In admin, open a client's **Details** and fill **Ringback number for this client**. It is saved
+into `setup.ringback_number` (merged, never replacing the rest of `setup`). When it is set and the client's status
+is `setting_up`, `trial` or `live`, their Overview and Setup show the **Go live** card: forwarding codes with the
+number locked in, the `*#61#`/`*#62#`/`*#67#` checks, and a real test call. Nothing is simulated: the card waits for
+a new row in `calls`.
+
+**Test-call wait.** `config.testCallWaitMinutes` (default 5) is how long the Go-live card polls for the test call
+(every 10 seconds, paused while the page is hidden) before showing a checklist and a WhatsApp button. Set it to
+roughly how long a call takes to appear in the portal, plus a margin.
+
+**What the portal stores on the phone** is listed in the storage table above (`rb_setup_draft_<uid>`,
+`rb_calls_seen_<uid>`, `rb_install_dismissed`). There is no service worker, so nothing about the account is cached.
+
+**Session expiry.** Every database call goes through `RB.call` in `portal.js`: on an expired session it refreshes
+once, and if that fails it saves the setup draft and sends the client to
+`login.html?next=dashboard.html%23<view>&notice=session`.
+
+**Admin extras.** Enquiries show their source (contact form, sign-up fallback, setup call) with filter chips.
+A client's Details sheet shows who referred them (matched on the first 8 characters of client ids), their
+"still to call back" count, **Email a login code** (an existing account only) and **Copy login link**.
+**Invite a new client** emails a log-in code and creates the account when they enter it.
+
 <!-- @@track:features -->
 
 <!-- @@track:pages -->
