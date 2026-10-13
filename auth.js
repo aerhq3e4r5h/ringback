@@ -342,7 +342,17 @@
     msgEl.className = 'form-msg ok';
     msgEl.innerHTML = RB.icon('i-check') + '<span></span>';
     msgEl.lastChild.textContent = /^dashboard\.html/.test(dest) ? 'You\'re in. Taking you to your dashboard…' : 'You\'re in. Taking you back…';
-    setTimeout(function(){ location.replace(dest); }, 600);
+    /* the owner lands on the admin portal; clients on their dashboard. An explicit ?next always wins. */
+    var t0 = Date.now(), go = function(d){ setTimeout(function(){ location.replace(d); }, Math.max(0, 600 - (Date.now() - t0))); };
+    if (hasNext || !/^dashboard\.html/.test(dest)) return go(dest);
+    adminDest(dest).then(go);
+  }
+  /* is_admin is checked by the database; anyone not an admin (or any error) goes to the client dashboard */
+  function adminDest(dest){
+    return Promise.race([
+      RB.sb.rpc('is_admin').then(function(x){ return x && x.data === true ? 'admin.html' : dest; }, function(){ return dest; }),
+      new Promise(function(res){ setTimeout(function(){ res(dest); }, 4000); })
+    ]);
   }
 
   /* ---- resend ---- */
@@ -462,6 +472,7 @@
     setView('in');
     showAddr($('inEmail'), (user && user.email) || 'your account');
     $('goDash').href = next;
+    if (!hasNext) adminDest(next).then(function(d){ if (d === 'admin.html') { var g = $('goDash'); g.href = d; g.firstChild.textContent = 'Go to the admin portal'; } });
     $('outBtn').onclick = async function(){
       var b = this; b.classList.add('loading');
       try { await RB.sb.auth.signOut({ scope: 'local' }); } catch (e) {}
