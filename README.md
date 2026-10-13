@@ -167,6 +167,14 @@ Supabase keeps its own session under `sb-<project>-auth-token` (local).
 
 <!-- @@track:auth-otp -->
 
+Log-in codes only reach real customers once Supabase sends through your own email provider. Full steps: [supabase/AUTH-SETUP.md](supabase/AUTH-SETUP.md).
+
+1. Set up custom SMTP (Resend recommended; Brevo, or Gmail with an app password as a stopgap) and add SPF, DKIM and DMARC `p=none` to your domain's DNS.
+2. Paste `supabase/email/magic-link.html` and `supabase/email/confirm-signup.html` into the Magic Link and Confirm signup templates, with their subjects.
+3. Set Email OTP Length 6 and Expiration 600 seconds, Site URL and Redirect URLs, raise the email rate limit, and leave CAPTCHA off.
+4. Open `login.html?check=1` (never linked from the site) and work through its checklist on Gmail, iPhone Mail and Outlook.
+5. Error wording lives in `RB.authError` in `auth.js`; email links use `login.html?th=…` and need a tap, so inbox scanners can't use them up. `rb_otp` is also mirrored to localStorage for 15 minutes so a new tab can carry on.
+
 ## Things to supply
 
 - **Sample call audio.** Put one recording per trade in `audio/`, named by trade key:

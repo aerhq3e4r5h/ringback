@@ -24,71 +24,148 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body data-page="login" data-no-ai data-no-float data-app>
+<script>
+/* "Tap to finish logging in" links carry ?th=<token hash>. Take it out of the address bar before any other script runs,
+   so it never stays in history or gets shared. auth.js picks it up from RB_TH (or sessionStorage rb_th after a reload). */
+(function(){try{var q=new URLSearchParams(location.search),t=q.get('th');if(t===null)return;q.delete('th');history.replaceState(history.state,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);if(/^[A-Za-z0-9_-]{20,200}$/.test(t)){window.RB_TH=t;document.documentElement.className+=' th-mode';try{sessionStorage.setItem('rb_th',JSON.stringify({th:t,at:Date.now()}))}catch(e){}}}catch(e){}})();
+</script>
 <a class="skip" href="#main">Skip to content</a>
 <header id="site-header"></header>
 <main id="main" class="auth">
   <aside class="auth-side">
-    <div style="display:grid;gap:20px">
+    <div class="auth-side-in">
       <span class="kicker">Client portal</span>
-      <h2>Your calls, your setup, <span class="hot">one place.</span></h2>
-      <ul class="checks" style="margin-top:4px">
-        <li><svg><use href="#i-check"/></svg><span><b>Set up your assistant</b>: services, area, hours, call-out fee, emergency rules.</span></li>
-        <li><svg><use href="#i-check"/></svg><span><b>Pick a plan</b> and request your free trial week.</span></li>
-        <li><svg><use href="#i-check"/></svg><span><b>See every call</b> it takes for you, once you're live.</span></li>
-        <li><svg><use href="#i-check"/></svg><span><b>Billing in one place</b>: invoices, banking details and payment status.</span></li>
-        <li><svg><use href="#i-check"/></svg><span><b>No password.</b> We email you a 6-digit code each time.</span></li>
+      <h2>Your calls, your setup, one place.</h2>
+      <div class="screen auth-sms">
+        <div class="screen-bar">Example · SMS alert</div>
+        <div class="sms"><b>EMERGENCY</b> · Lerato M · Fourways<br>Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</div>
+      </div>
+      <ul class="checks">
+        <li><span><b>Set up your assistant</b>: services, area, hours, call-out fee, emergency rules.</span></li>
+        <li><span><b>Pick a plan</b> and request your free trial week.</span></li>
+        <li><span><b>See every call</b> it takes for you, once you're live.</span></li>
+        <li><span><b>Billing in one place</b>: invoices, banking details and payment status.</span></li>
+        <li><span><b>No password.</b> We email you a 6-digit code each time.</span></li>
       </ul>
+      <div data-founder="compact" hidden></div>
     </div>
-    <div class="sms" style="max-width:380px"><b>EMERGENCY</b> · Lerato M · Fourways<br>Burst geyser, water through ceiling. Power and water off. Call back within 15 min.</div>
   </aside>
 
   <div class="auth-main">
     <div class="auth-card" id="auth">
-      <div id="stepForm" style="display:grid;gap:22px">
+      <div class="auth-wait" id="stepWait" hidden><span class="bars-loader" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>Checking your session…</span></div>
+
+      <!-- step 1: email (and sign-up details) -->
+      <div class="auth-step" id="stepForm">
         <div class="seg" role="tablist" aria-label="Log in or create an account" style="--n:2">
           <button type="button" role="tab" id="tabLogin" aria-selected="true">Log in</button>
           <button type="button" role="tab" id="tabSignup" aria-selected="false">Create account</button>
         </div>
-        <div style="display:grid;gap:10px">
-          <h1 id="authTitle">Welcome back</h1>
+        <div class="auth-head">
+          <h1 id="authTitle">Welcome <span class="hot">back</span></h1>
           <p class="muted" id="authSub">Enter your email and we'll send you a 6-digit code. No password needed.</p>
         </div>
         <p class="alert warn" id="cfgWarn" hidden>Accounts are being switched on. Please try again shortly, or WhatsApp us.</p>
+        <p class="alert warn" id="noticeMsg" role="status" hidden></p>
         <form class="form" id="authForm" novalidate onsubmit="return false">
-          <div id="signupFields" hidden style="display:grid;gap:16px">
-            <div class="two">
-              <label class="fld"><span>Your name <i class="req">*</i></span><input id="su-name" autocomplete="name" maxlength="120" placeholder="Pieter van Wyk"></label>
-              <label class="fld"><span>Business name <i class="req">*</i></span><input id="su-biz" autocomplete="organization" maxlength="120" placeholder="Ridgeway Plumbing"></label>
-            </div>
-            <div class="two">
-              <label class="fld"><span>Trade</span><select id="su-trade"><option>Plumbing</option><option>Electrical</option><option>Gates & alarms</option><option>Solar & backup</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
-              <label class="fld"><span>Cellphone</span><input id="su-phone" type="tel" autocomplete="tel" maxlength="30" placeholder="082 123 4567"></label>
-            </div>
+          <div class="fld">
+            <label for="email">Email address</label>
+            <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" enterkeyhint="send" maxlength="200" required placeholder="you@business.co.za">
+            <button type="button" class="typo-hint" id="typoBtn" hidden></button>
           </div>
-          <label class="fld"><span>Email address</span><input id="email" type="email" autocomplete="email" inputmode="email" required placeholder="you@business.co.za"></label>
-          <label class="check" id="termsRow" hidden><input type="checkbox" id="terms"><span>I agree to the <a href="terms.html" target="_blank" rel="noopener">terms of service</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</span></label>
-          <button class="btn btn-hot btn-block" type="submit" id="sendBtn">Send me a code</button>
-          <p class="form-msg" id="formMsg" aria-live="polite"></p>
+          <div id="signupFields" class="auth-su" hidden>
+            <p class="draft-note" id="draftNote" hidden>Brought in from your assistant preview</p>
+            <div class="two">
+              <label class="fld"><span>Your name <i class="req">*</i></span><input id="su-name" autocomplete="name" maxlength="120" enterkeyhint="next" placeholder="Pieter van Wyk"></label>
+              <label class="fld"><span>Business name <i class="req">*</i></span><input id="su-biz" autocomplete="organization" maxlength="120" enterkeyhint="next" placeholder="Ridgeway Plumbing"></label>
+            </div>
+            <div class="two">
+              <label class="fld"><span>Trade <small>optional</small></span><select id="su-trade"><option value="">Choose your trade</option><option>Plumbing</option><option>Electrical</option><option>Gates &amp; alarms</option><option>Solar &amp; backup</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
+              <label class="fld"><span>Cellphone <small>optional</small></span><input id="su-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="082 123 4567"></label>
+            </div>
+            <label class="check" id="termsRow"><input type="checkbox" id="terms"><span>I agree to the <a href="terms.html" target="_blank" rel="noopener">terms of service</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</span></label>
+          </div>
+          <button class="btn btn-hot btn-block" type="submit" id="sendBtn" disabled>Loading…</button>
         </form>
-        <p class="muted" style="font-size:.92rem" id="switchLine"></p>
+        <div class="form-msg" id="formMsg" aria-live="polite"></div>
+        <p class="auth-alt"><button type="button" class="linkbtn" id="haveCode">I already have a code</button></p>
+        <p class="muted auth-switch" id="switchLine"></p>
       </div>
 
-      <div id="stepCode" hidden style="display:grid;gap:22px">
-        <button type="button" class="btn btn-ghost btn-sm" id="backBtn" style="justify-self:start;padding-left:0">← Use a different email</button>
-        <div style="display:grid;gap:10px">
-          <span class="ic"><svg><use href="#i-mail"/></svg></span>
-          <h1>Check your email</h1>
-          <p class="muted">We sent a code to <span class="email-pill" id="sentTo"></span>. Enter it below, or just tap the link in the email.</p>
+      <!-- step 2: the code -->
+      <div class="auth-step" id="stepCode" hidden>
+        <button type="button" class="btn btn-ghost btn-sm auth-back" id="backBtn"><svg aria-hidden="true"><use href="#i-back"/></svg>Use a different email</button>
+        <div class="auth-head">
+          <h1>Check your <span class="hot">email</span></h1>
+          <p class="muted" id="codeLead">Enter the 6-digit code from the email. If your email shows a button instead, tap it.</p>
+          <p class="auth-sent" id="sentLine">Sent to <span class="email-pill" id="sentTo"></span></p>
         </div>
+        <p class="alert auth-inapp" id="inAppLine" hidden>Type the code here. The link in the email opens your normal browser, not this app.</p>
         <form class="form" id="codeForm" novalidate onsubmit="return false">
-          <div class="otp" id="otp" role="group" aria-label="One-time code"></div>
+          <div class="otp" id="otp">
+            <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" enterkeyhint="done" maxlength="10" aria-label="6-digit code" aria-describedby="sentLine codeMsg">
+            <div class="otp-cells" id="otpCells" aria-hidden="true"></div>
+          </div>
+          <div class="code-tools">
+            <button type="button" class="btn btn-line btn-sm" id="pasteBtn" hidden><svg aria-hidden="true"><use href="#i-copy"/></svg>Paste code</button>
+            <a class="btn btn-line btn-sm" id="mailBtn" target="_blank" rel="noopener" hidden><svg aria-hidden="true"><use href="#i-mail"/></svg><span>Open Gmail</span></a>
+          </div>
           <button class="btn btn-hot btn-block" type="submit" id="verifyBtn">Verify and continue</button>
-          <p class="form-msg" id="codeMsg" aria-live="polite"></p>
         </form>
-        <p class="muted" style="font-size:.9rem">Didn't get it? Check your spam folder, or <button type="button" class="linkbtn" id="resendBtn" disabled>resend the code</button> <span id="resendTimer" class="faint"></span></p>
+        <div class="form-msg" id="codeMsg" aria-live="polite"></div>
+        <p class="muted auth-resend"><span id="expiryLine">Codes last 10 minutes.</span> <button type="button" class="linkbtn" id="resendBtn" disabled>Send a new code</button> <span id="resendTimer" class="faint"></span></p>
+        <section class="noemail" id="noEmail" hidden aria-labelledby="neTitle">
+          <h2 id="neTitle">No email yet?</h2>
+          <ul class="checks">
+            <li><span>We sent it to <b id="neAddr"></b>. <button type="button" class="linkbtn" id="neChange">Change it</button></span></li>
+            <li><span>Check <b>Spam</b> or <b>Promotions</b>, and search for <b>Ringback</b>.</span></li>
+            <li><span id="neExpiry">Codes last 10 minutes.</span></li>
+          </ul>
+          <button type="button" class="btn btn-line btn-block" id="neWa"><svg aria-hidden="true"><use href="#i-wa"/></svg>Still nothing? Get set up by WhatsApp</button>
+        </section>
       </div>
 
-      <p class="faint" style="font-size:.82rem;display:flex;gap:8px;align-items:center"><svg style="width:14px;height:14px"><use href="#i-lock"/></svg>Secured by one-time codes. We'll never ask you for a password.</p>
+      <!-- tap to finish logging in (?th= link from the email) -->
+      <div class="auth-step" id="stepFinish" hidden>
+        <div class="auth-head">
+          <span class="ic"><svg aria-hidden="true"><use href="#i-lock"/></svg></span>
+          <h1>Finish <span class="hot">logging in</span></h1>
+          <p class="muted">Tap the button to log in on this device.</p>
+          <p class="faint auth-why">We wait for your tap because email security scanners open links by themselves, and that would use up your login.</p>
+        </div>
+        <button class="btn btn-hot btn-block auth-big" type="button" id="finishBtn">Finish logging in</button>
+        <div class="form-msg" id="finishMsg" aria-live="polite"></div>
+        <button class="btn btn-line btn-block" type="button" id="finishNew" hidden>Send me a new code</button>
+      </div>
+
+      <!-- already logged in, no ?next -->
+      <div class="auth-step" id="stepIn" hidden>
+        <div class="auth-head">
+          <span class="ic mint"><svg aria-hidden="true"><use href="#i-check"/></svg></span>
+          <h1>You're <span class="hot">logged in</span></h1>
+          <p class="muted">You're logged in as <span class="email-pill" id="inEmail"></span></p>
+        </div>
+        <a class="btn btn-hot btn-block" id="goDash" href="dashboard.html">Go to dashboard<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <button class="btn btn-line btn-block" type="button" id="outBtn"><svg aria-hidden="true"><use href="#i-logout"/></svg>Log out and use another email</button>
+        <p class="faint auth-why">This logs out this device only.</p>
+      </div>
+
+      <!-- owner self-check (?check=1, auth-check.js) -->
+      <div class="auth-step" id="stepCheck" hidden></div>
+
+      <!-- shown in place of the message area when we couldn't email a code -->
+      <section class="handoff" id="handoff" hidden aria-labelledby="hoTitle">
+        <h2 id="hoTitle">We couldn't email your code just now.</h2>
+        <p>That's on our side. Leave your cellphone and we'll set up your account with you on WhatsApp, within one working day.</p>
+        <form class="form" id="hoForm" novalidate onsubmit="return false">
+          <label class="fld"><span>Cellphone</span><input id="ho-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" enterkeyhint="send" placeholder="082 123 4567"></label>
+          <label class="check"><input type="checkbox" id="ho-ok"><span>You can contact me about Ringback</span></label>
+          <button class="btn btn-hot btn-block" type="submit" id="hoBtn">Get me set up</button>
+        </form>
+        <div class="form-msg" id="hoMsg" aria-live="polite"></div>
+      </section>
+
+      <p class="auth-lock"><svg aria-hidden="true"><use href="#i-lock"/></svg>Secured by one-time codes. We'll never ask you for a password.</p>
     </div>
   </div>
 </main>

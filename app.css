@@ -178,6 +178,136 @@ table.data select{background:var(--surface-2);border:1px solid var(--line-2);bor
 }
 
 /* @@track:auth-otp:start */
+/* Log-in page (login.html, auth.js, auth-check.js). Two columns from 1041px; one column below; COMPACT gets a static
+   slim header so nothing is fixed while the keyboard is open. */
+.auth{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.auth-side{justify-content:center;padding:120px clamp(32px,5vw,72px) 64px}
+.auth-side-in{display:grid;gap:24px;max-width:480px}
+.auth-side h2{font-size:clamp(2.2rem,1.4rem + 2.2vw,3.4rem)}
+.auth-side .kicker + h2{margin-top:0}
+.auth-sms{max-width:400px}
+.auth-sms .sms{margin:14px}
+.auth-side .checks{margin:0}
+.auth-main{align-content:center}
+.auth-card{gap:20px}
+.auth-card h1{font-size:var(--fs-h2);line-height:.95}
+.auth-step{display:grid;gap:20px;min-width:0}
+.auth-head{display:grid;gap:10px;min-width:0}
+.auth-head .ic{margin-bottom:4px}
+.auth-wait{display:flex;align-items:center;gap:12px;color:var(--muted);min-height:200px}
+.th-mode #stepForm{display:none}
+.auth-card .fld label{color:var(--muted)}
+.auth-card .fld small{font-size:.78rem;color:var(--faint)}
+.auth-su{display:grid;gap:16px}
+.draft-note{display:inline-flex;align-items:center;gap:8px;justify-self:start;font:500 max(12px,.75rem)/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px;border-radius:var(--r-xs);border:1px solid var(--line-2)}
+.typo-hint{justify-self:start;min-height:44px;padding:8px 14px;border-radius:var(--r-sm);border:1px dashed var(--amber-line);background:var(--amber-bg);color:var(--ink);font-size:.9rem;text-align:left;cursor:pointer;max-width:100%;overflow-wrap:anywhere}
+.typo-hint b{color:var(--amber);font-weight:600}
+.auth-alt{margin-top:-8px}
+.auth-alt .linkbtn,.auth-switch .linkbtn,.auth-resend .linkbtn,.noemail .linkbtn{min-height:44px;display:inline-flex;align-items:center;vertical-align:middle}
+.auth-switch,.auth-resend{font-size:.92rem}
+.auth-back{justify-self:start;padding-left:0;margin-bottom:-8px;min-height:44px}
+.auth-sent{font-size:.92rem;color:var(--muted);min-width:0}
+.auth-card .email-pill{display:inline;padding:3px 10px;line-height:1.9;white-space:normal;overflow-wrap:anywhere;color:var(--ink);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.auth-card .btn{white-space:normal;text-align:center;line-height:1.25}
+.auth-inapp{color:var(--ink-2)}
+.auth-why{font-size:.86rem;line-height:1.5}
+.auth-big{min-height:60px;font-size:1.05rem;margin-top:12px}
+.auth-lock{display:flex;gap:8px;align-items:center;font-size:.84rem;color:var(--muted)}
+.auth-lock svg{width:14px;height:14px;flex:none}
+.form-msg:empty{display:none}
+.form-msg{line-height:1.5}
+.form-msg.ok{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.form-msg.ok > svg{width:18px;height:18px;flex:none}
+.msg-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;flex-basis:100%}
+.msg-acts .btn{min-height:44px}
+.msg-acts .btn svg{width:16px;height:16px}
+
+/* the code: one real input laid over drawn cells */
+.otp{--n:6;position:relative;display:block;width:100%;max-width:calc(var(--n) * 56px + (var(--n) - 1) * 8px)}
+.otp-cells{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:8px;pointer-events:none}
+.otp-cells span{height:60px;display:grid;place-items:center;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--line-2);font-family:var(--display);font-stretch:75%;font-weight:800;font-size:1.9rem;font-variant-numeric:tabular-nums;color:var(--ink);transition:border-color var(--dur-1),box-shadow var(--dur-1)}
+.otp-cells span.cur{border-color:var(--ember);box-shadow:0 0 0 3px var(--ember-bg)}
+.otp-cells span.cur:empty::after{content:"";width:2px;height:26px;border-radius:2px;background:var(--ember)}
+.otp.bad .otp-cells span{border-color:var(--red)}
+.otp.ok .otp-cells span{border-color:var(--mint-line);color:var(--mint)}
+.auth #code,.auth #code:focus,.auth #code:focus-visible{position:absolute;inset:0;z-index:1;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:var(--r-sm);background:transparent;box-shadow:none;outline:none;color:transparent;-webkit-text-fill-color:transparent;caret-color:transparent;font-size:16px;letter-spacing:0;cursor:text;animation:none}
+.auth #code::selection{background:transparent;color:transparent}
+.auth #code:-webkit-autofill{transition:background-color 99999s}
+.auth #code:disabled{cursor:progress}
+.code-tools{display:flex;flex-wrap:wrap;gap:8px}
+.code-tools:not(:has(> :not([hidden]))){display:none}
+.code-tools .btn{min-height:44px}
+
+/* no email yet? and the handoff panel */
+.noemail,.handoff{display:grid;gap:14px;padding:20px;border-radius:var(--r-md);border:1px solid transparent;background:var(--lit-bg),var(--lit-edge)}
+.noemail h2,.handoff h2{font-size:var(--fs-h3);font-stretch:100%;font-weight:650;letter-spacing:-.015em;line-height:1.2}
+.noemail .checks{margin:0;gap:8px;font-size:.92rem}
+.noemail b{overflow-wrap:anywhere}
+.handoff{border-color:var(--amber-line);background:var(--amber-bg)}
+.handoff > p{color:var(--ink-2);font-size:.95rem}
+.handoff .form{gap:14px}
+
+/* ?check=1 owner self-check (auth-check.js) */
+body.is-check .auth{grid-template-columns:minmax(0,1fr)}
+body.is-check .auth-side{display:none}
+body.is-check .auth-card{width:min(760px,100%)}
+body.is-check .auth-main{align-content:start}
+.ck{display:grid;gap:20px;min-width:0}
+.ck-sec{display:grid;gap:14px;padding:22px;border-radius:var(--r-md);border:1px solid transparent;background:var(--lit-bg),var(--lit-edge);min-width:0}
+.ck-sec > h2{font-size:var(--fs-h3);font-stretch:100%;font-weight:650;letter-spacing:-.015em;line-height:1.2;display:flex;gap:10px;align-items:baseline}
+.ck-sec > h2 small{font:500 max(12px,.72rem)/1 var(--mono);letter-spacing:.1em;color:var(--muted)}
+.ck-sec > p{color:var(--muted);font-size:.92rem}
+.ck-rows{display:grid;gap:0;list-style:none;margin:0;padding:0}
+.ck-row{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.ck-row:first-child{border-top:0}
+.ck-row .tag{justify-content:center}
+.ck-row b{display:block;font-weight:600}
+.ck-row p{color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+.ck details{font-size:.88rem;color:var(--muted)}
+.ck summary{cursor:pointer;display:list-item;min-height:44px;padding:12px 0;line-height:20px;overflow-wrap:anywhere}
+.ck-raw{margin:0;font-family:var(--mono);font-size:.84rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;color:var(--ink-2);background:var(--screen);border-radius:var(--r-sm);padding:12px 14px}
+.ck-q{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.ck-q:first-child{border-top:0}
+.ck-q .seg{min-width:132px}
+.ck-q .seg button{min-height:44px}
+.ck-q .fix{grid-column:1/-1;font-size:.9rem;color:var(--ink-2);background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:var(--r-sm);padding:10px 12px}
+.ck-acts{display:flex;flex-wrap:wrap;gap:8px}
+.ck-acts .btn{min-height:44px}
+
+@media (prefers-reduced-motion:no-preference){
+  .otp.bad .otp-cells{animation:shake .4s}
+}
+@media (max-width:1040px){
+  .auth{grid-template-columns:minmax(0,1fr)}
+  .auth-main{padding-top:104px}
+}
+/* COMPACT: the card starts under a static 56px header, 16px gutters, full-width actions */
+@media (max-width:700px),(pointer:coarse) and (max-height:500px){
+  body[data-page="login"] .nav{position:absolute}
+  .auth{min-height:0}
+  .auth-main{place-items:start center;align-content:start;padding:76px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left))}
+  .auth-card,.auth-step{gap:16px}
+  .auth-card h1{font-size:clamp(2rem,1.4rem + 3vw,2.6rem)}
+  .otp-cells{gap:6px}
+  .otp-cells span{height:56px;font-size:1.7rem}
+  .msg-acts .btn,.code-tools .btn{flex:1 1 100%}
+  .noemail,.handoff,.ck-sec{padding:16px}
+  .ck-row{grid-template-columns:1fr;gap:6px}
+  .ck-row .tag{justify-self:start}
+  .ck-q{grid-template-columns:1fr}
+  .ck-q .seg{justify-self:stretch}
+}
+@media (orientation:landscape) and (max-height:500px){
+  .auth-main{padding-top:68px;padding-bottom:20px}
+  .auth-card,.auth-step{gap:12px}
+  .auth-card h1{font-size:2rem}
+  .auth-head{gap:6px}
+  .otp-cells span{height:50px}
+}
+@media (max-width:360px){
+  .otp-cells{gap:5px}
+  .otp-cells span{font-size:1.5rem;border-radius:10px}
+}
 /* @@track:auth-otp:end */
 /* @@track:portal:start */
 /* @@track:portal:end */
