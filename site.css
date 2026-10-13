@@ -348,7 +348,7 @@ a.card{text-decoration:none}
 .tag.ember{color:var(--ember-2);border-color:var(--ember-line);background:var(--ember-bg)}
 
 /* trades page */
-#tradeDetails:empty{min-height:100vh}
+#tradeDetails{min-height:100vh}
 dt.e{color:var(--red)}dt.r{color:var(--mint)}dt.s{color:var(--amber)}
 .trade-detail{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:start;padding-block:64px;border-top:1px solid var(--line)}
 .trade-detail > *{min-width:0}
