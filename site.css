@@ -20,36 +20,38 @@
 
 /* ---------- tokens ---------- */
 :root{
-  /* surfaces: plate, raised, control. Old names are aliases. */
-  --bg:#07100F; --surface-1:#0B1716; --surface-2:#0F1D1C; --surface-3:#132423; --screen:#050B0B;
-  --bg-2:var(--surface-1); --panel:var(--surface-2); --panel-2:var(--surface-3); --panel-3:#18302E;
-  --line:rgba(214,240,232,.09); --line-2:rgba(214,240,232,.16);
-  --edge-top:rgba(236,243,240,.14); --edge:rgba(236,243,240,.06);
-  --lit-bg:linear-gradient(var(--surface-2),var(--surface-1)) padding-box;
-  --lit-edge:linear-gradient(180deg,var(--edge-top),var(--edge) 35%,rgba(236,243,240,.03)) border-box;
-  /* --faint is AA on every surface */
-  --ink:#ECF3F0; --ink-2:#C5D3CE; --muted:#93A6A1; --faint:#839792;
-  --ember:#FF7A3D; --ember-2:#FFB25B; --ember-glow:rgba(255,122,61,.35); --ember-ink:#160A04;
-  --mint:#5BE3B4; --red:#FF5A4E; --amber:#FFC857;
-  --red-bg:rgba(255,90,78,.08); --red-line:rgba(255,90,78,.4);
-  --mint-bg:rgba(91,227,180,.07); --mint-line:rgba(91,227,180,.35);
-  --amber-bg:rgba(255,200,87,.07); --amber-line:rgba(255,200,87,.35);
-  --ember-bg:rgba(255,122,61,.08); --ember-line:rgba(255,122,61,.4);
-  --sh-1:0 1px 0 rgba(0,0,0,.35),0 10px 24px -14px rgba(0,0,0,.65);
-  --sh-2:var(--sh-1),0 40px 80px -40px rgba(0,0,0,.85);
+  /* "Job card" light theme: white paper, workwear navy ink, hi-vis orange only for the main action.
+     Status colours only where they mean something: red emergency, green booked, amber callback.
+     Old token names are kept as aliases so every page and the portal follow along. */
+  --bg:#FFFFFF; --surface-1:#F5F7FA; --surface-2:#FFFFFF; --surface-3:#EEF2F6; --screen:#FFFFFF;
+  --bg-2:var(--surface-1); --panel:var(--surface-2); --panel-2:var(--surface-3); --panel-3:#E3E9F0;
+  --line:#E4E9EF; --line-2:#CFD7E1;
+  --edge-top:#E4E9EF; --edge:#E4E9EF;
+  --lit-bg:var(--surface-2) padding-box;
+  --lit-edge:linear-gradient(var(--line),var(--line)) border-box;
+  --ink:#16243F; --ink-2:#2C3B57; --muted:#56637A; --faint:#5F6B80;
+  --ember:#F26419; --ember-2:#F26419; --ember-glow:rgba(242,100,25,.28); --ember-ink:#FFFFFF;
+  --ember-text:#C2410C;
+  --mint:#0B8A5C; --red:#C8321F; --amber:#A15C07;
+  --red-bg:#FDF0EE; --red-line:#F2C2BA;
+  --mint-bg:#EAF6F0; --mint-line:#B9E2CF;
+  --amber-bg:#FDF5E7; --amber-line:#F0D49E;
+  --ember-bg:#FEF0E7; --ember-line:#F9C7A8;
+  --navy:#16243F; --navy-2:#22345A;
+  --sh-1:0 1px 2px rgba(22,36,63,.06),0 4px 14px -6px rgba(22,36,63,.10);
+  --sh-2:0 1px 2px rgba(22,36,63,.06),0 24px 48px -24px rgba(22,36,63,.22);
   --display:"Bricolage Grotesque","Bricolage Fallback","Helvetica Neue",Arial,sans-serif;
   --body:"Geist","Geist Fallback",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
-  --fs-sm:.875rem; --fs-base:clamp(1rem,.96rem + .2vw,1.0625rem); --fs-lede:clamp(1.08rem,1rem + .4vw,1.25rem);
-  --fs-h3:clamp(1.25rem,1.1rem + .5vw,1.5rem); --fs-h2:clamp(2rem,1.3rem + 3.2vw,3.75rem);
-  --fs-statement:clamp(2.6rem,1.4rem + 5.6vw,6rem); --fs-h1:clamp(2.9rem,1.6rem + 6.4vw,7.25rem); --fs-num:clamp(3rem,2rem + 5vw,6.5rem);
+  --fs-sm:.875rem; --fs-base:clamp(1rem,.96rem + .2vw,1.0625rem); --fs-lede:clamp(1.08rem,1rem + .35vw,1.25rem);
+  --fs-h3:clamp(1.2rem,1.1rem + .4vw,1.4rem); --fs-h2:clamp(1.85rem,1.3rem + 2.2vw,3rem);
+  --fs-statement:clamp(2.2rem,1.4rem + 3.6vw,4.25rem); --fs-h1:clamp(2.45rem,1.5rem + 4.2vw,4.9rem); --fs-num:clamp(2.6rem,1.8rem + 3.4vw,4.5rem);
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px; --sp-9:96px; --sp-10:144px;
-  --sec-y:clamp(72px,9vw,144px);
-  /* nested radius = max(--r-xs, parent radius - parent padding) */
-  --r-xs:8px; --r-sm:12px; --r-md:16px; --r:22px; --r-lg:28px; --r-xl:36px;
+  --sec-y:clamp(64px,8vw,120px);
+  --r-xs:8px; --r-sm:10px; --r-md:14px; --r:18px; --r-lg:22px; --r-xl:28px;
   --ease-out:cubic-bezier(.22,1,.36,1); --ease-in-out:cubic-bezier(.65,0,.35,1); --ease-spring:cubic-bezier(.34,1.36,.64,1);
-  --dur-1:140ms; --dur-2:260ms; --dur-3:520ms;
-  color-scheme:dark;
+  --dur-1:140ms; --dur-2:220ms; --dur-3:420ms;
+  color-scheme:light;
 }
 @supports (transition-timing-function:linear(0,1)){:root{--ease-spring:linear(0,.006,.025 2.8%,.101 6.1%,.539 18.9%,.721 25.3%,.849 31.5%,.937 38.1%,.968 41.8%,.991 45.7%,1.006 50.1%,1.015 55%,1.017 63.9%,1.001 85.7%,1)}}
 
@@ -1538,3 +1540,121 @@ a.dk:active,a.dk.is-pressed{transform:scale(.94);background:var(--lit-bg),linear
   :is(body[data-page="privacy"],body[data-page="terms"]) .prose table,:is(body[data-page="privacy"],body[data-page="terms"]) .prose tr{break-inside:avoid}
 }
 /* @@track:pages:end */
+
+/* =====================================================================================================
+   LIGHT "JOB CARD" THEME (2026-10 redesign). Loaded last, so it calms the earlier layers down:
+   white paper, navy ink, orange only on the main action; no glows, grain, scroll effects or label chrome.
+   ===================================================================================================== */
+html{scrollbar-color:var(--line-2) transparent}
+body{font-size:17px;line-height:1.6}
+::selection{background:#FAD5BF}
+
+/* type: one confident heading voice, no condensed shouting, no accented single words */
+h1,.statement{font-family:var(--display);font-stretch:100%;font-weight:700;letter-spacing:-.025em;line-height:1.04;color:var(--ink)}
+h2{font-stretch:100%;font-weight:700;letter-spacing:-.022em;line-height:1.1;color:var(--ink)}
+h3{font-stretch:100%;font-weight:650;color:var(--ink)}
+.num,.stat b,.price b,.big-num,.lock-time,.kpi b,.clock,.out .big-num{font-stretch:90%;font-weight:750;letter-spacing:-.02em;line-height:1}
+.hot,.w.hot,.hot .w{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:inherit!important;-webkit-text-fill-color:currentColor}
+.lede{color:var(--ink-2)}
+
+/* labels above headings: quiet sentence case, no dots, no numbering, no monospace capitals */
+.kicker{font-family:var(--body);font-size:.95rem;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ember-text)}
+.kicker::before,.kicker b,.kicker i{display:none!important}
+.screen-bar{font-family:var(--body);font-weight:500;font-size:.82rem;letter-spacing:0;text-transform:none;color:var(--muted)}
+.phone-cap,.example,.src{font-family:var(--body);letter-spacing:0;text-transform:none}
+
+/* no appended arrows on buttons and links */
+:is(.btn,.link,.go,.next a,.foot-top) svg:has(use[href="#i-arrow"]){display:none}
+
+/* effects off: grain, glowing borders, page-hero grid and horizon, heading reveals, scroll-in fades */
+body::before{display:none!important}
+.surface-hot{border-color:var(--line)}
+.surface-hot::after{display:none!important}
+.phero::before,.phero::after{display:none!important}
+.wr .wi{transform:none!important;transition:none!important}
+.rv{animation:none!important;opacity:1!important;transform:none!important}
+.progress{display:none}
+.btn-hot::before{display:none}
+
+/* buttons */
+.btn{font-weight:600;border-radius:12px}
+.btn-hot{background:var(--ember);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 8px 20px -10px rgba(242,100,25,.6)}
+.btn-line{background:var(--bg);border-color:var(--line-2);color:var(--ink)}
+.btn-ghost{color:var(--ink-2)}
+@media (hover:hover){
+  .btn-hot:hover{background:#DD5510}
+  .btn-line:hover{border-color:var(--ink)}
+  .link:hover{background-size:100% 1px}
+}
+.link{color:var(--ink)}
+
+/* surfaces: white cards with a hairline and a soft shadow, mockup screens look like light app panels */
+.card,a.card{background:var(--bg);border:1px solid var(--line);box-shadow:var(--sh-1)}
+.screen{background:var(--bg);box-shadow:none;border:1px solid var(--line)}
+.screen-bar{border-bottom:1px solid var(--line);background:var(--surface-1);border-radius:var(--r-md) var(--r-md) 0 0}
+.sec.band{background:var(--surface-1)}
+.sec.band::before,.sec.band::after{display:none}
+.tag{border-color:var(--line-2);color:var(--ink-2);background:var(--bg)}
+.tag.red{color:var(--red);background:var(--red-bg);border-color:var(--red-line)}
+.tag.mint{color:var(--mint);background:var(--mint-bg);border-color:var(--mint-line)}
+.tag.amber{color:var(--amber);background:var(--amber-bg);border-color:var(--amber-line)}
+.tag.ember{color:var(--ember-text);background:var(--ember-bg);border-color:var(--ember-line)}
+
+/* page heroes on inner pages: pale band, no grid, no glow */
+.phero{background:var(--surface-1);border-bottom:1px solid var(--line)}
+
+/* navigation: a white bar */
+.nav-in{background:rgba(255,255,255,.92);border:1px solid var(--line);box-shadow:var(--sh-1);backdrop-filter:none;-webkit-backdrop-filter:none}
+.nav.is-scrolled .nav-in{background:#fff;box-shadow:var(--sh-2)}
+.links{color:var(--ink-2)}
+.links a[aria-current="page"]{color:var(--ink)}
+.nav-ind{background:var(--surface-3);box-shadow:none}
+.logo{color:var(--ink)}
+
+/* footer: a pale grey band */
+.site-footer{background:var(--surface-1);border-top:1px solid var(--line);color:var(--ink-2)}
+.foot h3{font-family:var(--body);font-size:.95rem;font-weight:650;letter-spacing:0;text-transform:none;color:var(--ink)}
+.foot-made,.foot-mail{font-family:var(--body);letter-spacing:0}
+.wordmark,.foot-word{opacity:.5}
+
+/* mobile action bar and menu sheet */
+@media (max-width:700px),(pointer:coarse) and (max-height:500px){
+  .nav-in,.nav.is-scrolled .nav-in{background:#fff;border:0;border-bottom:1px solid var(--line);box-shadow:none;border-radius:0}
+  .mbar{background:#fff;border-color:var(--line);box-shadow:0 12px 32px -12px rgba(22,36,63,.35)}
+  body{font-size:16px}
+}
+
+/* every small label in sentence case, in the body face (the phone demo and invoice stamps keep their own style) */
+:is(.menu-trade p,.rb-sheet-label,.phero-meta,.screen-bar,.trade-detail .box dt,.example,table.data thead th,.out .lbl,.ribbon,.faq-cat,.area-map figcaption,.fwd-code .lbl,.fc-l,.foot h3,.pr-sub,.fo-price span,.plans2 .price span,.fi-note,.cmp tr.cmp-g th,.tr-line time,.pal-g,.scn-q,.rail a.is-mine .rail-mine,.st h3,.case-sms-lbl,.dial-hint,.dk span,.prose thead th,.toc-box > summary,.status,.paper-meta h4,.paper-pay h4,.paper-lines th,.draft-note,.review-list dt,.day-h,.cc-new,.cd-tx dt,.rail-count){text-transform:none!important;letter-spacing:0!important;font-family:var(--body)!important}
+.fc-l{font-size:.88rem;font-weight:600}
+.fc-row b{font-stretch:100%}
+.ribbon,.status{font-weight:600}
+.site-footer::before{display:none}
+.wordmark{display:none}
+
+
+/* report tiles, charts and bars on white */
+.kpi{background:var(--surface-1)}
+.kpi.hl{background:var(--ember-bg);border-color:var(--ember-line)}
+.chart i{background:linear-gradient(180deg,#9FB0C7,#D5DDE8)}
+.chart i.night{background:linear-gradient(180deg,var(--navy),#7D8FAD)}
+.bar-row i{background:var(--surface-3)}
+.bar-row u{background:linear-gradient(90deg,#9FB0C7,var(--navy))}
+.setup,.when,.step .when{font-family:var(--body);font-size:.88rem}
+/* line drawings in navy on the light pages */
+.art{--art-line:rgba(22,36,63,.55)}
+.sa-art{--art-line:rgba(22,36,63,.4)}
+.about-contour{--art-line:rgba(22,36,63,.07);--ember:rgba(22,36,63,.07)}
+.nf-art{--art-line:rgba(22,36,63,.45)}
+.sms,.case-sms,.sms-card p{font-family:var(--body)!important;font-size:.95rem;letter-spacing:0}
+.crumbs{font-family:var(--body);letter-spacing:0;font-size:.88rem}
+.line small{font-family:var(--body);font-size:.8rem;letter-spacing:0;text-transform:none;font-weight:600}
+.phone .line small{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;font-weight:400}
+.tag,.fi-rec .tag{font-family:var(--body);font-size:.82rem}
+.holds li{grid-template-columns:minmax(0,1fr)}
+@media (min-width:800px){.holds li{grid-template-columns:minmax(0,18rem) minmax(0,1fr)}.holds h3{grid-row:span 2}}
+.faq-count{font-family:var(--body);letter-spacing:0;font-size:.9rem}
+.about-hero h1,.nf h1,.menu-links a{font-stretch:100%}
+.about-hero h1{font-size:var(--fs-h1);font-weight:700;line-height:1.04}
+.ptabs{background:rgba(255,255,255,.94);border-block-color:var(--line)}
+.wa-float{background:#fff;color:#128C4B;border-color:var(--line-2)}

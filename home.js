@@ -170,8 +170,8 @@
   /* "Your trade" (the select in the hero kicker on desktop, the menu chips on phones) switches the demo */
   document.addEventListener('rb:trade', function(e){ if (e.detail) RB.showTrade(e.detail); });
 
-  var rot = $('rot').children, ri = 0;
-  if (!reduced) setInterval(function(){ var o = rot[ri]; o.classList.remove('on'); o.classList.add('leaving'); setTimeout(function(){ o.classList.remove('leaving'); }, 500); ri = (ri + 1) % rot.length; rot[ri].classList.add('on'); }, 2400);
+  var rotEl = $('rot'), rot = rotEl ? rotEl.children : [], ri = 0;
+  if (!reduced && rot.length) setInterval(function(){ var o = rot[ri]; o.classList.remove('on'); o.classList.add('leaving'); setTimeout(function(){ o.classList.remove('leaving'); }, 500); ri = (ri + 1) % rot.length; rot[ri].classList.add('on'); }, 2400);
 
   /* the marquee loops by doubling its track (the copy is hidden from screen readers); standing still it scrolls by hand */
   if (!calm) ['trackA','trackB'].forEach(function(id){
