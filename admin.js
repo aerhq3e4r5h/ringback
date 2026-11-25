@@ -40,7 +40,7 @@
   }
   function head(title){ return '<div class="a-sheet-head"><h2 class="h-md">' + RB.esc(title) + '</h2><button class="btn btn-line btn-sm" type="button" data-close>Close</button></div>'; }
   function authMsg(err){ if (RB.authError) { try { var m = RB.authError(err); if (m) return typeof m === 'string' ? m : (m.text || m.message || ''); } catch (e) {} } return (err && (err.message || err.msg)) || 'Something went wrong.'; }
-  var SOURCES = { contact:['','Contact form'], signup_fallback:['amber','Sign-up fallback'], setup_call:['mint','Setup call'] }, leadSrc = 'all';
+  var SOURCES = { contact:['','Contact form'], signup_fallback:['amber','Sign-up fallback'], setup_call:['mint','Setup call'], privacy:['red','Privacy request'] }, leadSrc = 'all';
 
   async function load(){
     var r = await Promise.all([

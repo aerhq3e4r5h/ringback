@@ -406,7 +406,7 @@
         col('Product', [['product.html','How it works'],['product.html#features','Features'],['build.html','Build your assistant'],['index.html#try','Live demo'],['pricing.html','Pricing'],['pricing.html#calculator','Calculator']]) +
         col('Trades', RB.TRADES.map(function(t){ return ['trades.html#' + t.key, RB.esc(t.label), t.icon]; })) +
         col('Company', [['about.html','About'],['contact.html','Contact'],['faq.html','FAQ'],['login.html','Log in'],['login.html?mode=signup','Create an account']]) +
-        col('Legal', [['privacy.html','Privacy policy'],['terms.html','Terms of service'],['privacy.html#recordings','Call recordings'],['privacy.html#rights','Your POPIA rights']]) +
+        col('Legal', [['privacy.html','Privacy policy'],['terms.html','Terms of service'],['privacy.html#recordings','Call recordings'],['privacy.html#rights','Your POPIA rights'],['contact.html?topic=privacy#message','Make a privacy request'],['terms.html#details','Business details']]) +
       '</div>' +
       '<div class="foot-share"><p>Know a tradie who misses calls? <b>Send them Ringback.</b></p><a class="btn btn-line btn-sm" target="_blank" rel="noopener" href="' +
         RB.wa('Know a tradie who misses calls? Ringback answers them 24/7, sorts emergencies from quotes and books the job: ' + (C.siteUrl || ''), true) + '">' + RB.icon('i-wa') + 'Share on WhatsApp</a></div>' +
@@ -725,7 +725,7 @@
 
   /* ---------- RB.lead: through supabase-js, like the contact form always has ---------- */
   var LEAD = { name:120, business:120, trade:60, area:120, phone:30, email:200, message:2000, source:40 };
-  var SBJS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js';
+  var SBJS = 'vendor/supabase-2.116.0.js';
   function leadClient(){
     if (RB.sb) return Promise.resolve(RB.sb);
     if (RB.leadClient) return Promise.resolve(RB.leadClient);

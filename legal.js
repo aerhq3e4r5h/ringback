@@ -4,6 +4,13 @@
   var RB = window.RB || {}, text = document.getElementById('legalText');
   if (!text) return;
 
+  /* business details from config.js (legal: {...}); a row with nothing to show is hidden rather than left blank */
+  var C = window.RB_CONFIG || {}, L = C.legal || {};
+  document.querySelectorAll('[data-legal]').forEach(function(el){
+    var v = L[el.getAttribute('data-legal')] || (el.getAttribute('data-legal') === 'email' ? C.email : '');
+    if (v) el.textContent = v; else if (el.closest('tr')) el.closest('tr').hidden = true;
+  });
+
   var rt = document.querySelector('[data-read-time]');
   if (rt) {
     var words = (text.textContent.match(/\S+/g) || []).length, mins = Math.max(1, Math.ceil(words / 220));

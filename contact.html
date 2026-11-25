@@ -57,11 +57,12 @@
     <div class="stack-l">
     <div data-founder="card" hidden></div>
     <form class="form card surface-hot rv" id="contactForm" novalidate onsubmit="return false">
+      <label class="fld"><span>What's this about?</span><select name="topic"><option value="trial">Trying Ringback for my business</option><option value="question">A question</option><option value="privacy">A privacy request about my information</option></select></label>
       <div class="two">
         <label class="fld"><span>Your name <i class="req">*</i></span><input name="name" autocomplete="name" required maxlength="120"></label>
-        <label class="fld"><span>Business name</span><input name="business" autocomplete="organization" maxlength="120"></label>
+        <label class="fld" data-biz><span>Business name</span><input name="business" autocomplete="organization" maxlength="120"></label>
       </div>
-      <div class="two">
+      <div class="two" data-biz>
         <label class="fld"><span>Trade</span><select name="trade"><option value="">Choose one</option><option>Plumbing</option><option>Electrical</option><option>Gates and alarms</option><option>Solar and backup power</option><option>Pest control</option><option>Aircon</option><option>Locksmith</option><option>Other</option></select></label>
         <label class="fld"><span>Area</span><input name="area" maxlength="120" placeholder="e.g. Randburg"></label>
       </div>
@@ -70,7 +71,7 @@
         <label class="fld"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="200"></label>
       </div>
       <label class="fld"><span>Message</span><textarea name="message" maxlength="2000" placeholder="Roughly how many calls do you miss a week? Anything we should know?"></textarea></label>
-      <label class="check"><input type="checkbox" name="consent" required><span>You can contact me about Ringback using these details. See our <a href="privacy.html">privacy policy</a>.</span></label>
+      <label class="check"><input type="checkbox" name="consent" required><span>You can contact me about this using these details. See our <a href="privacy.html">privacy policy</a>.</span></label>
       <button class="btn btn-hot btn-block" type="submit" id="contactBtn">Send message</button>
       <p class="form-msg" id="contactMsg" aria-live="polite"></p>
     </form>
@@ -120,7 +121,7 @@
 <footer id="site-footer"></footer>
 <script src="config.js" defer></script>
 <script src="site.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js" defer></script>
+<script src="vendor/supabase-2.116.0.js" defer></script>
 <script src="contact.js" defer></script>
 </body>
 </html>

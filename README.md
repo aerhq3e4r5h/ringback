@@ -71,7 +71,7 @@ Every page follows the same head and script order. Marketing pages:
 
 - Fonts: no Google Fonts. Only Geist and Bricolage are preloaded; Geist Mono loads when first used.
 - Scripts: all `defer`, always in this order: `config.js`, `site.js`, then supabase-js
-  (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js`, only where needed), `auth.js`,
+  (`vendor/supabase-2.116.0.js`, served from this site so no third party sees the page load; only where needed), `auth.js`,
   then the page script. `product.html` and `dashboard.html` load `forward.js` before their page script.
 - The skip link is the first element in `<body>`, and every page's `<main>` has `id="main"`.
 - og:image is `og/home.png` for index, about, faq, contact, privacy and terms; `og/pricing.png`, `og/product.png` and
@@ -347,7 +347,7 @@ A first visit to the home page on a phone should transfer **200 KB or less, excl
 | `site.css` | ≤ 22 KB gz | 17.9 KB (plus `home.css` 8.9 KB on the home page only) |
 | First-party JS (`config.js`, `site.js`, `home.js`) | ≤ 25 KB gz | 28.6 KB: over, see below |
 | Fonts, 2 preloaded | ≤ 135 KB | 133.0 KB (Bricolage 80.4, Geist 29.4, Geist Mono 23.1) |
-| Third-party requests before interaction | 0 | 0 (Vapi and supabase-js load on demand) |
+| Third-party requests before interaction | 0 | 0 (Vapi loads on demand; supabase-js is self-hosted) |
 | Total | ≤ 200 KB | about 195 KB |
 
 - Lighthouse mobile (Slow 4G, 4× CPU): LCP ≤ 2.5 s and CLS ≤ 0.05. Measured 11 Oct 2026 on a gzip server:

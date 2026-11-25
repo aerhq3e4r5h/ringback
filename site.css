@@ -1658,3 +1658,5 @@ body::before{display:none!important}
 .about-hero h1{font-size:var(--fs-h1);font-weight:700;line-height:1.04}
 .ptabs{background:rgba(255,255,255,.94);border-block-color:var(--line)}
 .wa-float{background:#fff;color:#128C4B;border-color:var(--line-2)}
+.prose tbody th{text-align:left;font-weight:600;color:var(--ink);vertical-align:top;width:42%}
+.prose tbody tr + tr > *{border-top:1px solid var(--line)}

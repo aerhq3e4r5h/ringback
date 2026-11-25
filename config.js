@@ -7,6 +7,10 @@ window.RB_CONFIG = {
   supabaseKey: 'sb_publishable_A21Dzqa6_-UWZIfoxItrqA_8hu3wwSN',
   otpLength: 6,
 
+  /* Business details for the terms page ("Our details"). South Africa's ECT Act asks websites that sell online to show
+     them. Fill in what applies; empty ones are hidden. status is e.g. 'Private company', 'Sole proprietor'. */
+  legal: { name: '', status: '', regNo: '', vatNo: '', address: '', email: '', officer: '' },
+
   /* Contact details */
   whatsapp: '27652343106',
   phoneDisplay: '065 234 3106',
