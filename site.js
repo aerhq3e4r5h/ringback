@@ -756,4 +756,21 @@
   if (navigator.onLine === false) offline(true);
 
   RB.applyTrade();
+
+  /* ---------- reveals on the inner pages: each group plays once as it scrolls in. Anything already on screen,
+     reduced motion, Save-Data or no IntersectionObserver: nothing is hidden at all. Runs after the page scripts
+     (DOMContentLoaded follows every deferred script), so cards they build are included. ---------- */
+  var REVEAL = { '.flow2':'seq', '.steps':'seq', '.holds':'seq', '.plans2':'seq', '.case':'seq', '.chart--v':'bars' };
+  document.addEventListener('DOMContentLoaded', function(){
+    if (reduced || RB.lite || !IO) return;
+    var rio = new IO(function(en){ en.forEach(function(e){ if (!e.isIntersecting) return; rio.unobserve(e.target); e.target.classList.add('mo-in'); e.target.classList.remove('mo-wait'); }); }, { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+    Object.keys(REVEAL).forEach(function(sel){
+      [].forEach.call(document.querySelectorAll(sel), function(el){
+        if (el.getBoundingClientRect().top < innerHeight) return;
+        [].forEach.call(el.children, function(c, i){ c.style.setProperty('--i', i); });
+        el.classList.add('mo-wait', 'mo-' + REVEAL[sel]);
+        rio.observe(el);
+      });
+    });
+  });
 })();

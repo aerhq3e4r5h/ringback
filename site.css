@@ -1572,7 +1572,7 @@ body::before{display:none!important}
 .surface-hot::after{display:none!important}
 .phero::before,.phero::after{display:none!important}
 .wr .wi{transform:none!important;transition:none!important}
-.rv{animation:none!important;opacity:1!important;transform:none!important}
+.rv:not(.mo-seq > *){animation:none!important;opacity:1!important;transform:none!important}
 .progress{display:none}
 .btn-hot::before{display:none}
 
@@ -1664,3 +1664,38 @@ body::before{display:none!important}
 .phero-art > svg.art-draw{--mono:var(--body);--surface-3:#fff;--art-line:rgba(22,36,63,.72);max-height:none}
 @media (min-width:1041px){body[data-page="product"] .phero--split .wrap{grid-template-columns:minmax(0,13fr) minmax(0,11fr)}body[data-page="product"] .phero h1{font-size:clamp(2.45rem,1.5rem + 3.4vw,4.2rem)}}
 @media (prefers-reduced-motion:no-preference){.art-draw{stroke-dasharray:1 1;stroke-dashoffset:1;animation:pg-draw 1.2s var(--ease-out) .15s forwards}}
+
+/* =====================================================================================================
+   INNER-PAGE MOTION (2026-11). site.js marks groups below the fold .mo-wait, then .mo-in once they scroll in;
+   nothing on screen at load, and nothing at all under reduced motion or Save-Data, is ever hidden.
+   ===================================================================================================== */
+@media (prefers-reduced-motion:no-preference){
+  /* page heads: the copy around the title settles in and the art rises (the title itself stays put for page transitions) */
+  .phero :is(.wrap,.phero-copy) > :not(h1,.phero-copy,.phero-art,script){animation:rb-rise .55s var(--ease-out) calc(var(--pi,0) * 70ms + 60ms) both}
+  .phero :is(.wrap,.phero-copy) > :nth-child(2){--pi:1}.phero :is(.wrap,.phero-copy) > :nth-child(3){--pi:2}.phero :is(.wrap,.phero-copy) > :nth-child(4){--pi:3}.phero :is(.wrap,.phero-copy) > :nth-child(n+5){--pi:4}
+  .phero .phero-art,.phero > svg.art{animation:rb-rise .7s var(--ease-out) .15s both}
+  @keyframes rb-rise{from{opacity:0;transform:translateY(14px)}}
+
+  /* groups: the pieces arrive in order (steps, plans, values, a trade's case) */
+  .mo-wait.mo-seq > *{opacity:0;transform:translateY(18px)}
+  .mo-in.mo-seq > *{transition:opacity .45s var(--ease-out) calc(var(--i,0) * 90ms),transform .6s var(--ease-out) calc(var(--i,0) * 90ms)}
+  .mo-in.mo-seq > .flow2-lines{transition-delay:.5s}
+  /* a trade's example text buzzes once it has landed */
+  .case.mo-in .case-sms{animation:rb-buzz .7s linear .9s}
+  @keyframes rb-buzz{0%,35%,50%,85%,100%{transform:none}8%,58%{transform:translateX(-3px) rotate(-.5deg)}17%,67%{transform:translateX(3px) rotate(.5deg)}26%,76%{transform:translateX(-2px)}}
+
+  /* the calls chart: each day's bar grows from the baseline, Monday first */
+  .chart--v i{transform-origin:50% 100%}
+  .mo-wait.chart--v i{transform:scaleY(0)}
+  .mo-in.chart--v i{transition:transform .6s var(--ease-out) calc(var(--i,0) * 70ms)}
+
+  /* answers open and close smoothly where the browser can animate to auto height */
+  @supports (interpolate-size:allow-keywords){
+    main details{interpolate-size:allow-keywords}
+    main details::details-content{height:0;overflow:clip;transition:height .3s var(--ease-out),content-visibility .3s allow-discrete}
+    main details[open]::details-content{height:auto}
+  }
+}
+@media (max-width:700px) and (prefers-reduced-motion:no-preference){
+  .mo-wait.mo-seq > *{transform:translateY(10px)}
+}
