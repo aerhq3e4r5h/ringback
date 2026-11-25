@@ -238,16 +238,6 @@
 
 /* ===== RICH ===== */
 @media (hover:hover) and (pointer:fine) and (min-width:701px) and (min-height:501px) and (prefers-reduced-motion:no-preference){
-  /* hero entrance, once a session (index.html sets html.intro before first paint); done in under 900ms */
-  .intro .hero .kicker{animation:rise .5s var(--ease-out) both}
-  .intro .hero h1 .ln{animation:ln .56s var(--ease-out) .08s both}
-  .intro .hero h1 .ln + .ln{animation-delay:.16s}
-  .intro .hero .lede{animation:rise .5s var(--ease-out) .26s both}
-  .intro .hero :is(.ctas,.hero-more,.spec){animation:rise .5s var(--ease-out) .32s both}
-  .intro .hero .phone-stage{animation:rise24 .6s var(--ease-out) .2s both}
-  @keyframes rise{from{opacity:0;transform:translateY(12px)}}
-  @keyframes rise24{from{opacity:0;transform:translateY(24px)}}
-  @keyframes ln{from{clip-path:inset(-.3em -.1em 100% -.1em);transform:translateY(.45em)}to{clip-path:inset(-.3em -.1em -.3em -.1em)}}
   /* one signal ring turns; they all ripple outward each time the demo phone locks */
   .rings .spin{animation:spin 90s linear infinite}
   .rings.ripple circle{animation:rip .8s var(--ease-out) calc(var(--k,0) * 100ms) both}
@@ -289,6 +279,8 @@
 
 /* sections */
 .sec.tint{background:var(--surface-1)}
+/* sections only share padding when they share a background */
+.sec.tint + .sec:not(.tint),.sec:not(.tint) + .sec.tint{padding-top:var(--sec-y)}
 .head{max-width:760px;margin-bottom:var(--sp-7)}
 .head .lede{margin-top:var(--sp-4)}
 
@@ -393,3 +385,62 @@
   .priv-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--sp-8)}
   .priv-list{grid-template-columns:1fr 1fr}
 }
+
+/* =====================================================================================================
+   MOTION: "a missed call, handled" (2026-11). One story told in four moments, each played once:
+   the opening, the text arriving (#alert), the calls being sorted (#features) and the setup steps (#how).
+   index.html adds html.js-motion before first paint only when motion is allowed (and not on Save-Data);
+   it removes it again after 4s if home.js never ran, so nothing can stay hidden.
+   ===================================================================================================== */
+.hero h1 .ln{display:block}
+
+/* sorted: each example gets its result; the space is always there, so nothing shifts */
+.oc .oc-ex{display:grid;gap:10px}
+.oc .oc-ex p{margin:0}
+.oc-e{--oc-ink:var(--red);--oc-bg:var(--red-bg)}.oc-r{--oc-ink:var(--mint);--oc-bg:var(--mint-bg)}.oc-c{--oc-ink:var(--amber);--oc-bg:var(--amber-bg)}
+.oc-res{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--line-2);font-weight:650;font-size:.9rem;color:var(--oc-ink)}
+.oc-res .tick{flex:none;width:22px;height:22px;padding:4px;border-radius:50%;background:var(--oc-bg);fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.oc-res .tick path{stroke-dasharray:1}
+
+/* setup steps: a grey track under each step, with a navy line laid over it */
+.steps3 li{position:relative;border-top-color:var(--line-2)}
+.steps3 li::after{content:"";position:absolute;left:0;right:0;top:-2px;height:2px;background:var(--navy);transform-origin:0 50%}
+
+@media (prefers-reduced-motion:no-preference){
+  /* 1. opening, once a session: the two lines, then the copy, while the phone rises; done by 900ms */
+  .intro .hero h1 .ln{animation:rise .6s var(--ease-out) both}
+  .intro .hero h1 .ln + .ln{animation-delay:.09s}
+  .intro .hero .lede{animation:rise .55s var(--ease-out) .18s both}
+  .intro .hero .ctas{animation:rise .55s var(--ease-out) .26s both}
+  .intro .hero .hero-points{animation:rise .55s var(--ease-out) .32s both}
+  .intro .hero .console{animation:rise24 .7s var(--ease-out) .2s both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}}
+  @keyframes rise24{from{opacity:0;transform:translateY(28px)}}
+
+  /* 2. the text arrives: it drops in like a notification, buzzes twice, then its link underlines */
+  .js-motion .land-msg:not(.is-in) .sms-big{opacity:0;transform:translateY(-28px) scale(.97)}
+  .js-motion .land-msg.is-in .sms-big{animation:notif .55s var(--ease-out) both,buzz .7s linear .62s}
+  .js-motion .land-msg .sms-link{text-decoration:none;padding-bottom:1px;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .5s var(--ease-out) 1.3s}
+  .js-motion .land-msg.is-in .sms-link{background-size:100% 1px}
+  @keyframes notif{from{opacity:0;transform:translateY(-28px) scale(.97)}}
+  @keyframes buzz{0%,35%,50%,85%,100%{transform:none}8%,58%{transform:translateX(-3px) rotate(-.5deg)}17%,67%{transform:translateX(3px) rotate(.5deg)}26%,76%{transform:translateX(-2px)}}
+
+  /* 3. sorted: each result settles and its tick draws, card by card */
+  .oc-e{--d:.15s}.oc-r{--d:.3s}.oc-c{--d:.45s}
+  .js-motion .oc:not(.is-in) .oc-res{opacity:0;transform:translateY(8px)}
+  .js-motion .oc:not(.is-in) .oc-res .tick path{stroke-dashoffset:1}
+  .js-motion .oc.is-in .oc-res{transition:opacity .35s var(--ease-out) var(--d),transform .45s var(--ease-out) var(--d)}
+  .js-motion .oc.is-in .oc-res .tick path{transition:stroke-dashoffset .4s var(--ease-out) calc(var(--d) + .2s)}
+
+  /* 4. live the same day: the navy line fills step by step as the section scrolls up (scrubbed, not timed) */
+  @supports (animation-timeline:view()){
+    .steps3 li::after{animation:fillx linear both;animation-timeline:view();animation-range:cover 8% cover 30%}
+    .steps3 li:nth-child(2)::after{animation-range:cover 20% cover 42%}
+    .steps3 li:nth-child(3)::after{animation-range:cover 32% cover 54%}
+    @keyframes fillx{from{transform:scaleX(0)}}
+  }
+}
+
+/* the chips confirm a copy with a tick */
+.try-say .prompt.copied::before{content:"";display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;background:var(--mint);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/contain no-repeat}
+@media (min-width:1041px){.hero-grid{align-items:center}}

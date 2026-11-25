@@ -20,7 +20,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
-<script>try{if(!sessionStorage.getItem('rb_intro_seen')&&matchMedia('(hover:hover) and (pointer:fine) and (min-width:701px) and (min-height:501px) and (prefers-reduced-motion:no-preference)').matches)document.documentElement.classList.add('intro')}catch(e){}</script>
+<script>try{var d=document.documentElement,n=navigator.connection;if(matchMedia('(prefers-reduced-motion:no-preference)').matches&&!(n&&n.saveData)){d.classList.add('js-motion');if(!sessionStorage.getItem('rb_intro_seen'))d.classList.add('intro');setTimeout(function(){if(!(window.RB&&RB.motion))d.classList.remove('js-motion')},4000)}}catch(e){}</script>
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="home.css">
 </head>
@@ -33,7 +33,7 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <h1>Every call answered. Every job booked.</h1>
+      <h1><span class="ln">Every call answered.</span> <span class="ln">Every job booked.</span></h1>
       <p class="lede">Ringback answers the calls you miss, in your business name, day or night. It spots emergencies, books the job and texts you the details within a minute.</p>
       <div class="ctas">
         <a class="btn btn-hot" href="login.html?mode=signup">Start your free trial week</a>
@@ -115,17 +115,17 @@
       <article class="oc oc-e">
         <h3>Emergencies</h3>
         <p>Gives the caller basic safety steps, then alerts you straight away.</p>
-        <p class="oc-ex">Burst geyser in Fourways. Power and water already off.</p>
+        <div class="oc-ex"><p>Burst geyser in Fourways. Power and water already off.</p><p class="oc-res"><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" pathLength="1"/></svg>Alert sent to you</p></div>
       </article>
       <article class="oc oc-r">
         <h3>Routine jobs</h3>
         <p>Books them into open slots in your Google Calendar and confirms by SMS.</p>
-        <p class="oc-ex">Gate motor service in Midrand, booked for Tuesday 09:00.</p>
+        <div class="oc-ex"><p>Gate motor service in Midrand, any morning next week.</p><p class="oc-res"><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" pathLength="1"/></svg>Booked for Tuesday 09:00</p></div>
       </article>
       <article class="oc oc-c">
         <h3>Quotes</h3>
         <p>Takes the details and puts them on your callback list for when you're free.</p>
-        <p class="oc-ex">Two aircon units for an office in Sandton.</p>
+        <div class="oc-ex"><p>Two aircon units for an office in Sandton.</p><p class="oc-res"><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" pathLength="1"/></svg>Added to your callback list</p></div>
       </article>
     </div>
     <p class="oc-note">Sales calls and wrong numbers get a polite message and never reach you. <a class="link" href="product.html">See everything it does</a></p>

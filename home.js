@@ -229,4 +229,17 @@
       '<a class="trade more spot rv" href="contact.html"><span class="tg">' + RB.icon('i-plus') + '</span><h3>Another trade?</h3><p class="muted">Roofers, glaziers, pool services, appliance repairs, garage doors. If customers phone you, we can set it up.</p><span class="go">Talk to us ' + arrow + '</span></a>';
   }
   if (grid) { buildGrid(); document.addEventListener('rb:trade', buildGrid); }
+
+  /* ---------- motion: the text arrives (#alert) and each call gets sorted (#features); each plays once ---------- */
+  RB.motion = true;
+  if (document.documentElement.classList.contains('js-motion')) {
+    var once = function(el, thr){
+      if (!el) return;
+      if (!IO) { el.classList.add('is-in'); return; }
+      var o = new IO(function(en){ if (en[0].isIntersecting) { el.classList.add('is-in'); o.disconnect(); } }, { threshold: thr });
+      o.observe(el);
+    };
+    once(document.querySelector('.land-msg'), .55);
+    each(document.querySelectorAll('.outcomes .oc'), function(c){ once(c, .6); });
+  }
 })();
