@@ -4,6 +4,8 @@
   if (!f) return;
   function say(text, kind){ msg.className = 'form-msg ' + (kind || ''); msg.textContent = text; }
   var sending = false;
+  var waOnly = (window.RB_CONFIG || {}).accounts === false;
+  if (waOnly) btn.innerHTML = RB.icon('i-wa') + 'Send on WhatsApp';
 
   /* topic: a privacy request hides the business fields and is saved with source 'privacy' so it stands out in admin */
   var topic = f.elements.namedItem('topic'), note = f.elements.namedItem('message'), hint = note.placeholder;
@@ -29,6 +31,14 @@
     if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) { el('email').setAttribute('aria-invalid','true'); el('email').focus(); return say('That email address doesn\'t look right.', 'err'); }
     if (!el('consent').checked) { el('consent').focus(); return say('Please tick the box so we can contact you.', 'err'); }
     var waText = priv ? 'Hi Ringback, I\'m ' + d.name + '. I have a privacy request.\n' + val('message') : 'Hi Ringback, I\'m ' + d.name + (d.business ? ' from ' + d.business : '') + (d.trade ? ' (' + d.trade + ')' : '') + (d.area ? ', ' + d.area : '') + '.' + (d.message ? '\n' + d.message : '');
+    if (waOnly) {
+      /* WhatsApp-only mode: the message goes straight to WhatsApp, filled in */
+      window.open(RB.wa(waText), '_blank', 'noopener');
+      f.innerHTML = '<div class="stack-m" role="status"><span class="ic mint">' + RB.icon('i-wa') + '</span><h3 class="h-md">WhatsApp should have opened with your message.</h3>' +
+        '<p class="muted">Tap send there and we\'ll reply within one working day' + (priv ? ', and within 30 days at most for a privacy request' : '') + '. If it didn\'t open, use the button below.</p>' +
+        '<div class="row-tags"><a class="btn btn-hot btn-sm" target="_blank" rel="noopener" href="' + RB.wa(waText) + '">Open WhatsApp</a></div></div>';
+      return;
+    }
     sending = true; btn.classList.add('loading'); btn.setAttribute('aria-busy', 'true'); say('Sending…');
     RB.lead(d).then(function(ok){
       sending = false; btn.classList.remove('loading'); btn.removeAttribute('aria-busy');

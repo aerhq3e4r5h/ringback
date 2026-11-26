@@ -737,7 +737,7 @@
       var d = {}, ref = RB.getRef();
       Object.keys(LEAD).forEach(function(k){ var v = row && row[k] != null ? String(row[k]).trim().slice(0, LEAD[k]) : ''; if (v) d[k] = v; });
       if (ref) { var tag = ' · Ref: ' + ref; d.message = d.message ? d.message.slice(0, LEAD.message - tag.length) + tag : tag.slice(3); }
-      if (!C.supabaseUrl || !C.supabaseKey) return Promise.resolve(false);
+      if (C.accounts === false || !C.supabaseUrl || !C.supabaseKey) return Promise.resolve(false);
       return Promise.race([
         leadClient().then(function(sb){ return sb.from('leads').insert(d); }).then(function(r){ return !!r && !r.error; }),
         new Promise(function(res){ setTimeout(function(){ res(false); }, 8000); })
@@ -756,6 +756,35 @@
   if (navigator.onLine === false) offline(true);
 
   RB.applyTrade();
+
+  /* ---------- WhatsApp-only mode (config accounts:false): sign-up buttons open WhatsApp with a message that fits
+     where they were tapped; log-in links in the header, menu and footer disappear. Links inside text are left alone
+     (the log-in page explains what to do). ---------- */
+  RB.noAccounts = C.accounts === false;
+  if (RB.noAccounts) {
+    var signupMsg = function(h){
+      var p = new URLSearchParams(h.split('?')[1] || ''), plan = p.get('plan');
+      if (p.get('from') === 'build') return 'Hi Ringback, I\'ve built a preview of my assistant and I\'d like to start my free trial week.';
+      if (plan === 'founding') return 'Hi Ringback, I\'d like to apply to be a founding partner.';
+      return 'Hi Ringback, I\'d like to start a free trial week' + (plan ? ' on the ' + plan.charAt(0).toUpperCase() + plan.slice(1) + ' plan' : '') + (p.get('start') ? ', starting ' + p.get('start') : '') + '.';
+    };
+    /* links that page scripts build later (the trial planner, plan finder, search) are caught when tapped */
+    document.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('a[href^="login.html"]');
+      if (!a || !/mode=signup/.test(a.getAttribute('href'))) return;
+      e.preventDefault(); window.open(RB.wa(signupMsg(a.getAttribute('href'))), '_blank', 'noopener');
+    }, true);
+    [].forEach.call(document.querySelectorAll('a[href^="login.html"]'), function(a){
+      var h = a.getAttribute('href');
+      if (/from=build/.test(h)) { a.hidden = true; return; }  /* the build page has its own 'Send these to us on WhatsApp' */
+      if (/mode=signup/.test(h)) {
+        a.href = RB.wa(signupMsg(h)); a.target = '_blank'; a.rel = 'noopener';
+        [].forEach.call(a.childNodes, function(n){ if (n.nodeType === 3 && /account/i.test(n.textContent)) n.textContent = n.textContent.replace(/create (an|your) account( with these details)?/i, function(m, x, y){ return y ? 'Send these to us on WhatsApp' : 'Start your free trial'; }); });
+      } else if (!a.hasAttribute('data-digit') && !/check=1/.test(h) && a.closest('header, footer, .menu, .mbar, .nav')) {
+        (a.closest('li') || a).hidden = true;
+      }
+    });
+  }
 
   /* ---------- reveals on the inner pages: each group plays once as it scrolls in. Anything already on screen,
      reduced motion, Save-Data or no IntersectionObserver: nothing is hidden at all. Runs after the page scripts

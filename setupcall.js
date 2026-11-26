@@ -107,8 +107,8 @@
             '<a class="btn btn-line" href="build.html">Meanwhile, preview your assistant ' + RB.icon('i-arrow') + '</a></div></div>';
           sh.body.firstChild.focus();
         } else {
-          msg.className = 'form-msg err';
-          msg.innerHTML = 'We couldn\'t send that just now. Send the same details on WhatsApp instead: ';
+          msg.className = RB.noAccounts ? 'form-msg' : 'form-msg err';
+          msg.innerHTML = RB.noAccounts ? 'Tap below to send these details to us on WhatsApp: ' : 'We couldn\'t send that just now. Send the same details on WhatsApp instead: ';
           var a = document.createElement('a'); a.className = 'btn btn-hot btn-block mt-s'; a.href = wa; a.target = '_blank'; a.rel = 'noopener';
           a.innerHTML = RB.icon('i-wa') + 'Send on WhatsApp'; msg.appendChild(a);
           a.focus();

@@ -11,6 +11,11 @@ window.RB_CONFIG = {
      them. Fill in what applies; empty ones are hidden. status is e.g. 'Private company', 'Sole proprietor'. */
   legal: { name: '', status: '', regNo: '', vatNo: '', address: '', email: '', officer: '' },
 
+  /* Accounts (log in, client portal, admin, invoices) need the Supabase database. false switches the site to
+     WhatsApp only: log-in links are hidden, sign-up and enquiry buttons open WhatsApp with the details filled in,
+     and the portal pages point people there. Set it back to true once the Supabase project is running. */
+  accounts: false,
+
   /* Contact details */
   whatsapp: '27652343106',
   phoneDisplay: '065 234 3106',

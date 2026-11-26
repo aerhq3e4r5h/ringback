@@ -10,6 +10,17 @@
   var C = window.RB_CONFIG || {}, RB = window.RB = window.RB || {};
   var fromLink = /(^|[#&])access_token=/.test(location.hash);
   RB.sb = null;
+  /* WhatsApp-only mode (config accounts:false): portal pages send people to the log-in page, which points them to WhatsApp */
+  if (C.accounts === false) {
+    RB.requireUser = function(){ location.replace('login.html'); return Promise.resolve(null); };
+    RB.signOut = function(){ location.href = 'index.html'; };
+    var card = document.getElementById('auth');
+    if (card) card.innerHTML = '<div class="auth-step stack-m"><div class="auth-head"><h1>We\'ll set you up on WhatsApp.</h1>' +
+      '<p class="muted">For now, we set up every client by WhatsApp: your free trial week, your assistant\'s details, call forwarding and invoices. It takes a few minutes, and there\'s nothing to log in to.</p></div>' +
+      '<a class="btn btn-hot btn-block" target="_blank" rel="noopener" href="' + RB.wa('Hi Ringback, I\'d like to start a free trial week.') + '">' + RB.icon('i-wa') + 'Start on WhatsApp</a>' +
+      '<a class="btn btn-line btn-block" href="build.html">Preview your assistant first</a></div>';
+    return;
+  }
   if (C.supabaseUrl && C.supabaseKey && window.supabase && window.supabase.createClient) {
     RB.sb = window.supabase.createClient(C.supabaseUrl, C.supabaseKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' } });
   }
